@@ -1,0 +1,13 @@
+Tameru: 1 ken, 1 shu, 5 tai, 0 nin, 0 gen +3opt
+Tayuga: 1 ken, 1 shu, 3 tai, 2 nin, 1 gen +2opt
+Kensou: 3 ken, 1 shu, 1 tai, 1 nin, 0 gen +4opt
+Surike: 1 ken, 3 shu, 1 tai, 1 nin, 0 gen +4opt
+Geniru: 1 ken, 1 shu, 1 tai, 1 nin, 3 gen +3opt
+Ninere: 1 ken, 1 shu, 1 tai, 3 nin, 1 gen +3opt
+
++2 tai, +1 opt
++1 tai, +1 nin, +1 opt
++1 ken, +2 opt
++1 shu, +2 opt
++1 gen, +2 opt
++1 nin, +2 opt

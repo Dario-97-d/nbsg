@@ -1,0 +1,62 @@
+hachimon tonkou: _> +chance +dano
+ 8 portões
+
+juuken: _> +dano
+    byakugan _> +chance
+    kaiten _> +defesa
+    hakkeshou (2,4,8,16,32,64,128,361) _> tira chakra
+
+genjutsu:
+    sharingan: _> +chance
+        1 tomoe
+        2 tomoe -> stun
+        3 tomoe -> copy
+        mangekyou:
+            tsukuyomi; _> crit, instante
+            susanno'o; _> defesa instante
+
+katon:
+    goukakyuu _> crit, curta
+    housenka _> crit, multipla
+    amaterasu _> crit, instante
+
+fuuton:
+    toppa _> crit, chance
+    kazekiri _> crit, multipla
+    rasen-shuriken _> crit, multiplo, chance
+
+raiton:
+    chidori _> crit, curta
+    nagashi _> crit, multipla
+    kirin  _> crit, instante
+
+doton:
+    kengan _> crit, curta
+    doryuuheki _> defesa, multipla
+    mokuton: jukai kotan _> +chance
+
+suiton:
+    mizurappa _> crit, chance
+    suirou _> stun
+    mokuton: jukai kotan _> +chance
+
+bijuu:
+    caudas: 0,1,2,3,4,5,6,7,8,9 +dano +chance
+    4 caudas -> bijuudama _> crit, multipla, chance
+
+hebi:
+    jagei jubaki _> stun
+    orochimaru kawarimi _> +defesa
+    sennin (corpo de cobra) _> +dano +chance
+
+gama:
+    rasengan _> crit, curta
+    gama rinshou _> stun, multipla, longa
+    sennin (kawazu kumite) _> +chance
+
+katsuyu:
+    shousen _> cura outro
+    100 curas _> +defesa
+    imensa rede de cura _> +defesa, multipla
+
+ht . jb . gs . ne . bj . ky

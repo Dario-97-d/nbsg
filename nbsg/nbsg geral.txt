@@ -1,0 +1,20 @@
+village
+lv - xp
+
+style
+
+sta - cha
+
+flair (critical)
+power (damage)
+speed (chance)
+jutsu (usage)
+tactics (plan)
+
+chunnin: lv 
+jounin: lv 
+
+pvp wins 
+
+missions: 
+patrol - anbu

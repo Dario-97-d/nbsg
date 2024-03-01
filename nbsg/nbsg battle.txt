@@ -1,0 +1,22 @@
+se ganha:
+ recebe pelo que faz melhor
+ recebe pelo que o outro faz melhor
+se perde:
+ recebe pelo que faz pior
+ recebe pelo que o outro faz melhor
+
+TL- nada
+ML- recebe 1 ponto pelo que fez pior
+mL- recebe 1 ponto pelo que fez pior + 1 rand
+D- recebe 1 rand + 1 tai
+mW- recebe 1 ponto pelo que fez melhor + 1 rand
+MW- recebe 1 ponto pelo que fez melhor
+TW- nada
+
+TL 0,5
+ML 0,75
+mL 0,875
+ < D <
+mW 1,25
+MW 1,5
+TW 2
