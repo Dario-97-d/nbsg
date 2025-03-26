@@ -1,9 +1,0 @@
-nbs database
-
-user. id, vid, rank, name, password, email
-nins. id, clan, team, squad, organ, villa
-atts. id, sta, cha, fla, pow, agi, jut, tac
-clan. id, style, ken, shu, tai, nin, gen
-styl. id, tken, tshu, ttai, tnin, tgen, tskl, ntrain, ready
-stat. id, wins, patrol, anbu
-team. id, nin1, nin2

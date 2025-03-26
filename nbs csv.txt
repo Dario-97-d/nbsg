@@ -1,0 +1,23 @@
+gennin: treinar style
+chunnin: 1 vit 3v3 + 1 vit pvp
+jounin:
+
+CV com vila
+ha 1 ou 5 vila(s), nin sobe grads e cria nova vila (sennin)
+start -> gennin -> team -> chunnin shiken -> chunnin
+atts -> style -> clan_dojo -> shiken -> squad patrol (contra quem?)
+
+ou
+
+SC sem vila
+nao ha vila, nin sai do cla, forma team (-> squad -> organ -> vila)
+start -> clan -> team -> organ -> village
+atts -> style -> clan_dojo -> team -> duelo pvp -> squad
+
+ou
+
+há 1 vila e C clãs, nin escolhe (std: vila), luta dojo
+
+ou
+
+há 1 vila, nin começa na vila, aprende skill básica, faz chunnin shiken, entra squad, patrol até estar a um certo nível, vai para aldeia periférica (clã/specio), treina até 
