@@ -1,15 +1,20 @@
 <?php
 
-include("headeron.php");
+require_once 'headeron.php';
 
 $ids = explode( '-', array_search('Train', $_POST) );
 
-extract( sql_mfa( $conn, "SELECT nin1, nin2, s.* FROM team t JOIN styl s ON t.id = s.id WHERE t.id = $uid" ) );
+extract( sql_mfa(
+	$conn,
+	"SELECT teammate1_id, teammate2_id, s.*
+	FROM char_team      t
+	JOIN skill_training s ON t.char_id = s.char_id
+	WHERE t.char_id = $uid" ) );
 
-if ( $nin1 < 1 || $nin2 < 1 || $nin1 != $ids[0] || $nin2 != $ids[1] ) exiter("team");
+if ( $teammate1_id < 1 || $teammate2_id < 1 || $teammate1_id != $ids[0] || $teammate2_id != $ids[1] ) exiter("team");
 
 /*
-if ( min( $nin1_level, $nin2_level ) > $user_level )
+if ( min( $teammate1_level, $teammate2_level ) > $user_level )
 {
 	// remove nin from team
 	exiter('team');
@@ -18,16 +23,16 @@ if ( min( $nin1_level, $nin2_level ) > $user_level )
 
 $members = sql_query(
 	$conn,
-	"SELECT level, c.*, name
-	FROM atts a
-	JOIN clan c ON a.id = c.id
-	JOIN user u ON a.id = u.id
-	WHERE a.id IN ($uid, $nin1, $nin2)
+	"SELECT char_level, c.*, username
+	FROM char_attributes  a
+	JOIN style_attributes c ON a.char_id = c.char_id
+	JOIN game_users       u ON a.char_id = u.char_id
+	WHERE a.char_id IN ($uid, $teammate1_id, $teammate2_id)
 	ORDER BY
-		CASE a.id
-			WHEN $uid THEN 1
-			WHEN $nin1 THEN 2
-			WHEN $nin2 THEN 3
+		CASE a.char_id
+			WHEN $uid          THEN 1
+			WHEN $teammate1_id THEN 2
+			WHEN $teammate2_id THEN 3
 		END" );
 
 ?>
@@ -50,32 +55,32 @@ $members = sql_query(
 		?>
 		<tr>
 			
-			<td><?= $row['style'] ?></td>
+			<td><?= $row['style_name'] ?></td>
 			
-			<td><?= ( ${'level'. $i } = $row['level'] ) ?></td>
+			<td><?= ( ${'char_level'. $i } = $row['char_level'] ) ?></td>
 			
 			<td>
-				<a href="nin?id=<?= $row['id'] ?>">
-					<?= $row['name'] ?>
+				<a href="nin?id=<?= $row['char_id'] ?>">
+					<?= $row['username'] ?>
 				</a>
 			</td>
 			
 			<th>
-				<?= ( ${'ken'. $i} = $row['ken'] ) ?>
+				<?= ( ${'kenjutsu'. $i} = $row['kenjutsu'] ) ?>
 				 • 
-				<?= ( ${'shu'. $i} = $row['shu'] ) ?>
+				<?= ( ${'shuriken'. $i} = $row['shuriken'] ) ?>
 				 • 
-				<?= ( ${'tai'. $i} = $row['tai'] ) ?>
+				<?= ( ${'taijutsu'. $i} = $row['taijutsu'] ) ?>
 				 • 
-				<?= ( ${'nin'. $i} = $row['nin'] ) ?>
+				<?= ( ${'ninjutsu'. $i} = $row['ninjutsu'] ) ?>
 				 • 
-				<?= ( ${'gen'. $i} = $row['gen'] ) ?>
+				<?= ( ${'genjutsu'. $i} = $row['genjutsu'] ) ?>
 			</th>
 			
 		</tr>
 		<?php
 		
-		${'style'. $i} = $row['style'];
+		${'style_name'. $i} = $row['style_name'];
 		
 		$i++;
 	}
@@ -88,136 +93,136 @@ $members = sql_query(
 <?php
 
 echo
-	( $ken = $ken0 + $ken1 + $ken2 )
+	( $kenjutsu = $kenjutsu0 + $kenjutsu1 + $kenjutsu2 )
 	.' • '.
-	( $shu = $shu0 + $shu1 + $shu2 )
+	( $shuriken = $shuriken0 + $shuriken1 + $shuriken2 )
 	.' • '.
-	( $tai = $tai0 + $tai1 + $tai2 )
+	( $taijutsu = $taijutsu0 + $taijutsu1 + $taijutsu2 )
 	.' • '.
-	( $nin = $nin0 + $nin1 + $nin2 )
+	( $ninjutsu = $ninjutsu0 + $ninjutsu1 + $ninjutsu2 )
 	.' • '.
-	( $gen = $gen0 + $gen1 + $gen2 );
+	( $genjutsu = $genjutsu0 + $genjutsu1 + $genjutsu2 );
 
-$keni = $ken0;
-$shui = $shu0;
-$taii = $tai0;
-$nini = $nin0;
-$geni = $gen0;
+$kenjutsui = $kenjutsu0;
+$shurikeni = $shuriken0;
+$taijutsui = $taijutsu0;
+$ninjutsui = $ninjutsu0;
+$genjutsui = $genjutsu0;
 
-$up_ken =
+$up_kenjutsu =
 	max(
 		round(
 			(
-				$ken0 * (
-					$ken1 + $ken2 - $ken0
+				$kenjutsu0 * (
+					$kenjutsu1 + $kenjutsu2 - $kenjutsu0
 				) / (
-					$level0 * $ken / (
-						$level1 + $level2
+					$char_level0 * $kenjutsu / (
+						$char_level1 + $char_level2
 					)
 				)
 			)
 		),
 	0 );
 
-$up_shu =
+$up_shuriken =
 	max(
 		round(
 			(
-				$shu0 * (
-					$shu1 + $shu2 - $shu0
+				$shuriken0 * (
+					$shuriken1 + $shuriken2 - $shuriken0
 				) / (
-					$level0 * $shu / (
-						$level1 + $level2
+					$char_level0 * $shuriken / (
+						$char_level1 + $char_level2
 					)
 				)
 			)
 		),
 	0);
 
-$up_tai =
+$up_taijutsu =
 	max(
 		round(
 			(
-				$tai0 * (
-					$tai1 + $tai2 - $tai0
+				$taijutsu0 * (
+					$taijutsu1 + $taijutsu2 - $taijutsu0
 				) / (
-					$level0 * $tai / (
-						$level1 + $level2
+					$char_level0 * $taijutsu / (
+						$char_level1 + $char_level2
 					)
 				)
 			)
 		),
 	0);
 
-$up_nin =
+$up_ninjutsu =
 	max(
 		round(
 			(
-				$nin0 * (
-					$nin1 + $nin2 - $nin0
+				$ninjutsu0 * (
+					$ninjutsu1 + $ninjutsu2 - $ninjutsu0
 				) / (
-					$level0 * $nin / (
-						$level1 + $level2
+					$char_level0 * $ninjutsu / (
+						$char_level1 + $char_level2
 					)
 				)
 			)
 		),
 	0);
 
-$up_gen =
+$up_genjutsu =
 	max(
 		round(
 			(
-				$gen0 * (
-					$gen1 + $gen2 - $gen0
+				$genjutsu0 * (
+					$genjutsu1 + $genjutsu2 - $genjutsu0
 				) / (
-					$level0 * $gen / (
-						$level1 + $level2
+					$char_level0 * $genjutsu / (
+						$char_level1 + $char_level2
 					)
 				)
 			)
 		),
 	0);
 
-if ( $style0 == 'Tameru' )
+if ( $style_name0 == 'Tameru' )
 {
-	$up_nin0 = 0;
-	$up_gen0 = 0;
+	$up_ninjutsu0 = 0;
+	$up_genjutsu0 = 0;
 }
 
-if ( $up_ken > 0 ) $tken += $up_ken;
-if ( $up_shu > 0 ) $tshu += $up_shu;
-if ( $up_tai > 0 ) $ttai += $up_tai;
-if ( $up_nin > 0 ) $tnin += $up_nin;
-if ( $up_gen > 0 ) $tgen += $up_gen;
+if ( $up_kenjutsu > 0 ) $kenjutsu_points += $up_kenjutsu;
+if ( $up_shuriken > 0 ) $shuriken_points += $up_shuriken;
+if ( $up_taijutsu > 0 ) $taijutsu_points += $up_taijutsu;
+if ( $up_ninjutsu > 0 ) $ninjutsu_points += $up_ninjutsu;
+if ( $up_genjutsu > 0 ) $genjutsu_points += $up_genjutsu;
 
-while ( $tken >= $ken0 ) { $tken -= $ken0; $ken0++; }
-while ( $tshu >= $shu0 ) { $tshu -= $shu0; $shu0++; }
-while ( $ttai >= $tai0 ) { $ttai -= $tai0; $tai0++; }
+while ( $kenjutsu_points >= $kenjutsu0 ) { $kenjutsu_points -= $kenjutsu0; $kenjutsu0++; }
+while ( $shuriken_points >= $shuriken0 ) { $shuriken_points -= $shuriken0; $shuriken0++; }
+while ( $taijutsu_points >= $taijutsu0 ) { $taijutsu_points -= $taijutsu0; $taijutsu0++; }
 
-while ( $tnin >= $nin0 && $nin0 > 0 ) { $tnin -= $nin0; $nin0++; }
-while ( $tgen >= $gen0 && $gen0 > 0 ) { $tgen -= $gen0; $gen0++; }
-
-sql_query(
-	$conn,
-	"UPDATE clan SET
-		ken = $ken0,
-		shu = $shu0,
-		tai = $tai0,
-		nin = $nin0,
-		gen = $gen0,
-		skp = skp - 0
-	WHERE id = $uid" );
+while ( $ninjutsu_points >= $ninjutsu0 && $ninjutsu0 > 0 ) { $ninjutsu_points -= $ninjutsu0; $ninjutsu0++; }
+while ( $genjutsu_points >= $genjutsu0 && $genjutsu0 > 0 ) { $genjutsu_points -= $genjutsu0; $genjutsu0++; }
 
 sql_query(
 	$conn,
-	"UPDATE styl SET
-		tken = $tken,
-		tshu = $tshu,
-		ttai = $ttai,
-		tnin = $tnin,
-		tgen = $tgen
-	WHERE id = $uid" );
+	'UPDATE style_attributes SET
+		kenjutsu = '. $kenjutsu0 .',
+		shuriken = '. $shuriken0 .',
+		taijutsu = '. $taijutsu0 .',
+		ninjutsu = '. $ninjutsu0 .',
+		genjutsu = '. $genjutsu0 .',
+		skill_points = skill_points - 0
+	WHERE char_id = '. $uid );
+
+sql_query(
+	$conn,
+	'UPDATE skill_training SET
+		kenjutsu_points = '. $kenjutsu_points .',
+		shuriken_points = '. $shuriken_points .',
+		taijutsu_points = '. $taijutsu_points .',
+		ninjutsu_points = '. $ninjutsu_points .',
+		genjutsu_points = '. $genjutsu_points .'
+	WHERE char_id = '. $uid );
 
 ?>
 
@@ -233,11 +238,11 @@ sql_query(
 	</tr>
 	
 	<tr>
-		<td><?= $ken0 ?></td>
-		<td><?= $shu0 ?></td>
-		<td><?= $tai0 ?></td>
-		<td><?= $nin0 ?></td>
-		<td><?= $gen0 ?></td>
+		<td><?= $kenjutsu0 ?></td>
+		<td><?= $shuriken0 ?></td>
+		<td><?= $taijutsu0 ?></td>
+		<td><?= $ninjutsu0 ?></td>
+		<td><?= $genjutsu0 ?></td>
 	</tr>
 </table>
 
@@ -247,95 +252,95 @@ sql_query(
 	
 	<tr>
 		
-		<th><?= ( $ken0 - $keni ? '+'. ( $ken0 - $keni ) : '' ) ?></th>
+		<th><?= ( $kenjutsu0 - $kenjutsui ? '+'. ( $kenjutsu0 - $kenjutsui ) : '' ) ?></th>
 		
 		<th>Kenjutsu</th>
 		
 		<td>
 			<div id="bp">
-				<div id="bt" style="width: <?= round( $tken * 100 / $ken0 ) ?>px;"></div>
+				<div id="bt" style="width: <?= round( $kenjutsu_points * 100 / $kenjutsu0 ) ?>px;"></div>
 			</div>
 		</td>
 		
-		<th><?= $tken .'/'. $ken0 ?></th>
+		<th><?= $kenjutsu_points .'/'. $kenjutsu0 ?></th>
 		
-		<th><?= ( $up_ken > 0 ? '+'. $up_ken .' train' : '' ) ?></th>
+		<th><?= ( $up_kenjutsu > 0 ? '+'. $up_kenjutsu .' train' : '' ) ?></th>
 	</tr>
 	
 	<tr>
 		
-		<th><?= ( $shu0 - $shui ? '+'. ( $shu0 - $shui ) : '' ) ?></th>
+		<th><?= ( $shuriken0 - $shurikeni ? '+'. ( $shuriken0 - $shurikeni ) : '' ) ?></th>
 		
 		<th>Shuriken</th>
 		
 		<td>
 			<div id="bp">
-				<div id="bt" style="width: <?= round( $tshu * 100 / $shu0 ) ?>px;"></div>
+				<div id="bt" style="width: <?= round( $shuriken_points * 100 / $shuriken0 ) ?>px;"></div>
 			</div>
 		</td>
 		
-		<th><?= $tshu .'/'. $shu0 ?></th>
+		<th><?= $shuriken_points .'/'. $shuriken0 ?></th>
 		
-		<th><?= ( $up_shu > 0 ? '+'. $up_shu .' train' : '' ) ?></th>
+		<th><?= ( $up_shuriken > 0 ? '+'. $up_shuriken .' train' : '' ) ?></th>
 		
 	</tr>
 	
 	<tr>
 		
-		<th><?= ( $tai0 - $taii ? '+'. ( $tai0 - $taii ) : '' ) ?></th>
+		<th><?= ( $taijutsu0 - $taijutsui ? '+'. ( $taijutsu0 - $taijutsui ) : '' ) ?></th>
 		
 		<th>Taijutsu</th>
 		
 		<td>
 			<div id="bp">
-				<div id="bt" style="width: <?= round( $ttai * 100 / $tai0 ) ?>px;"></div>
+				<div id="bt" style="width: <?= round( $taijutsu_points * 100 / $taijutsu0 ) ?>px;"></div>
 			</div>
 		</td>
 		
-		<th><?= $ttai .'/'. $tai0 ?></th>
+		<th><?= $taijutsu_points .'/'. $taijutsu0 ?></th>
 		
-		<th><?= ( $up_tai > 0 ? '+'. $up_tai .' train' : '' ) ?></th>
+		<th><?= ( $up_taijutsu > 0 ? '+'. $up_taijutsu .' train' : '' ) ?></th>
 		
 	</tr>
 	
 	<?php
 	
-	if ( $style0 != 'Tameru' )
+	if ( $style_name0 != 'Tameru' )
 	{
 		?>
 		<tr>
 			
-			<th><?= ( $nin0 - $nini ? '+'. ( $nin0 - $nini ) : '' ) ?></th>
+			<th><?= ( $ninjutsu0 - $ninjutsui ? '+'. ( $ninjutsu0 - $ninjutsui ) : '' ) ?></th>
 			
 			<th>Ninjutsu</th>
 			
 			<td>
 				<div id="bp">
-					<div id="bt" style="width: <?= round( $tnin * 100 / $nin0 ) ?>px;"></div>
+					<div id="bt" style="width: <?= round( $ninjutsu_points * 100 / $ninjutsu0 ) ?>px;"></div>
 				</div>
 			</td>
 			
-			<th><?= $tnin .'/'. $nin0 ?></th>
+			<th><?= $ninjutsu_points .'/'. $ninjutsu0 ?></th>
 			
-			<th><?= ( $up_nin > 0 ? '+'. $up_nin .' train' : '' ) ?></th>
+			<th><?= ( $up_ninjutsu > 0 ? '+'. $up_ninjutsu .' train' : '' ) ?></th>
 			
 		</tr>
 		
 		<tr>
 			
-			<th><?= ( $gen0 - $geni ? '+'. ( $gen0 - $geni ) : '' ) ?></th>
+			<th><?= ( $genjutsu0 - $genjutsui ? '+'. ( $genjutsu0 - $genjutsui ) : '' ) ?></th>
 			
 			<th>Genjutsu</th>
 			
 			<td>
 				<div id="bp">
-					<div id="bt" style="width: <?= round( $tgen * 100 / $gen0 ) ?>px;"></div>
+					<div id="bt" style="width: <?= round( $genjutsu_points * 100 / $genjutsu0 ) ?>px;"></div>
 				</div>
 			</td>
 			
-			<th><?= $tgen .'/'. $gen0 ?></th>
+			<th><?= $genjutsu_points .'/'. $genjutsu0 ?></th>
 			
-			<th><?= ( $up_gen > 0 ? '+'. $up_gen .' train' : '' ) ?></th>
+			<th><?= ( $up_genjutsu > 0 ? '+'. $up_genjutsu .' train' : '' ) ?></th>
 			
 		</tr>
 		<?php

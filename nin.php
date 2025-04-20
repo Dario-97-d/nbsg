@@ -1,6 +1,6 @@
 <?php
 
-include("headeron.php");
+require_once 'headeron.php';
 
 if (
 	! isset($_GET['id'])
@@ -12,27 +12,27 @@ if (
 
 extract( sql_mfa(
 	$conn,
-	"SELECT level, style, skp, tskl
-	FROM atts a
-	JOIN clan c ON a.id = c.id
-	JOIN styl s ON a.id = s.id
-	WHERE a.id = $uid" ) );
+	'SELECT char_level, style_name, skill_points, skill_training
+	FROM char_attributes  a
+	JOIN style_attributes c ON a.char_id = c.char_id
+	JOIN skill_training   s ON a.char_id = s.char_id
+	WHERE a.char_id = '. $uid ) );
 
 extract(
 	sql_mfa(
 		$conn,
-		"SELECT a.*, c.*, name, rank
-		FROM atts a
-		JOIN clan c ON a.id = c.id
-		JOIN user u ON a.id = u.id
-		WHERE u.id = $pid" ),
-	EXTR_PREFIX_ALL, "p" );
+		'SELECT a.*, c.*, username, char_rank
+		FROM char_attributes  a
+		JOIN style_attributes c ON a.char_id = c.char_id
+		JOIN game_users       u ON a.char_id = u.char_id
+		WHERE u.char_id = '. $pid ),
+	EXTR_PREFIX_ALL, 'p' );
 
 ?>
 
-<h1><?= $p_name ?></h1>
+<h1><?= $p_username ?></h1>
 
-<h3><?= $p_style ?></h3>
+<h3><?= $p_style_name ?></h3>
 
 <?php
 
@@ -40,7 +40,7 @@ if ( $uid != $pid )
 {
 	?>
 	<h3>
-		<a href="sendpm?to=<?= $p_name ?>">pm</a>
+		<a href="sendpm?to=<?= $p_username ?>">pm</a>
 	</h3>
 	<?php
 }
@@ -57,28 +57,28 @@ if ( $uid != $pid )
 	</tr>
 	
 	<tr>
-		<td><?= $p_ken ?></td>
-		<td><?= $p_shu ?></td>
-		<td><?= $p_tai ?></td>
-		<td><?= $p_nin ?></td>
-		<td><?= $p_gen ?></td>
+		<td><?= $p_kenjutsu ?></td>
+		<td><?= $p_shuriken ?></td>
+		<td><?= $p_taijutsu ?></td>
+		<td><?= $p_ninjutsu ?></td>
+		<td><?= $p_genjutsu ?></td>
 	</tr>
 </table>
 
 <br />
 
-<b>Skill Points: <?= $skp ?> / 5</b>
+<b>Skill Points: <?= $skill_points ?> / 5</b>
 
 <?php
 
 if (
-	$skp > 4
+	$skill_points > 4
 	&& $pid != $uid
-	&& $style == $p_style
+	&& $style_name == $p_style_name
 	&& (
-		$level - $p_level <= 5
-		&& $p_level - $level <= 5 )
-	&& $tskl == '' )
+		$char_level - $p_char_level <= 5
+		&& $p_char_level - $char_level <= 5 )
+	&& $skill_training == '' )
 {
 	?>
 	<form action="clantrainskill" method="POST">
@@ -90,7 +90,7 @@ if (
 			<option>Taijutsu</option>
 			<?php
 			
-			if ( $style != 'Tameru' )
+			if ( $style_name != 'Tameru' )
 			{
 				?>
 				<option>Ninjutsu</option>
@@ -109,9 +109,9 @@ if (
 ?>
 
 <p>
-	Rank-<?= $p_rank ?>
+	Rank-<?= $p_char_rank ?>
 	<br />
-	<b title="Average of stats">Lv <?= $p_level ?></b>
+	<b title="Average of stats">Lv <?= $p_char_level ?></b>
 </p>
 
 <?php
@@ -125,31 +125,31 @@ if ( true )
 		<tr>
 			<td title="Critical">Flair</td>
 			
-			<td><?= $p_fla ?></td>
+			<td><?= $p_flair ?></td>
 		</tr>
 		
 		<tr>
 			<td title="Strength">Power</td>
 			
-			<td><?= $p_pow ?></td>
+			<td><?= $p_strength ?></td>
 		</tr>
 		
 		<tr>
 			<td title="Reach">Speed</td>
 			
-			<td><?= $p_agi ?></td>
+			<td><?= $p_agility ?></td>
 		</tr>
 		
 		<tr>
 			<td title="Effect">Jutsu</td>
 			
-			<td><?= $p_jut ?></td>
+			<td><?= $p_jutsu ?></td>
 		</tr>
 		
 		<tr>
 			<td title="Planning">Tactics</td>
 			
-			<td><?= $p_tac ?></td>
+			<td><?= $p_tactics ?></td>
 		</tr>
 		
 	</table>

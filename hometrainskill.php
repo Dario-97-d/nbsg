@@ -1,57 +1,63 @@
 <?php
 
-include("headeron.php");
+require_once 'headeron.php';
 
-extract( sql_mfa( $conn, "SELECT * FROM clan c JOIN styl s ON c.id = s.id WHERE c.id = $uid" ) );
+extract( sql_mfa( $conn, "SELECT * FROM style_attributes c JOIN skill_training s ON c.char_id = s.char_id WHERE c.char_id = $uid" ) );
 
 $trained = '';
 
-$tskls = array(
-	'tken' => 'ken',
-	'tshu' => 'shu',
-	'ttai' => 'tai',
-	'tnin' => 'nin',
-	'tgen' => 'gen' );
+$skill_trainings = array(
+	'kenjutsu_points' => 'kenjutsu',
+	'shuriken_points' => 'shuriken',
+	'taijutsu_points' => 'taijutsu',
+	'ninjutsu_points' => 'ninjutsu',
+	'genjutsu_points' => 'genjutsu' );
 
 $tskills = array(
-	'tken' => 'Kenjutsu',
-	'tshu' => 'Shuriken',
-	'ttai' => 'Taijutsu',
-	'tnin' => 'Ninjutsu',
-	'tgen' => 'Genjutsu' );
+	'kenjutsu_points' => 'Kenjutsu',
+	'shuriken_points' => 'Shuriken',
+	'taijutsu_points' => 'Taijutsu',
+	'ninjutsu_points' => 'Ninjutsu',
+	'genjutsu_points' => 'Genjutsu' );
 
 if ( ! empty($_POST) )
 {
-	if ( $tskl == '' )
+	if ( $skill_training == '' )
 	{
 		if (
 			in_array(
 				$skl = array_search('Train', $_POST),
-				[ 'tken', 'tshu', 'ttai', 'tnin', 'tgen'] )
+				[ 'kenjutsu_points', 'shuriken_points', 'taijutsu_points', 'ninjutsu_points', 'genjutsu_points'] )
 			&&
 			ctype_digit( $n = $_POST['n'] )
 			&&
 			$n > 0
 			&&
-			$n <= ${$tskls[$skl]}
+			$n <= ${$skill_trainings[$skl]}
 			&&
 			$n < 11 )
 		{
-			$tskl = $skl;
-			$ntrain = $n;
-			$ready = time() + ($n * 1800);
+			$skill_training = $skl;
+			$sessions_in_training = $n;
+			$time_ready = time() + ($n * 1800);
 			
-			sql_query( $conn, "UPDATE styl SET tskl = '$skl', ntrain = $n, ready = $ready WHERE id = $uid" );
+			sql_query(
+				$conn,
+					"UPDATE skill_training SET
+						skill_training       = '$skl',
+						sessions_in_training = $n,
+						ready                = $time_ready
+					WHERE char_id = $uid" );
 		}
 	}
-	else if ( isset($_POST['end']) && $ready > time() )
+	else if ( isset($_POST['end']) && $time_ready > time() )
 	{
-		$tdone = $ntrain - ceil( ( $ready - time() ) / 1800 );
+		$tdone = $sessions_in_training - ceil( ( $time_ready - time() ) / 1800 );
 		
 		$skillupgrade = '';
 	}
 }
-else if ( $tskl != '' && $ready <= time() )
+else if ( $skill_training != '' && $time_ready <= time() )
 {
 	$skillupgrade = '';
 }
@@ -60,23 +66,34 @@ if ( isset($skillupgrade) )
 {
 	if ( isset($tdone) )
 	{
-		$ntrain = $tdone;
+		$sessions_in_training = $tdone;
 	}
 	
-	if ( ($$tskl += $ntrain) >= ${$tskls[$tskl]} )
+	if ( ($$skill_training += $sessions_in_training) >= ${$skill_trainings[$skill_training]} )
 	{
-		$$tskl -= ${$tskls[$tskl]};
-		${$tskls[$tskl]} += 1;
+		$$skill_training -= ${$skill_trainings[$skill_training]};
+		${$skill_trainings[$skill_training]} += 1;
 		
-		sql_query( $conn, "UPDATE clan SET $tskls[$tskl] = $tskls[$tskl] + 1 WHERE id = $uid" );
+		sql_query(
+			$conn,
+			"UPDATE style_attributes SET
+				$skill_trainings[$skill_training] = $skill_trainings[$skill_training] + 1
+			WHERE char_id = $uid" );
 		
-		$skillupgrade = "<br />$tskills[$tskl] +1";
+		$skillupgrade = "<br />$tskills[$skill_training] +1";
 	}
 	
-	sql_query( $conn, "UPDATE styl SET $tskl = ". $$tskl .", tskl = '', ntrain = 0, ready = 0 WHERE id = $uid" );
+	sql_query(
+		$conn,
+		"UPDATE skill_training SET
+			$skill_training = ". $$skill_training .",
+			skill_training = '',
+			sessions_in_training = 0,
+			ready = 0
+		WHERE char_id = $uid" );
 	
-	$trained = $ntrain == 0 ? '' : "$tskills[$tskl] trained(+$ntrain)$skillupgrade");
-	$tskl = '';
+	$trained = $sessions_in_training == 0 ? '' : "$tskills[$skill_training] trained(+$sessions_in_training)$skillupgrade");
+	$skill_training = '';
 }
 
 ?>
@@ -85,7 +102,7 @@ if ( isset($skillupgrade) )
 	<a href="hometrain">Training Grounds</a>
 </h1>
 
-<h3><?= $style ?></h3>
+<h3><?= $style_name ?></h3>
 
 <table class="table-skill" align="center">
 	<tr>
@@ -97,23 +114,23 @@ if ( isset($skillupgrade) )
 	</tr>
 	
 	<tr>
-		<td><?= $ken ?></td>
-		<td><?= $shu ?></td>
-		<td><?= $tai ?></td>
-		<td><?= $nin ?></td>
-		<td><?= $gen ?></td>
+		<td><?= $kenjutsu ?></td>
+		<td><?= $shuriken ?></td>
+		<td><?= $taijutsu ?></td>
+		<td><?= $ninjutsu ?></td>
+		<td><?= $genjutsu ?></td>
 	</tr>
 </table>
 
 <?php
 
-if ( $tskl == '')
+if ( $skill_training == '')
 {
 	?>
 	
 	<h4><?= $trained ?></h4>
 	
-	<!--<div style="padding:4px;"><b>Skill Points: <?= $skp ?>/50</b><br />Train: 5 SP<br />(ainda não gasta)</div>-->
+	<!--<div style="padding:4px;"><b>Skill Points: <?= $skill_points ?>/50</b><br />Train: 5 SP<br />(ainda não gasta)</div>-->
 	
 	<table id="table-train" align="center" cellspacing="3">
 		
@@ -122,18 +139,18 @@ if ( $tskl == '')
 			
 			<td>
 				<div id="bp">
-					<div id="bt" style="width: <?= round( $tken * 100 / $ken ) ?>px;"></div>
+					<div id="bt" style="width: <?= round( $kenjutsu_points * 100 / $kenjutsu ) ?>px;"></div>
 				</div>
 			</td>
 			
-			<th><?= $tken .'/'. $ken ?></th>
+			<th><?= $kenjutsu_points .'/'. $kenjutsu ?></th>
 			
 			<form method="POST">
 				<th>
 					<select name="n">
 						<?php
 						
-						for ( $i = 1; $i <= $ken && $i < 11; $i++ )
+						for ( $i = 1; $i <= $kenjutsu && $i < 11; $i++ )
 						{
 							?>
 							<option><?= $i ?></option>
@@ -145,7 +162,7 @@ if ( $tskl == '')
 				</th>
 				
 				<th>
-					<input type="submit" name="tken" value="Train" />
+					<input type="submit" name="kenjutsu_points" value="Train" />
 				</th>
 			</form>
 			
@@ -157,18 +174,18 @@ if ( $tskl == '')
 			
 			<td>
 				<div id="bp">
-					<div id="bt" style="width: <?= round( $tshu * 100 / $shu ) ?>px;"></div>
+					<div id="bt" style="width: <?= round( $shuriken_points * 100 / $shuriken ) ?>px;"></div>
 				</div>
 			</td>
 			
-			<th><?= $tshu .'/'. $shu ?></th>
+			<th><?= $shuriken_points .'/'. $shuriken ?></th>
 			
 			<form method="POST">
 				<th>
 					<select name="n">
 						<?php
 						
-						for ( $i = 1; $i <= $shu && $i < 11; $i++ )
+						for ( $i = 1; $i <= $shuriken && $i < 11; $i++ )
 						{
 							?>
 							<option><?= $i ?></option>
@@ -180,7 +197,7 @@ if ( $tskl == '')
 				</th>
 				
 				<th>
-					<input type="submit" name="tshu" value="Train" />
+					<input type="submit" name="shuriken_points" value="Train" />
 				</th>
 			</form>
 			
@@ -192,18 +209,18 @@ if ( $tskl == '')
 			
 			<td>
 				<div id="bp">
-					<div id="bt" style="width: <?= round( $ttai * 100 / $tai ) ?>px;"></div>
+					<div id="bt" style="width: <?= round( $taijutsu_points * 100 / $taijutsu ) ?>px;"></div>
 				</div>
 			</td>
 			
-			<th><?= $ttai .'/'. $tai ?></th>
+			<th><?= $taijutsu_points .'/'. $taijutsu ?></th>
 			
 			<form method="POST">
 				<th>
 					<select name="n">
 						<?php
 						
-						for ( $i = 1; $i <= $tai && $i < 11; $i++ )
+						for ( $i = 1; $i <= $taijutsu && $i < 11; $i++ )
 						{
 							?>
 							<option><?= $i ?></option>
@@ -215,7 +232,7 @@ if ( $tskl == '')
 				</th>
 				
 				<th>
-					<input type="submit" name="ttai" value="Train" />
+					<input type="submit" name="taijutsu_points" value="Train" />
 				</th>
 			</form>
 			
@@ -223,7 +240,7 @@ if ( $tskl == '')
 		
 		<?php
 		
-		if ( $style != 'Tameru' )
+		if ( $style_name != 'Tameru' )
 		{
 			?>
 			
@@ -233,18 +250,18 @@ if ( $tskl == '')
 				
 				<td>
 					<div id="bp">
-						<div id="bt" style="width: <?= round( $tnin * 100 / $nin ) ?>px;"></div>
+						<div id="bt" style="width: <?= round( $ninjutsu_points * 100 / $ninjutsu ) ?>px;"></div>
 					</div>
 				</td>
 				
-				<th><?= $tnin .'/'. $nin ?></th>
+				<th><?= $ninjutsu_points .'/'. $ninjutsu ?></th>
 				
 				<form method="POST">
 					<th>
 						<select name="n">
 							<?php
 							
-							for ( $i = 1; $i <= $nin && $i < 11; $i++ )
+							for ( $i = 1; $i <= $ninjutsu && $i < 11; $i++ )
 							{
 								?>
 								<option><?= $i ?></option>
@@ -256,7 +273,7 @@ if ( $tskl == '')
 					</th>
 					
 					<th>
-						<input type="submit" name="tnin" value="Train" />
+						<input type="submit" name="ninjutsu_points" value="Train" />
 					</th>
 				</form>
 				
@@ -268,18 +285,18 @@ if ( $tskl == '')
 				
 				<td>
 					<div id="bp">
-						<div id="bt" style="width: <?= round( $tgen * 100 / $gen ) ?>px;"></div>
+						<div id="bt" style="width: <?= round( $genjutsu_points * 100 / $genjutsu ) ?>px;"></div>
 					</div>
 				</td>
 				
-				<th><?= $tgen .'/'. $gen ?></th>
+				<th><?= $genjutsu_points .'/'. $genjutsu ?></th>
 				
 				<form method="POST">
 					<th>
 						<select name="n">
 							<?php
 							
-							for ( $i = 1; $i <= $gen && $i < 11; $i++ )
+							for ( $i = 1; $i <= $genjutsu && $i < 11; $i++ )
 							{
 								?>
 								<option><?= $i ?></option>
@@ -291,7 +308,7 @@ if ( $tskl == '')
 					</th>
 					
 					<th>
-						<input type="submit" name="tgen" value="Train" />
+						<input type="submit" name="genjutsu_points" value="Train" />
 					</th>
 				</form>
 				
@@ -314,18 +331,18 @@ else
 	
 	<br /><br />
 	
-	<b><?= $tskills[$tskl] ?></b>
+	<b><?= $tskills[$skill_training] ?></b>
 	
 	<br /><br />
 	
-	<?= $ntrain .' Sessions | '. ($ntrain * 30) .' minutes' ?>
+	<?= $sessions_in_training .' Sessions | '. ($sessions_in_training * 30) .' minutes' ?>
 	
 	<br /><br />
 	
 	Time left:
 	<br />
 	
-	<?= date( "H:i:s", $ready-time() ) ?>
+	<?= date( "H:i:s", $time_ready-time() ) ?>
 	
 	<br /><br />
 	

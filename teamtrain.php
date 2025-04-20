@@ -1,24 +1,24 @@
 <?php
 
-include("headeron.php");
+require_once 'headeron.php';
 
 extract( sql_mfa(
 	$conn,
-	"SELECT nin1, nin2, rank, name, level, c.*
-	FROM team t
-	JOIN user u ON t.id = u.id
-	JOIN atts a ON u.id = a.id
-	JOIN clan c ON u.id = c.id
-	WHERE u.id = $uid" ) );
+	'SELECT teammate1_id, teammate2_id, char_rank, username, char_level, c.*
+	FROM char_team        t
+	JOIN game_users       u ON t.char_id = u.char_id
+	JOIN char_attributes  a ON u.char_id = a.char_id
+	JOIN style_attributes c ON u.char_id = c.char_id
+	WHERE u.char_id = '. $uid ) );
 
-if ( $nin1 < 1 || $nin2 < 1 ) exiter("team");
+if ( $teammate1_id < 1 || $teammate2_id < 1 ) exiter("team");
 
-$nin_1 = $nin1;
-$nin_2 = $nin2;
+$nin_1 = $teammate1_id;
+$nin_2 = $teammate2_id;
 
 ?>
 
-<h1>Team <?= $name ?></h1>
+<h1>Team <?= $username ?></h1>
 
 <h4>
 	In a forest between villages
@@ -37,28 +37,28 @@ $nin_2 = $nin2;
 	</tr>
 	
 	<tr>
-		<td><?= $ken ?></td>
-		<td><?= $shu ?></td>
-		<td><?= $tai ?></td>
-		<td><?= $nin ?></td>
-		<td><?= $gen ?></td>
+		<td><?= $kenjutsu ?></td>
+		<td><?= $shuriken ?></td>
+		<td><?= $taijutsu ?></td>
+		<td><?= $ninjutsu ?></td>
+		<td><?= $genjutsu ?></td>
 	</tr>
 </table>
 
-<h2>Rank-<?= $rank ?></h2>
+<h2>Rank-<?= $char_rank ?></h2>
 
 <table align="center" style="text-align: center;" cellpadding="8" cellspacing="0">
 	<?php
 	
 	$getplayers = sql_query(
 		$conn,
-		"SELECT name, level, c.*
-		FROM user u
-		JOIN atts a ON u.id = a.id
-		JOIN clan c on u.id = c.id
-		WHERE u.id = $nin1
-		OR u.id = $nin2
-		ORDER BY level DESC
+		"SELECT username, char_level, c.*
+		FROM game_users       u
+		JOIN char_attributes  a ON u.char_id = a.char_id
+		JOIN style_attributes c on u.char_id = c.char_id
+		WHERE u.char_id = $teammate1_id
+		OR    u.char_id = $teammate2_id
+		ORDER BY char_level DESC
 		LIMIT 25" );
 	
 	if ( mysqli_num_rows($getplayers) < 1 )
@@ -77,35 +77,35 @@ $nin_2 = $nin2;
 		
 		<?php
 		
-		$i = 1;
+		$i = 0;
 		while ( $row = mysqli_fetch_assoc($getplayers) )
 		{
 			$i++;
 			?>
 			<tr>
 				
-				<td><?= $row['style'] ?></td>
+				<td><?= $row['style_name'] ?></td>
 				
-				<td><?= $row['level'] ?></td>
+				<td><?= $row['char_level'] ?></td>
 				
 				<td>
-					<a href="nin?id=<?= $row['id'] ?>">
-						<?= $row['name'] ?>
+					<a href="nin?id=<?= $row['char_id'] ?>">
+						<?= $row['username'] ?>
 					</a>
 				</td>
 				
 				<th>
 					<?=
 					
-					( ${'ken'. $i} = $row['ken'] )
+					( ${'kenjutsu'. $i} = $row['kenjutsu'] )
 					." • ".
-					( ${'shu'. $i} = $row['shu'] )
+					( ${'shuriken'. $i} = $row['shuriken'] )
 					." • ".
-					( ${'tai'. $i} = $row['tai'] )
+					( ${'taijutsu'. $i} = $row['taijutsu'] )
 					." • ".
-					( ${'nin'. $i} = $row['nin'] )
+					( ${'ninjutsu'. $i} = $row['ninjutsu'] )
 					." • ".
-					( ${'gen'. $i} = $row['gen'] )
+					( ${'genjutsu'. $i} = $row['genjutsu'] )
 					
 					?>
 				</th>
@@ -123,26 +123,26 @@ $nin_2 = $nin2;
 <?php
 
 $ratio = 253 / (
-	$ken + $ken1 + $ken2
+	$kenjutsu + $kenjutsu1 + $kenjutsu2
 	+
-	$shu + $shu1 + $shu2
+	$shuriken + $shuriken1 + $shuriken2
 	+
-	$tai + $tai1 + $tai2
+	$taijutsu + $taijutsu1 + $taijutsu2
 	+
-	$nin + $nin1 + $nin2
+	$ninjutsu + $ninjutsu1 + $ninjutsu2
 	+
-	$gen + $gen1 + $gen2 );
+	$genjutsu + $genjutsu1 + $genjutsu2 );
 
 echo
-	( $ken + $ken1 + $ken2 )
+	( $kenjutsu + $kenjutsu1 + $kenjutsu2 )
 	.' • '.
-	( $shu + $shu1 + $shu2 )
+	( $shuriken + $shuriken1 + $shuriken2 )
 	.' • '.
-	( $tai + $tai1 + $tai2 )
+	( $taijutsu + $taijutsu1 + $taijutsu2 )
 	.' • '.
-	( $nin + $nin1 + $nin2 )
+	( $ninjutsu + $ninjutsu1 + $ninjutsu2 )
 	.' • '.
-	( $gen + $gen1 + $gen2 );
+	( $genjutsu + $genjutsu1 + $genjutsu2 );
 
 ?>
 
@@ -154,7 +154,7 @@ echo
 		<th>Kenjutsu</th>
 		
 		<td>
-			<div id="ttd" style="width: <?= round( ( $ken + $ken1 + $ken2 ) * $ratio ) ?>px"></div>
+			<div id="ttd" style="width: <?= round( ( $kenjutsu + $kenjutsu1 + $kenjutsu2 ) * $ratio ) ?>px"></div>
 		</td>
 	</tr>
 	
@@ -162,7 +162,7 @@ echo
 		<th>Shuriken</th>
 		
 		<td>
-			<div id="ttd" style="width: <?= round( ( $shu + $shu1 + $shu2 ) * $ratio ) ?>px"></div>
+			<div id="ttd" style="width: <?= round( ( $shuriken + $shuriken1 + $shuriken2 ) * $ratio ) ?>px"></div>
 		</td>
 	</tr>
 	
@@ -170,7 +170,7 @@ echo
 		<th>Taijutsu</th>
 		
 		<td>
-			<div id="ttd" style="width: <?= round( ( $tai + $tai1 + $tai2 ) * $ratio ) ?>px"></div>
+			<div id="ttd" style="width: <?= round( ( $taijutsu + $taijutsu1 + $taijutsu2 ) * $ratio ) ?>px"></div>
 		</td>
 	</tr>
 	
@@ -178,7 +178,7 @@ echo
 		<th>Ninjutsu</th>
 		
 		<td>
-			<div id="ttd" style="width: <?= round( ( $nin + $nin1 + $nin2 ) * $ratio ) ?>px"></div>
+			<div id="ttd" style="width: <?= round( ( $ninjutsu + $ninjutsu1 + $ninjutsu2 ) * $ratio ) ?>px"></div>
 		</td>
 	</tr>
 	
@@ -186,7 +186,7 @@ echo
 		<th>Genjutsu</th>
 		
 		<td>
-			<div id="ttd" style="width: <?= round( ( $gen + $gen1 + $gen2 ) * $ratio ) ?>px"></div>
+			<div id="ttd" style="width: <?= round( ( $genjutsu + $genjutsu1 + $genjutsu2 ) * $ratio ) ?>px"></div>
 		</td>
 	</tr>
 	

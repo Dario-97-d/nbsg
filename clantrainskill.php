@@ -1,71 +1,82 @@
 <?php
 
-include("headeron.php");
+require_once 'headeron.php';
 
-if ( ! is_int( $pid = array_search('Train', $_POST) ) ) exiter("clantrain");
+if (
+	! is_int( $pid = array_search('Train', $_POST) )
+	&&
+	! (
+		isset($_POST['pick']) && $pid = intval($_POST['pick']) )
+	)
+{
+	exiter('clantrain');
+}
 
 if ( $uid == $pid ) exiter("nin?id=$pid");
 
 $skills = array(
-	'ken' => 'Kenjutsu',
-	'shu' => 'Shuriken',
-	'tai' => 'Taijutsu',
-	'nin' => 'Ninjutsu',
-	'gen' => 'Genjutsu' );
+	'kenjutsu' => 'Kenjutsu',
+	'shuriken' => 'Shuriken',
+	'taijutsu' => 'Taijutsu',
+	'ninjutsu' => 'Ninjutsu',
+	'genjutsu' => 'Genjutsu' );
 
 if ( ! in_array($_POST['skill'], $skills) ) exiter("nin?id=$pid");
 
-$skl = array_search( $skill = $_POST['skill'], $skills );
+$skill_to_train = array_search( $skill = $_POST['skill'], $skills );
 
 extract(
 	sql_mfa(
 		$conn,
-		"SELECT a.*, c.*, name, rank, s.*
-		FROM atts a
-		JOIN clan c ON a.id = c.id
-		JOIN user u ON a.id = u.id
-		JOIN styl s ON a.id = s.id
-		WHERE a.id = $uid" ),
-	EXTR_PREFIX_ALL, "u" );
+		'SELECT a.*, c.*, username, char_rank, s.*
+		FROM char_attributes  a
+		JOIN style_attributes c ON a.char_id = c.char_id
+		JOIN game_users       u ON a.char_id = u.char_id
+		JOIN skill_training   s ON a.char_id = s.char_id
+		WHERE a.char_id = '. $uid ),
+	EXTR_PREFIX_ALL, 'u' );
 
 extract(
 	sql_mfa(
 		$conn,
-		"SELECT level ,c.*, name, rank
-		FROM atts a
-		JOIN clan c ON a.id = c.id
-		JOIN user u ON a.id = u.id
-		WHERE a.id = $pid" ),
-	EXTR_PREFIX_ALL, "p" );
+		'SELECT char_level, c.*, username, char_rank
+		FROM char_attributes  a
+		JOIN style_attributes c ON a.char_id = c.char_id
+		JOIN game_users       u ON a.char_id = u.char_id
+		WHERE a.char_id = '. $pid ),
+	EXTR_PREFIX_ALL, 'p' );
 
 if (
-	$u_skp < 5              ||
-	$u_level - $p_level > 5 ||
-	$p_level - $u_level > 5 ||
-	$u_style != $p_style    ||
-	$u_rank  != $p_rank )
+	$u_skill_points < 5               ||
+	$u_char_level - $p_char_level > 5 ||
+	$p_char_level - $u_char_level > 5 ||
+	$u_style_name != $p_style_name    ||
+	$u_char_rank  != $p_char_rank )
 {
 	exiter("nin?id=$pid");
 }
 
-$result = ( $u_level * ( ${'u_'. $skl} ** 2 ) ) / ( $p_level * ( ${'p_'. $skl} ** 2) ) * 32;
-
 $atts = array(
-	'fla' => 'Flair',
-	'pow' => 'Power',
-	'agi' => 'Speed',
-	'jut' => 'Jutsu',
-	'tac' => 'Tactics' );
+	'flair'    => 'Flair',
+	'strength' => 'Power',
+	'agility'  => 'Speed',
+	'jutsu'    => 'Jutsu',
+	'tactics'  => 'Tactics' );
 
-$sklatts = array(
-	'nin' => 'fla',
-	'ken' => 'pow',
-	'tai' => 'agi',
-	'shu' => 'jut',
-	'gen' => 'tac' );
+$skills_to_atts = array(
+	'ninjutsu' => 'flair',
+	'kenjutsu' => 'strength',
+	'taijutsu' => 'agility',
+	'shuriken' => 'jutsu',
+	'genjutsu' => 'tactics' );
 
-$att = $sklatts[$skl];
-$tskl = "u_t". $skl;
+$att = $skills_to_atts[$skill_to_train];
+
+$p_skill_to_train = 'p_'. $skill_to_train;
+$u_skill_to_train = 'u_'. $skill_to_train;
+$u_skill_to_train_points = 'u_'. $skill_to_train .'_points';
+
+$result = ( $u_char_level * ( $$u_skill_to_train ** 2 ) ) / ( $p_char_level * ( $$p_skill_to_train ** 2) ) * 32;
 
 switch (true)
 {
@@ -84,57 +95,76 @@ switch (true)
 
 ?>
 
-<h1><?= $u_style ?></h1>
+<h1><?= $u_style_name ?></h1>
 
 <table align="center" style="text-align: center;">
 	
 	<tr>
-		<th width="33%"><?= $u_name ?></th>
+		<th width="33%"><?= $u_username ?></th>
 		<th width="33%"></th>
-		<th width="33%"><?= $p_name ?></th>
+		<th width="33%"><?= $p_username ?></th>
 	</tr>
 	
 	<tr>
-		<th><?=  $u_level ?></th>
+		<th><?=  $u_char_level ?></th>
 		<th>Lv</th>
-		<th><?=  $p_level ?></th>
+		<th><?=  $p_char_level ?></th>
 	</tr>
 	
 	<tr>
-		<th><?= $u_ken ?> • <?= $u_shu ?> • <?= $u_tai ?> • <?= $u_nin ?> • <?= $u_gen ?></th>
+		<th><?= $u_kenjutsu ?> • <?= $u_shuriken ?> • <?= $u_taijutsu ?> • <?= $u_ninjutsu ?> • <?= $u_genjutsu ?></th>
 		<th>JUTSU</th>
-		<th><?= $p_ken ?> • <?= $p_shu ?> • <?= $p_tai ?> • <?= $p_nin ?> • <?= $p_gen ?></th>
+		<th><?= $p_kenjutsu ?> • <?= $p_shuriken ?> • <?= $p_taijutsu ?> • <?= $p_ninjutsu ?> • <?= $p_genjutsu ?></th>
 	</tr>
 	
 </table>
 
 <?php
 
-$a_up = $p_level > $u_level ? 1 : 0;
+$a_up = $p_char_level > $u_char_level ? 1 : 0;
 
 if (
 	floor(
-		( $u_fla + $u_pow + $u_agi + $u_jut + $u_tac + $a_up )
+		( $u_flair + $u_strength + $u_agility + $u_jutsu + $u_tactics + $a_up )
 		/ 5 )
-	> $u_level )
+	> $u_char_level )
 {
-	$uplv = 'level = level + 1, ';
-	$u_level += 1;
+	$uplv = 'char_level = char_level + 1, ';
+	$u_char_level += 1;
 }
 else $uplv = '';
 
-$$tskl += $t_up;
+$$u_skill_to_train_points += $t_up;
 $up = 0;
 
-while ( $$tskl >= ${'u_'. $skl} )
+while ( $$u_skill_to_train_points >= $$u_skill_to_train )
 {
-	$$tskl -= ${'u_'. $skl}; ${'u_'. $skl} += 1;
+	$$u_skill_to_train_points -= $$u_skill_to_train;
+	$$u_skill_to_train += 1;
 	$up++;
 }
 
-sql_query( $conn, "UPDATE atts SET $uplv $att = $att + $a_up WHERE id=$uid");
-sql_query( $conn, "UPDATE clan SET ". ( $up > 0 ? "$skl = $skl + $up, " : '' ) ."skp = skp - 5 WHERE id = $uid");
-sql_query( $conn, "UPDATE styl SET t$skl = ". $$tskl ." WHERE id = $uid" );
+sql_query(
+	$conn,
+	'UPDATE char_attributes SET
+		'. $uplv .'
+		'. $att .' = '. $att .' + '. $a_up .'
+	WHERE char_id = '. $uid );
+
+sql_query(
+	$conn,
+	'UPDATE style_attributes SET
+		'. ( $up > 0 ?
+			$skill_to_train .' = '. $skill_to_train .' + '. $up .', '
+		: '' ) .'
+		skill_points = skill_points - 5
+	WHERE char_id = '. $uid);
+
+sql_query(
+	$conn,
+	'UPDATE skill_training SET
+		'.$skill_to_train .'_points' .' = '. $$u_skill_to_train_points .'
+	WHERE char_id = '. $uid );
 
 ?>
 
@@ -149,11 +179,11 @@ sql_query( $conn, "UPDATE styl SET t$skl = ". $$tskl ." WHERE id = $uid" );
 	</tr>
 	
 	<tr>
-		<td><?= $u_ken ?></td>
-		<td><?= $u_shu ?></td>
-		<td><?= $u_tai ?></td>
-		<td><?= $u_nin ?></td>
-		<td><?= $u_gen ?></td>
+		<td><?= $u_kenjutsu ?></td>
+		<td><?= $u_shuriken ?></td>
+		<td><?= $u_taijutsu ?></td>
+		<td><?= $u_ninjutsu ?></td>
+		<td><?= $u_genjutsu ?></td>
 	</tr>
 </table>
 
@@ -168,11 +198,11 @@ sql_query( $conn, "UPDATE styl SET t$skl = ". $$tskl ." WHERE id = $uid" );
 		
 		<td>
 			<div id="bp">
-				<div id="bt" style="width: <?= round( $$tskl * 100 / ${'u_'. $skl} ) ?>px;"></div>
+				<div id="bt" style="width: <?= round( $$u_skill_to_train_points * 100 / $$u_skill_to_train ) ?>px;"></div>
 			</div>
 		</td>
 		
-		<th><?= $$tskl .'/'. ${'u_'. $skl} ?></th>
+		<th><?= $$u_skill_to_train_points .'/'. ${'u_'. $skill_to_train} ?></th>
 		
 		<th><?= "+$t_up train" ?></th>
 	
@@ -182,7 +212,7 @@ sql_query( $conn, "UPDATE styl SET t$skl = ". $$tskl ." WHERE id = $uid" );
 <table align="center">
 	
 	<tr>
-		<th colspan="3" title="Average of stats">Lv <?= $u_level ?></th>
+		<th colspan="3" title="Average of stats">Lv <?= $u_char_level ?></th>
 	</tr>
 	
 	<tr>
@@ -195,31 +225,31 @@ sql_query( $conn, "UPDATE styl SET t$skl = ". $$tskl ." WHERE id = $uid" );
 		
 		<tr>
 			<th>Flair</th>
-			<th><?= $u_fla ?></td>
+			<th><?= $u_flair ?></td>
 			<td>Critical</td>
 		</tr>
 		
 		<tr>
 			<th>Power</th>
-			<th><?= $u_pow ?></td>
+			<th><?= $u_strength ?></td>
 			<td>Strength</td>
 		</tr>
 		
 		<tr>
 			<th>Speed</th>
-			<th><?= $u_agi ?></td>
+			<th><?= $u_agility ?></td>
 			<td>Reach</td>
 		</tr>
 		
 		<tr>
 			<th>Jutsu</th>
-			<th><?= $u_jut ?></td>
+			<th><?= $u_jutsu ?></td>
 			<td>Skill</td>
 		</tr>
 		
 		<tr>
 			<th>Tactics</th>
-			<th><?= $u_tac ?></td>
+			<th><?= $u_tactics ?></td>
 			<td>Planning</td>
 		</tr>
 		

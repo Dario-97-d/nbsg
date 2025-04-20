@@ -2,7 +2,7 @@
 
 include("header.php");
 
-if ( isset($_SESSION['uid']) ) exiter("overview");
+if ( isset($_SESSION['uid']) ) exiter("home");
 
 $username = '';
 $email = '';
@@ -16,7 +16,7 @@ if ( isset($_POST['signup']) )
 		// $username returns error.
 		echo $username;
 	}
-	else if ( mysqli_num_rows( sql_query( $conn, "SELECT id FROM user WHERE name='$username'" ) ) > 0)
+	else if ( mysqli_num_rows( sql_query( $conn, "SELECT char_id FROM game_users WHERE username = '$username'" ) ) > 0)
 	{
 		echo $username ." already in use";
 	}
@@ -29,7 +29,7 @@ if ( isset($_POST['signup']) )
 			// $email returns error.
 			echo $email;
 		}
-		else if ( mysqli_num_rows( sql_query( $conn, "SELECT id FROM user WHERE email = '$email'" ) ) > 0 )
+		else if ( mysqli_num_rows( sql_query( $conn, "SELECT char_id FROM game_users WHERE email = '$email'" ) ) > 0 )
 		{
 			echo $email ." already in use";
 		}
@@ -44,23 +44,16 @@ if ( isset($_POST['signup']) )
 			}
 			else
 			{
-				mysqli_multi_query(
-					$conn,
-					"
-					INSERT INTO user (vid, name, rank, password, email) VALUES (1, '$username', 'E', '". md5($password) ."', '$email');
-					INSERT INTO atts (nrg, level, need, tss, fla, pow, agi, jut, tac) VALUES (100, 1, 6, 50, 1, 1, 1, 1, 1);
-					INSERT INTO clan (style, ken, shu, tai, nin, gen, skp) VALUES ('', 1, 1, 1, 1, 1, 50);
-					INSERT INTO styl (tken, tshu, ttai, tnin, tgen, tskl, ntrain, ready) VALUES (0, 0, 0, 0, 0, '', 0, 0);
-					INSERT INTO stat (wins, patrol, anbu) VALUES (0, 0, 0);
-					INSERT INTO team (nin1, nin2, joint) VALUES (0, 0, 0);
-					"
-				) or die( mysqli_error($conn) );
+				$sql_register =
+					mysqli_query(
+						$conn,
+						'CALL sp_register_userchar(\''. $username .'\', \''. $email .'\', \''. md5($password) .'\')' )
+					or die( mysqli_error($conn) );
 				
-				while ( mysqli_next_result($conn) ) { }
+				$sql_mfa_register = mysqli_fetch_assoc( $sql_register );
 				
-				$uid = sql_mfa( $conn, "SELECT id FROM user WHERE name = '$username'" );
+				$_SESSION['uid'] = $sql_mfa_register['char_id'];
 				
-				$_SESSION['uid'] = $uid['id'];
 				exiter("clan");
 			}
 		}

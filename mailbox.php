@@ -1,17 +1,17 @@
 <?php
 
-include("headeron.php");
+require_once 'headeron.php';
 
-if ( is_int( $pmid = array_search('Delete', $_POST) ) )
+if ( is_int( $msg_id = array_search('Delete', $_POST) ) )
 {
-	sql_query( $conn, "UPDATE mailbox SET seen = 2 WHERE pmid = '$pmid'" );
+	sql_query( $conn, 'UPDATE mail SET seen = 2 WHERE msg_id = '. $msg_id );
 	
 	echo "PM deleted";
 }
 
-if ( is_int( $pmid = array_search('Set as Seen', $_POST) ) )
+if ( is_int( $msg_id = array_search('Set as Seen', $_POST) ) )
 {
-	sql_query( $conn, "UPDATE mailbox SET seen = 1 WHERE pmid = '$pmid'" );
+	sql_query( $conn, 'UPDATE mail SET seen = 1 WHERE msg_id = '. $msg_id );
 	
 	echo "PM seen";
 }
@@ -28,10 +28,10 @@ if ( is_int( $pmid = array_search('Set as Seen', $_POST) ) )
 
 $getpms = sql_query(
 	$conn,
-	"SELECT m.*, u.id
-	FROM mailbox m
-	LEFT JOIN user u ON m.pmto = u.name
-	WHERE id = $uid
+	"SELECT m.*, u.char_id
+	FROM      mail    m
+	LEFT JOIN game_users u ON m.receiver_username = u.username
+	WHERE char_id = $uid
 	AND seen <> 2" );
 
 if ( mysqli_num_rows($getpms) < 1 )
@@ -40,45 +40,43 @@ if ( mysqli_num_rows($getpms) < 1 )
 }
 else
 {
-	while( $pms = mysqli_fetch_assoc($getpms) )
+	while( $row = mysqli_fetch_assoc($getpms) )
 	{
 		?>
 		
 		<b>
 			
-			<?= date( "d/m H:i:s", $pms['time'] ) ?>
+			<?= $row['msg_time'] ?>
 			
 		</b> || <b>
 			
 			From:
 			
-		</b> <a href="nin?id=<?= $pms['id'] ?>">
+		</b> <a href="nin?id=<?= $row['char_id'] ?>">
 			
-			<?= $pms['pmfrom'] ?>
+			<?= $row['sender_username'] ?>
 			
 		</a> || <b>
 			
-			<?= $pms['seen'] == 0 ? 'Not s' : 'S' ?>een
+			<?= $row['seen'] == 0 ? 'Not s' : 'S' ?>een
 			
-		</b> || <a href="sendpm?to=<?= $pms['pmfrom'] ?>">
+		</b> || <a href="sendpm?to=<?= $row['sender_username'] ?>">
 			
 			Reply
 			
 		</a>
 		
-		<textarea name="pmtext" disabled>
-			<?= nl2br($pms['pmtext']) ?>
-		</textarea>
+		<textarea name="msg-text" disabled><?= $row['msg_text'] ?></textarea>
 		
 		<form action="mailbox" method="POST">
 			<table align="center">
 				<?php
 				
-				if ( $pms['seen'] != 1 )
+				if ( $row['seen'] != 1 )
 				{
 					?>
 					<td>
-						<input type="submit" name="<?= $pms['pmid'] ?>" value="Set as Seen" />
+						<input type="submit" name="<?= $row['msg_id'] ?>" value="Set as Seen" />
 					</td>
 					<?php
 				}
@@ -86,7 +84,7 @@ else
 				?>
 				
 				<td>
-					<input type="submit" name="<?= $pms['pmid'] ?>" value="Delete" />
+					<input type="submit" name="<?= $row['msg_id'] ?>" value="Delete" />
 				</td>
 			</table>
 		</form>

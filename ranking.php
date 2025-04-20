@@ -1,14 +1,14 @@
 <?php
 
-include("headeron.php");
+require_once 'headeron.php';
 
 $getplayers = sql_query(
 	$conn,
-	"SELECT u.id, rank, name, level, style
-	FROM user u
-	JOIN atts a ON u.id = a.id
-	JOIN clan c ON u.id = c.id
-	ORDER BY rank, level DESC
+	"SELECT u.char_id, char_rank, username, char_level, style_name
+	FROM game_users       u
+	JOIN char_attributes  a ON u.char_id = a.char_id
+	JOIN style_attributes c ON u.char_id = c.char_id
+	ORDER BY char_rank, char_level DESC
 	LIMIT 25" );
 
 ?>
@@ -35,17 +35,17 @@ $getplayers = sql_query(
 			
 			<th><?= $r ?></th>
 			
-			<td><?= $row['style'] ?></td>
+			<td><?= $row['style_name'] ?></td>
 			
 			<td>
-				<a href="nin?id=<?= $row['id'] ?>">
-					<?= $row['name'] ?>
+				<a href="nin?id=<?= $row['char_id'] ?>">
+					<?= $row['username'] ?>
 				</a>
 			</td>
 			
-			<td><?= $row['rank'] ?></td>
+			<td><?= $row['char_rank'] ?></td>
 			
-			<td><?= $row['level'] ?></td>
+			<td><?= $row['char_level'] ?></td>
 			
 		</tr>
 		<?php

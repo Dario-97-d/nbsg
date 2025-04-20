@@ -1,9 +1,9 @@
 <?php
 
-include("headeron.php");
+require_once 'headeron.php';
 
 $player = '';
-$pmtext = '';
+$msg_text = '';
 
 if ( isset($_GET['to']) )
 {
@@ -11,28 +11,28 @@ if ( isset($_GET['to']) )
 	
 	if ( strlen( $perr = handle_name($_GET['to']) ) > 16 )
 	{
-		$pmtext = $perr;
+		$msg_text = $perr;
 	}
 }
 
 if ( isset($_POST['sendpm']) )
 {
-	$player = $_POST['pmto'];
-	$pmto = handle_name($player);
-	$pmtext = $_POST['pmtext'];
+	$player = $_POST['receiver_username'];
+	$receiver_username = handle_name($player);
+	$msg_text = $_POST['msg-text'];
 	
-	if ( strlen($pmto) > 16 )
+	if ( strlen($receiver_username) > 16 )
 	{
-		// $pmto returns error.
-		echo $pmto;
+		// $receiver_username returns error.
+		echo $receiver_username;
 	}
-	else if ( mysqli_num_rows( sql_query( $conn, "SELECT id FROM user WHERE name = '$pmto'" ) ) != 1)
+	else if ( mysqli_num_rows( sql_query( $conn, "SELECT char_id FROM game_users WHERE username = '$receiver_username'" ) ) != 1)
 	{
-		echo $pmto ." not found";
+		echo $receiver_username ." not found";
 	}
 	else
 	{
-		$slpmt = strlen($pmtext);
+		$slpmt = strlen($msg_text);
 		
 		if ( $slpmt < 1 || $slpmt > 800)
 		{
@@ -41,15 +41,17 @@ if ( isset($_POST['sendpm']) )
 		}
 		else
 		{
-			$user = mysqli_fetch_assoc( sql_query( $conn, "SELECT name FROM user WHERE id = '$uid'" ) );
+			$user = mysqli_fetch_assoc( sql_query( $conn, "SELECT username FROM game_users WHERE char_id = $uid" ) );
 			
 			sql_prepstate(
 				$conn,
-				"INSERT INTO mailbox (time, pmfrom, pmto, pmtext, seen)
-				VALUES ('". time() ."', '". $user['name'] ."', '$pmto', ?, 0)",
-				"s", $pmtext);
+				"INSERT INTO mail (sender_username, receiver_username, msg_text, seen)
+				VALUES ('". $user['username'] ."', '". $receiver_username ."', ?, 0)",
+				"s", $msg_text);
 			
 			echo "PM sent";
+			
+			exiter('pmsent');
 		}
 	}
 }
@@ -64,10 +66,10 @@ if ( isset($_POST['sendpm']) )
 
 <form action="sendpm" method="POST">
 	PM to:
-	<br /><input type="text" style="text-align: center;" name="pmto" value="<?= $player ?>" />
+	<br /><input type="text" style="text-align: center;" name="receiver_username" value="<?= $player ?>" />
 	<br />
 	<br />
-	<textarea name="pmtext" maxlength="800"><?= $pmtext ?></textarea>
+	<textarea name="msg-text" maxlength="800"><?= $msg_text ?></textarea>
 	<br />
 	<br />
 	<input type="submit" name="sendpm" value="Send" />

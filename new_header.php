@@ -36,7 +36,7 @@
 			$uid = $_SESSION['uid'];
 			?>
 			
-			<h5><a href="overview" title="Overview" accesskey="g">GERAL</a></h5>
+			<h5><a href="home" title="Overview" accesskey="g">GERAL</a></h5>
 			<h5><a href="bonds" title="Family" accesskey="b">BONDS</a></h5>
 			<h5><a href="clan" title="Upgrades" accesskey="c">CLAN</a></h5>
 			<h5><a href="ranking" title="Ranking" accesskey="r">RANK</a></h5>

@@ -1,29 +1,29 @@
 <?php
 
-include("headeron.php");
+require_once 'headeron.php';
 
 $ids = explode( '-', array_search( 'Train', $_POST ) );
 
-extract( sql_mfa( $conn, "SELECT nin1, nin2 FROM team WHERE id = $uid" ) );
+extract( sql_mfa( $conn, "SELECT teammate1_id, teammate2_id FROM char_team WHERE char_id = $uid" ) );
 
-if ( $nin1 != $ids[0] || $nin2 != $ids[1] ) exiter("team");
+if ( $teammate1_id != $ids[0] || $teammate2_id != $ids[1] ) exiter("team");
 
 $members = sql_query(
 	$conn,
-	"SELECT a.*, c.*, name
-	FROM atts a
-	JOIN clan c ON a.id = c.id
-	JOIN user u ON a.id = u.id
-	JOIN styl s ON a.id = s.id
-	WHERE a.id IN ($uid, $nin1, $nin2)
+	"SELECT a.*, c.*, username
+	FROM char_attributes  a
+	JOIN style_attributes c ON a.char_id = c.char_id
+	JOIN game_users       u ON a.char_id = u.char_id
+	JOIN skill_training   s ON a.char_id = s.char_id
+	WHERE a.char_id IN ($uid, $teammate1_id, $teammate2_id)
 	ORDER BY
-		CASE a.id
-			WHEN $uid THEN 1
-			WHEN $nin1 THEN 2
-			WHEN $nin2 THEN 3
+		CASE a.char_id
+			WHEN $uid          THEN 1
+			WHEN $teammate1_id THEN 2
+			WHEN $teammate2_id THEN 3
 		END" );
 
-$prefix = [ 'user', 'nin1', 'nin2' ];
+$prefix = [ 'user', 'teammate1', 'teammate2' ];
 
 $i = 0;
 while ( $row = mysqli_fetch_assoc($members) )
@@ -32,7 +32,7 @@ while ( $row = mysqli_fetch_assoc($members) )
 	$i++;
 }
 
-if ( min( $nin1_level, $nin2_level ) > $user_level )
+if ( min( $teammate1_level, $teammate2_level ) > $user_level )
 {
 	// remove nin from team
 	// exiter(team)
@@ -57,38 +57,38 @@ switch (true)
 		$placard = "There's some gap";
 		$$up_att = '+1';
 		
-		if ( floor( ( $u_fla + $u_pow + $u_agi + $u_jut + $u_tac + 1 ) / 5 ) > $u_level )
+		if ( floor( ( $u_flair + $u_strength + $u_agility + $u_jutsu + $u_tactics + 1 ) / 5 ) > $u_char_level )
 		{
-			$uplv = 'level = level + 1, ';
-			$u_level += 1;
+			$uplv = 'char_level = char_level + 1, ';
+			$u_char_level += 1;
 		}
 		else
 		{
 			$uplv = '';
 		}
 		
-		sql_query( $conn, "UPDATE atts SET $uplv $up_att = $up_att + 1 WHERE id = $uid" );
+		sql_query( $conn, "UPDATE char_attributes SET $uplv $up_att = $up_att + 1 WHERE char_id = $uid" );
 		
-		$upgrade = ( $uplv != '' ? 'Lv: '. $u_level .'<br />' : '' ) . $atts[$up_att] . ' +1';
+		$upgrade = ( $uplv != '' ? 'Lv: '. $u_char_level .'<br />' : '' ) . $atts[$up_att] . ' +1';
 		
 		break;
 	
 	case ( $result < 7 || $result >= 9 ):
 		$placard = "Good training";
 		
-		if ( $$tskl + 1 >= $$up_skill )
+		if ( $$skill_training + 1 >= $$up_skill )
 		{
-			$$tskl = 0;
+			$$skill_training = 0;
 			$up_skl = 2;
 		}
 		else
 		{
-			$$tskl += 1;
+			$$skill_training += 1;
 		}
 		
-		sql_query( $conn, "UPDATE styl SET $up_tskl = ". $$tskl ." WHERE id = $uid");
+		sql_query( $conn, 'UPDATE skill_training SET $up_skill_training = '. $$skill_training .' WHERE char_id = $uid');
 		
-		$upgrade = $skill .' training: +1";
+		$upgrade = $skill .' training: +1';
 		
 		break;
 	
@@ -105,7 +105,7 @@ if ( isset($up_skl) )
 	$upgrade = ( $up_skl == 2 ? $upgrade .'<br />' : '' ) . $skill .' +1';
 }
 
-sql_query( $conn, "UPDATE clan SET $set_up_skl skp = skp - 5 WHERE id = $uid" );
+sql_query( $conn, "UPDATE style_attributes SET $set_up_skl skill_points = skill_points - 5 WHERE char_id = $uid" );
 */
 
 ?>
@@ -115,57 +115,57 @@ sql_query( $conn, "UPDATE clan SET $set_up_skl skp = skp - 5 WHERE id = $uid" );
 <table align="center" style="text-align: center;">
 	
 	<tr>
-		<th width="33%"><?= $nin1_name ?></th>
+		<th width="33%"><?= $teammate1_name ?></th>
 		<th width="33%"><?= $user_name ?></th>
-		<th width="33%"><?= $nin2_name ?></th>
+		<th width="33%"><?= $teammate2_name ?></th>
 	</tr>
 	
 	<tr><td></td><th></th><td></td></tr>
 	
 	<tr>
-		<th><?= $nin1_ken ?> • <?= $nin1_shu ?> • <?= $nin1_tai ?> • <?= $nin1_nin ?> • <?= $nin1_gen ?></th>
+		<th><?= $teammate1_kenjutsu ?> • <?= $teammate1_shuriken ?> • <?= $teammate1_taijutsu ?> • <?= $teammate1_ninjutsu ?> • <?= $teammate1_genjutsu ?></th>
 		
-		<th><?= $user_ken ?> • <?= $user_shu ?> • <?= $user_tai ?> • <?= $user_nin ?> • <?= $user_gen ?></th>
+		<th><?= $user_kenjutsu ?> • <?= $user_shuriken ?> • <?= $user_taijutsu ?> • <?= $user_ninjutsu ?> • <?= $user_genjutsu ?></th>
 		
-		<th><?= $nin2_ken ?> • <?= $nin2_shu ?> • <?= $nin2_tai ?> • <?= $nin2_nin ?> • <?= $nin2_gen ?></th>
+		<th><?= $teammate2_kenjutsu ?> • <?= $teammate2_shuriken ?> • <?= $teammate2_taijutsu ?> • <?= $teammate2_ninjutsu ?> • <?= $teammate2_genjutsu ?></th>
 	</tr>
 	
 	<tr><td></td><th></th><td></td></tr>
 	
 	<tr>
-		<th><?= $nin1_level ?></th>
+		<th><?= $teammate1_level ?></th>
 		<th><?= $user_level ?></th>
-		<th><?= $nin2_level ?></th>
+		<th><?= $teammate2_level ?></th>
 	</tr>
 	
 	<tr>
-		<td><?= $nin1_fla ?></td>
+		<td><?= $teammate1_fla ?></td>
 		<th><?= $user_fla ?></th>
-		<td><?= $nin2_fla ?></td>
+		<td><?= $teammate2_fla ?></td>
 	</tr>
 	
 	<tr>
-		<td><?= $nin1_pow ?></td>
+		<td><?= $teammate1_pow ?></td>
 		<th><?= $user_pow ?></th>
-		<td><?= $nin2_pow ?></td>
+		<td><?= $teammate2_pow ?></td>
 	</tr>
 	
 	<tr>
-		<td><?= $nin1_agi ?></td>
+		<td><?= $teammate1_agi ?></td>
 		<th><?= $user_agi ?></th>
-		<td><?= $nin2_agi ?></td>
+		<td><?= $teammate2_agi ?></td>
 	</tr>
 	
 	<tr>
-		<td><?= $nin1_jut ?></td>
+		<td><?= $teammate1_jut ?></td>
 		<th><?= $user_jut ?></th>
-		<td><?= $nin2_jut ?></td>
+		<td><?= $teammate2_jut ?></td>
 	</tr>
 	
 	<tr>
-		<td><?= $nin1_tac ?></td>
+		<td><?= $teammate1_tac ?></td>
 		<th><?= $user_tac ?></th>
-		<td><?= $nin2_tac ?></td>
+		<td><?= $teammate2_tac ?></td>
 	</tr>
 	
 </table>

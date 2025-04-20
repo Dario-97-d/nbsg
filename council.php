@@ -1,4 +1,4 @@
-<?php include("headeron.php"); ?>
+<?php require_once 'headeron.php'; ?>
 
 <h1>Council</h1>
 

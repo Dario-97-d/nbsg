@@ -11,11 +11,11 @@
 	</tr>
 	
 	<tr>
-		<td><?= $ken ?></td>
-		<td><?= $shu ?></td>
-		<td><?= $tai ?></td>
-		<td><?= $nin ?></td>
-		<td><?= $gen ?></td>
+		<td><?= $kenjutsu ?></td>
+		<td><?= $shuriken ?></td>
+		<td><?= $taijutsu ?></td>
+		<td><?= $ninjutsu ?></td>
+		<td><?= $genjutsu ?></td>
 	</tr>
 	
 	<tr>
@@ -30,42 +30,42 @@
 		
 		<td>
 			<div class="barprogt">
-				<div class="bartrain" style="width: <?= $tken * 100 / $ken ?>px;"></div>
+				<div class="bartrain" style="width: <?= $kenjutsu_points * 100 / $kenjutsu ?>px;"></div>
 			</div>
 			
-			<?= $tken .'/'. $ken ?>
+			<?= $kenjutsu_points .'/'. $kenjutsu ?>
 		</td>
 		
 		<td>
 			<div class="barprogt">
-				<div class="bartrain" style="width: <?= $tshu * 100 / $shu ?>px;"></div>
+				<div class="bartrain" style="width: <?= $shuriken_points * 100 / $shuriken ?>px;"></div>
 			</div>
 			
-			<?= $tshu .'/'. $shu ?>
+			<?= $shuriken_points .'/'. $shuriken ?>
 		</td>
 		
 		<td>
 			<div class="barprogt">
-				<div class="bartrain" style="width: <?= $ttai * 100 / $tai ?>px;"></div>
+				<div class="bartrain" style="width: <?= $taijutsu_points * 100 / $taijutsu ?>px;"></div>
 			</div>
 			
-			<?= $ttai .'/'. $tai ?>
+			<?= $taijutsu_points .'/'. $taijutsu ?>
 		</td>
 		
 		<td>
 			<div class="barprogt">
-				<div class="bartrain" style="width: <?= $tnin * 100 / $nin ?>px;"></div>
+				<div class="bartrain" style="width: <?= $ninjutsu_points * 100 / $ninjutsu ?>px;"></div>
 			</div>
 			
-			<?= $tnin .'/'. $nin ?>
+			<?= $ninjutsu_points .'/'. $ninjutsu ?>
 		</td>
 		
 		<td>
 			<div class="barprogt">
-				<div class="bartrain" style="width: <?= $tgen * 100 / $gen ?>px;"></div>
+				<div class="bartrain" style="width: <?= $genjutsu_points * 100 / $genjutsu ?>px;"></div>
 			</div>
 			
-			<?= $tgen .'/'. $gen ?>
+			<?= $genjutsu_points .'/'. $genjutsu ?>
 		</td>
 		
 	</tr>
@@ -76,7 +76,7 @@
 			<select name="skill">
 				<?php
 				
-				for ( $i = 1; $i <= $ken; $i++ )
+				for ( $i = 1; $i <= $kenjutsu; $i++ )
 				{
 					?>
 					<option><?= $i ?></option>

@@ -1,8 +1,8 @@
 <?php
 
-include("headeron.php");
+require_once 'headeron.php';
 
-$getdata = sql_query( $conn, "SELECT * FROM user WHERE id = '$uid'" );
+$getdata = sql_query( $conn, "SELECT * FROM game_users WHERE char_id = $uid" );
 
 extract( $udata = mysqli_fetch_assoc($getdata) );
 
@@ -10,7 +10,7 @@ if ( isset($_POST['chemail']) )
 {
 	$pw = md5($_POST['pw']);
 	
-	if ( $pw != $password )
+	if ( $pw != $pass_word )
 	{
 		echo "Wrong password";
 	}
@@ -25,7 +25,7 @@ if ( isset($_POST['chemail']) )
 		}
 		else
 		{
-			sql_query( $conn, "UPDATE user SET email = '$chemail' WHERE id = ". $_SESSION['uid'] );
+			sql_query( $conn, "UPDATE game_users SET email = '$chemail' WHERE char_id = ". $_SESSION['uid'] );
 			
 			echo "Email has been updated";
 			
@@ -37,7 +37,7 @@ else if ( isset($_POST['newpw']) )
 {
 	$oldpw = md5($_POST['oldpw']);
 	
-	if ( $oldpw != $password )
+	if ( $oldpw != $pass_word )
 	{
 		echo "Wrong password";
 	}
@@ -53,7 +53,7 @@ else if ( isset($_POST['newpw']) )
 		}
 		else
 		{
-			sql_query( $conn, "UPDATE user SET password = '$newpw' WHERE id = ". $_SESSION['uid'] );
+			sql_query( $conn, "UPDATE game_users SET pass_word = '$newpw' WHERE char_id = ". $_SESSION['uid'] );
 			
 			echo "Password has been updated";
 		}

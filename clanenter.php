@@ -1,10 +1,10 @@
 <?php
 
-include("headeron.php");
+require_once 'headeron.php';
 
-extract( mysqli_fetch_assoc( sql_query( $conn, "SELECT * FROM clan WHERE id = $uid ") ) );
+extract( mysqli_fetch_assoc( sql_query( $conn, 'SELECT * FROM style_attributes WHERE char_id = '. $uid ) ) );
 
-if ( $style != '' ) exier("clan");
+if ( $style_name != '' ) exiter("clan");
 
 ?>
 

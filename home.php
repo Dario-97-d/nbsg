@@ -1,56 +1,63 @@
 <?php
 
-include("headeron.php");
+require_once 'headeron.php';
 
 extract( sql_mfa(
 	$conn,
-	"SELECT a.*, c.*, name, rank
-	FROM atts a
-	JOIN clan c ON a.id = c.id
-	JOIN user u ON a.id = u.id
-	WHERE a.id = '$uid'" ) );
+	"SELECT a.*, c.*, username, char_rank
+	FROM char_attributes  a
+	JOIN style_attributes c ON a.char_id = c.char_id
+	JOIN game_users       u ON a.char_id = u.char_id
+	WHERE a.char_id = $uid" ) );
 
 if (
 	in_array(
 		$att = array_search('+', $_POST),
-		[ 'fla', 'pow', 'agi', 'jut', 'tac' ] )
+		[ 'flair', 'strength', 'agility', 'jutsu', 'tactics' ] )
 	)
 {
-	if ( ($tss - $need) < 0 )
+	if ( ($training_sessions_for_use - $sessions_needed_for_upgrade) < 0 )
 	{
 		echo "Not enough Training Sessions";
 	}
 	else
 	{
-		$tss -= $need;
-		$need += 1;
+		$training_sessions_for_use -= $sessions_needed_for_upgrade;
+		$sessions_needed_for_upgrade += 1;
 		$$att += 1;
 		
 		if (
 			floor(
-				( $fla + $pow + $agi + $jut + $tac )
+				( $flair + $strength + $agility + $jutsu + $tactics )
 				/ 5 )
-			> $level )
+			> $char_level )
 		{
-			$uplv = 'level = level + 1, ';
-			$level += 1;
+			$uplv = 'char_level = char_level + 1, ';
+			$char_level += 1;
 		}
 		else
 		{
 			$uplv = '';
 		}
 		
-		sql_query( $conn, "UPDATE atts SET $uplv need = need + 1, tss = $tss, $att = $att + 1 WHERE id = $uid" );
+		sql_query(
+			$conn,
+			'UPDATE char_attributes SET
+				'. $uplv .'
+				sessions_needed_for_upgrade = sessions_needed_for_upgrade + 1,
+				training_sessions_for_use   = '. $training_sessions_for_use .',
+				'. $att .' = '. $att .' + 1
+			WHERE char_id = '. $uid );
 	}
 }
 
-$disabled = $tss - $need < 0 ? 'disabled' : '';
+$disabled = $training_sessions_for_use - $sessions_needed_for_upgrade < 0 ? 'disabled' : '';
 
 ?>
 
-<h1><?= $name ?></h1>
+<h1><?= $username ?></h1>
 
-<h3><?= $style ?></h3>
+<h3><?= $style_name ?></h3>
 
 <table class="table-skill" align="center">
 	<tr>
@@ -62,11 +69,11 @@ $disabled = $tss - $need < 0 ? 'disabled' : '';
 	</tr>
 	
 	<tr>
-		<td><?= $ken ?></td>
-		<td><?= $shu ?></td>
-		<td><?= $tai ?></td>
-		<td><?= $nin ?></td>
-		<td><?= $gen ?></td>
+		<td><?= $kenjutsu ?></td>
+		<td><?= $shuriken ?></td>
+		<td><?= $taijutsu ?></td>
+		<td><?= $ninjutsu ?></td>
+		<td><?= $genjutsu ?></td>
 	</tr>
 </table>
 
@@ -77,7 +84,7 @@ $disabled = $tss - $need < 0 ? 'disabled' : '';
 <table align="center">
 	
 	<tr>
-		<th colspan="4" title="Average of stats">Rank-<?= $rank ?><br />Lv <?= $level ?></th>
+		<th colspan="4" title="Average of stats">Rank-<?= $char_rank ?><br />Lv <?= $char_level ?></th>
 	</tr>
 	
 	<tr>
@@ -94,10 +101,10 @@ $disabled = $tss - $need < 0 ? 'disabled' : '';
 			
 			<th>Flair</th>
 			
-			<td style="text-align: right;"><?= $fla ?></td>
+			<td style="text-align: right;"><?= $flair ?></td>
 			
 			<td>
-				<input type="submit" name="fla" value="+" <?= $disabled ?>/>
+				<input type="submit" name="flair" value="+" <?= $disabled ?>/>
 			</td>
 			
 			<td>Critical</td>
@@ -108,10 +115,10 @@ $disabled = $tss - $need < 0 ? 'disabled' : '';
 			
 			<th>Power</th>
 			
-			<td style="text-align: right;"><?= $pow ?></td>
+			<td style="text-align: right;"><?= $strength ?></td>
 			
 			<td>
-				<input type="submit" name="pow" value="+" <?= $disabled ?>/>
+				<input type="submit" name="strength" value="+" <?= $disabled ?>/>
 			</td>
 			
 			<td>Strength</td>
@@ -122,10 +129,10 @@ $disabled = $tss - $need < 0 ? 'disabled' : '';
 			
 			<th>Speed</th>
 			
-			<td style="text-align: right;"><?= $agi ?></td>
+			<td style="text-align: right;"><?= $agility ?></td>
 			
 			<td>
-				<input type="submit" name="agi" value="+" <?= $disabled ?>/>
+				<input type="submit" name="agility" value="+" <?= $disabled ?>/>
 			</td>
 			
 			<td>Reach</td>
@@ -136,10 +143,10 @@ $disabled = $tss - $need < 0 ? 'disabled' : '';
 			
 			<th>Jutsu</th>
 			
-			<td style="text-align: right;"><?= $jut ?></td>
+			<td style="text-align: right;"><?= $jutsu ?></td>
 			
 			<td>
-				<input type="submit" name="jut" value="+" <?= $disabled ?>/>
+				<input type="submit" name="jutsu" value="+" <?= $disabled ?>/>
 			</td>
 			
 			<td>Skill</td>
@@ -150,10 +157,10 @@ $disabled = $tss - $need < 0 ? 'disabled' : '';
 			
 			<th>Tactics</th>
 			
-			<td style="text-align: right;"><?= $tac ?></td>
+			<td style="text-align: right;"><?= $tactics ?></td>
 			
 			<td>
-				<input type="submit" name="tac" value="+" <?= $disabled ?>/>
+				<input type="submit" name="tactics" value="+" <?= $disabled ?>/>
 			</td>
 			
 			<td>Planning</td>
@@ -165,9 +172,9 @@ $disabled = $tss - $need < 0 ? 'disabled' : '';
 	<tr>
 		<td style="text-align: right">Need:</td>
 		
-		<th><?= $need ?></th>
+		<th><?= $sessions_needed_for_upgrade ?></th>
 		
-		<td colspan="2">Stats: <?= $tss ?>/50</td>
+		<td colspan="2">Stats: <?= $training_sessions_for_use ?>/50</td>
 	</tr>
 	
 </table>

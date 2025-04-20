@@ -1,6 +1,6 @@
 <?php
 
-include("headeron.php");
+require_once 'headeron.php';
 
 // check id was provided as int.
 if ( ! is_int( $pid = array_search('Train', $_POST) ) ) exiter("clandojo");
@@ -9,11 +9,11 @@ if ( $uid == $pid ) exiter("nin?id=$pid");
 
 // check skill was given.
 $skills = array(
-	'ken' => 'Kenjutsu',
-	'shu' => 'Shuriken',
-	'tai' => 'Taijutsu',
-	'nin' => 'Ninjutsu',
-	'gen' => 'Genjutsu' );
+	'kenjutsu' => 'Kenjutsu',
+	'shuriken' => 'Shuriken',
+	'taijutsu' => 'Taijutsu',
+	'ninjutsu' => 'Ninjutsu',
+	'genjutsu' => 'Genjutsu' );
 
 if ( in_array($_POST['skill'], $skills) )
 {
@@ -28,7 +28,7 @@ echo $skill;
 // randomize att to be upgraded.
 function upatt( $c, $a, $m, $b )
 {
-	if ( in_array($c, [ 'fla', 'pow', 'agi', 'jut', 'tac' ]) )
+	if ( in_array($c, [ 'flair', 'strength', 'agility', 'jutsu', 'tactics' ]) )
 	{
 		$upatt = $c;
 	}
@@ -62,7 +62,7 @@ function upatt( $c, $a, $m, $b )
 // upgrade atts (bup: battle upgrade).
 function sql_bup ( $conn, $setupatt, $uid )
 {
-	mysqli_query( $conn, "UPDATE atts SET $setupatt WHERE id = $uid" ) or die( mysqli_error($conn) );
+	mysqli_query( $conn, "UPDATE char_attributes SET $setupatt WHERE char_id = $uid" ) or die( mysqli_error($conn) );
 }
 
 // -- END functions --
@@ -71,18 +71,18 @@ function sql_bup ( $conn, $setupatt, $uid )
 extract(
 	sql_mfa(
 		$conn,
-		"SELECT a.*, c.*, name FROM atts a JOIN clan c ON a.id = c.id JOIN user u ON a.id = u.id WHERE a.id = $uid" ),
-	EXTR_PREFIX_ALL, "u" );
+		"SELECT a.*, c.*, username FROM char_attributes a JOIN style_attributes c ON a.char_id = c.char_id JOIN game_users u ON a.char_id = u.char_id WHERE a.char_id = $uid" ),
+	EXTR_PREFIX_ALL, 'u' );
 
 extract(
 	sql_mfa(
 		$conn,
-		"SELECT a.*, c.*, name FROM atts a JOIN clan c ON a.id = c.id JOIN user u ON a.id = u.id WHERE a.id = $pid" ),
-	EXTR_PREFIX_ALL, "p" );
+		"SELECT a.*, c.*, username FROM char_attributes a JOIN style_attributes c ON a.char_id = c.char_id JOIN game_users u ON a.char_id = u.char_id WHERE a.char_id = $pid" ),
+	EXTR_PREFIX_ALL, 'p' );
 	
 // calc scores for battle.
-$uscore = $u_fla + $u_pow + $u_agi + $u_jut + $u_tac;
-$pscore = $p_fla + $p_pow + $p_agi + $p_jut + $p_tac;
+$uscore = $u_flair + $u_strength + $u_agility + $u_jutsu + $u_tactics;
+$pscore = $p_flair + $p_strength + $p_agility + $p_jutsu + $p_tactics;
 
 // determine result, based on (user/player) _total_atts.
 $result = $uscore / $pscore * 8;
@@ -91,14 +91,19 @@ $result = $uscore / $pscore * 8;
 if ( $result < 4 || $result >= 12 ) exiter("nin?id=$pid");
 
 // attribute ratios.
-$fla = $u_fla / $p_fla;
-$pow = $u_pow / $p_pow;
-$agi = $u_agi / $p_agi;
-$jut = $u_jut / $p_jut;
-$tac = $u_tac / $p_tac;
+$flair    = $u_flair    / $p_flair;
+$strength = $u_strength / $p_strength;
+$agility  = $u_agility  / $p_agility;
+$jutsu    = $u_jutsu    / $p_jutsu;
+$tactics  = $u_tactics  / $p_tactics;
 
 // array with the ratios.
-$a = [ "fla" => $fla, "pow" => $pow, "agi" => $agi, "jut" => $jut, "tac" => $tac ];
+$a = array(
+	"flair"    => $flair,
+	"strength" => $strength,
+	"agility"  => $agility,
+	"jutsu"    => $jutsu,
+	"tactics"  => $tactics );
 
 // -- whatever this is --
 // victor: max; victum: min.
@@ -112,7 +117,7 @@ $c = $result >= 6 && $result < 10 ?
 	count($b) > 1 ? count($b) : array_search( $m ( $a ), $a );
 
 // if $c = [att], then it's on; if it's random, so be it.
-if ( in_array($c, [ 'fla', 'pow', 'agi', 'jut', 'tac' ]) )
+if ( in_array($c, [ 'flair', 'strength', 'agility', 'jutsu', 'tactics' ]) )
 {
 	if ( $result >= 4 && $result < 12 )
 	{
@@ -128,11 +133,11 @@ else if ('random')
 	// random number from microtime two chars from last three chars (different from upatt, which is -2 instead of -3.2).
 	switch ( substr( microtime(true), -3, 2 ) % 5 )
 	{
-		case 0: $rupatt = "fla=fla+1"; break;
-		case 1: $rupatt = "pow=pow+1"; break;
-		case 2: $rupatt = "agi=agi+1"; break;
-		case 3: $rupatt = "jut=jut+1"; break;
-		case 4: $rupatt = "tac=tac+1"; break;
+		case 0: $rupatt = "fla = fla + 1"; break;
+		case 1: $rupatt = "pow = pow + 1"; break;
+		case 2: $rupatt = "agi = agi + 1"; break;
+		case 3: $rupatt = "jut = jut + 1"; break;
+		case 4: $rupatt = "tac = tac + 1"; break;
 		
 		default:
 			$rupatt = "microtime Error";
@@ -168,11 +173,11 @@ else
 }
 
 $atts = array(
-	'fla' => 'Flair',
-	'pow' => 'Power',
-	'agi' => 'Speed',
-	'jut' => 'Jutsu',
-	'tac' => 'Tactics' );
+	'flair'    => 'Flair',
+	'strength' => 'Power',
+	'agility'  => 'Speed',
+	'jutsu'    => 'Jutsu',
+	'tactics'  => 'Tactics' );
 
 // result !!
 switch ( true )
@@ -180,7 +185,7 @@ switch ( true )
 	case ( $result < 6 ):  $placard = "Major Loss"; sql_bup( $conn, $setupatt = upatt( $c, $a, 'min', $b ), $uid ); break;
 	case ( $result < 7 ):  $placard = "Minor Loss"; sql_bup( $conn, $setupatt, $uid); break;
 	case ( $result < 9 ):  $placard = "Draw";       sql_bup( $conn, $setupatt, $uid);
-													sql_query ( $conn, "UPDATE clan SET tai = tai + 1 WHERE id = $uid" ); break;
+													sql_query ( $conn, "UPDATE style_attributes SET taijutsu = taijutsu + 1 WHERE char_id = $uid" ); break;
 	case ( $result < 10 ): $placard = "Minor Win";  sql_bup( $conn, $setupatt, $uid ); break;
 	case ( $result < 12 ): $placard = "Major Win";  sql_bup( $conn, $setupatt = upatt( $c, $a, 'max', $b ), $uid ); break;
 	
@@ -190,7 +195,7 @@ switch ( true )
 }
 
 // End message and '+1' after the att in table.
-$fla = $pow = $agi = $jut = $tac = '';
+$flair = $strength = $agility = $jutsu = $tactics = '';
 
 // 1 or 2 diff atts.
 if ( strlen($setupatt) == 9 )
@@ -221,7 +226,7 @@ switch ( true )
 	
 	case ( $result < 6 || $result >= 10 ):
 		$placard = "There's some gap";
-		sql_query( $conn, "UPDATE atts SET $up_att = $up_att + 1 WHERE id = $uid" );
+		sql_query( $conn, "UPDATE char_attributes SET $up_att = $up_att + 1 WHERE char_id = $uid" );
 		$upgrade = $atts[$up_att] ." +1";
 		$$up_att = "+1";
 		break;
@@ -231,11 +236,11 @@ switch ( true )
 		{
 			default: "switch_microtime Error"; break;
 			
-			case 0: $ranatt = "fla"; break;
-			case 1: $ranatt = "pow"; break;
-			case 2: $ranatt = "agi"; break;
-			case 3: $ranatt = "jut"; break;
-			case 4: $ranatt = "tac"; break;
+			case 0: $ranatt = "flair";    break;
+			case 1: $ranatt = "strength"; break;
+			case 2: $ranatt = "agility";  break;
+			case 3: $ranatt = "jutsu";    break;
+			case 4: $ranatt = "tactics";  break;
 		}
 	case ( $result < 7  || $result >= 9):
 		$placard = "Good training";
@@ -244,25 +249,25 @@ switch ( true )
 		{
 			if (
 				floor(
-					( $u_fla + $u_pow + $u_agi + $u_jut + $u_tac + 2 )
+					( $u_flair + $u_strength + $u_agility + $u_jutsu + $u_tactics + 2 )
 					/ 5 )
-				> $u_level )
+				> $u_char_level )
 			{
-				$uplv = 'level = level + 1, ';
-				$u_level += 1;
-				$level = 'Lv: '. $u_level .'<br />';
+				$uplv = 'char_level = char_level + 1, ';
+				$u_char_level += 1;
+				$char_level = 'Lv: '. $u_char_level .'<br />';
 			}
 			else $uplv = '';
 			
 			if ( $up_att == $ranatt )
 			{
-				sql_query( $conn, "Update atts SET $uplv $up_att = $up_att + 2 WHERE id = $uid");
+				sql_query( $conn, "UPDATE char_attributes SET $uplv $up_att = $up_att + 2 WHERE char_id = $uid");
 				$upgrade = $atts[$up_att] ." +2";
 				$$up_att = "+2";
 			}
 			else
 			{
-				sql_query( $conn, "Update atts SET $uplv $up_att = $up_att + 1, $ranatt = $ranatt + 1 WHERE id = $uid");
+				sql_query( $conn, "UPDATE char_attributes SET $uplv $up_att = $up_att + 1, $ranatt = $ranatt + 1 WHERE char_id = $uid");
 				$upgrade = $atts[$up_att] ." +1<br />". $atts[$ranatt] ." +1";
 				$$up_att = "+1";
 				$$ranatt = "+1";
@@ -271,21 +276,21 @@ switch ( true )
 		else
 		{
 			$$up_skill = 1;
-			sql_query( $conn, "Update clan SET $up_skill = $up_skill + 1 WHERE id = $uid");
+			sql_query( $conn, "UPDATE style_attributes SET $up_skill = $up_skill + 1 WHERE char_id = $uid");
 			
 			if (
 				floor(
-					( $u_fla + $u_pow + $u_agi + $u_jut + $u_tac + 1 )
+					( $u_flair + $u_strength + $u_agility + $u_jutsu + $u_tactics + 1 )
 					/ 5 )
-				> $u_level )
+				> $u_char_level )
 			{
-				$uplv = 'level = level + 1, ';
-				$u_level += 1;
-				$level = 'Lv: '. $u_level .'<br />';
+				$uplv = 'char_level = char_level + 1, ';
+				$u_char_level += 1;
+				$char_level = 'Lv: '. $u_char_level .'<br />';
 			}
 			else $uplv = '';
 			
-			sql_query( $conn, "Update atts SET $uplv $ranatt = $ranatt+1 WHERE id = $uid");
+			sql_query( $conn, "UPDATE char_attributes SET $uplv $ranatt = $ranatt+1 WHERE char_id = $uid");
 			$$ranatt = "+1";
 			$upgrade = $skills[$up_skill] ." +1<br />". $atts[$ranatt] ." +1";
 		}
@@ -293,29 +298,29 @@ switch ( true )
 	case ( $result < 9 || $result >= 7 ):
 		$placard = "Evenly matched";
 		$$up_skill = 1;
-		sql_query( $conn, "Update clan SET $up_skill = $up_skill + 1 WHERE id = $uid");
+		sql_query( $conn, "UPDATE style_attributes SET $up_skill = $up_skill + 1 WHERE char_id = $uid");
 		
 		if (
 			floor(
-				( $u_fla + $u_pow + $u_agi + $u_jut + $u_tac + 2 )
+				( $u_flair + $u_strength + $u_agility + $u_jutsu + $u_tactics + 2 )
 				/ 5 )
-			> $u_level )
+			> $u_char_level )
 		{
-			$uplv = 'level = level + 1, ';
-			$u_level += 1;
-			$level = 'Lv: '. $u_level .'<br />';
+			$uplv = 'char_level = char_level + 1, ';
+			$u_char_level += 1;
+			$char_level = 'Lv: '. $u_char_level .'<br />';
 		}
 		else $uplv = '';
 		
 		if ( $up_att == $ranatt )
 		{
-			sql_query( $conn, "Update atts SET $uplv $up_att = $up_att + 2 WHERE id = $uid");
+			sql_query( $conn, "UPDATE char_attributes SET $uplv $up_att = $up_att + 2 WHERE char_id = $uid");
 			$upgrade = $skills[$up_skill] ." +1<br />". $atts[$up_att] ." +2";
 			$$up_att = "+2";
 		}
 		else
 		{
-			sql_query( $conn, "Update atts SET $uplv $up_att = $up_att + 1, $ranatt = $ranatt + 1 WHERE id = $uid");
+			sql_query( $conn, "UPDATE char_attributes SET $uplv $up_att = $up_att + 1, $ranatt = $ranatt + 1 WHERE char_id = $uid");
 			$upgrade = $skills[$up_skill] ." +1<br />". $atts[$up_att] ." +1<br />". $atts[$ranatt] ." +1";
 			$$up_att = "+1";
 			$$ranatt = "+1";
@@ -325,17 +330,17 @@ switch ( true )
 }
 if (
 	floor(
-		( $u_fla + $u_pow + $u_agi + $u_jut + $u_tac + $nflv )
+		( $u_flair + $u_strength + $u_agility + $u_jutsu + $u_tactics + $nflv )
 		/ 5 )
-	> $u_level )
+	> $u_char_level )
 {
-	$uplv = 'sta = sta + 10, cha = cha + 10, level = level + 1, ';
-	$u_level += 1;
-	$level = 'Lv: '. $u_level .'<br />';
+	$uplv = 'sta = sta + 10, cha = cha + 10, char_level = char_level + 1, ';
+	$u_char_level += 1;
+	$char_level = 'Lv: '. $u_char_level .'<br />';
 }
 else $uplv = '';
 
-sql_query( $conn, "UPDATE clan SET skp = skp - 5" );
+sql_query( $conn, "UPDATE style_attributes SET skill_points = skill_points - 5" );
 */
 /*
 if ( $result < 4 || $result >= 12 )
@@ -366,7 +371,7 @@ else
 		{
 			$placard = "Good training";
 			
-			if ( $u_level / $p_level < $u_skill / $p_skill )
+			if ( $u_char_level / $p_char_level < $u_skill / $p_skill )
 			{
 				if ( $up_att == $ranatt )
 				{
@@ -442,18 +447,18 @@ else
 	
 	if (
 		floor(
-			( $u_fla + $u_pow + $u_agi + $u_jut + $u_tac + $upa + $rna )
+			( $u_flair + $u_strength + $u_agility + $u_jutsu + $u_tactics + $upa + $rna )
 			/ 5 )
-		> $u_level )
+		> $u_char_level )
 	{
-		$uplv = 'level = level + 1, ';
-		$u_level += 1;
-		$level = 'Lv: '. $u_level .'<br />';
+		$uplv = 'char_level = char_level + 1, ';
+		$u_char_level += 1;
+		$char_level = 'Lv: '. $u_char_level .'<br />';
 	}
 	else $uplv = '';
 	
-	sql_query( $conn, "UPDATE atts SET $uplv $set_up_att". ( $rna == 1 ? ', ' : '' ) ." $set_ranatt WHERE id = $uid");
-	sql_query( $conn, "UPDATE clan SET $set_up_skl skp = skp - 5 WHERE id = $uid");
+	sql_query( $conn, "UPDATE char_attributes SET $uplv $set_up_att". ( $rna == 1 ? ', ' : '' ) ." $set_ranatt WHERE char_id = $uid");
+	sql_query( $conn, "UPDATE style_attributes SET $set_up_skl skill_points = skill_points - 5 WHERE char_id = $uid");
 }*/
 
 ?>
@@ -463,23 +468,23 @@ else
 <table align="center" style="text-align: center;">
 	
 	<tr>
-		<th><?= $u_name ?></th>
+		<th><?= $u_username ?></th>
 		<th>VS</th>
-		<th><?= $p_name ?></th>
+		<th><?= $p_username ?></th>
 	</tr>
 	
 	<tr>
-		<td><?= $u_style ?></td>
+		<td><?= $u_style_name ?></td>
 		<th></th>
-		<td><?= $p_style ?></td>
+		<td><?= $p_style_name ?></td>
 	</tr>
 	
 	<tr><td></td><th></th><td></td></tr>
 	
 	<tr>
-		<th><?= $u_ken .' • '. $u_shu .' • '. $u_tai .' • '. $u_nin .' • '. $u_gen ?></th>
+		<th><?= $u_kenjutsu .' • '. $u_shuriken .' • '. $u_taijutsu .' • '. $u_ninjutsu .' • '. $u_genjutsu ?></th>
 		<th>K•S•T•N•G</th>
-		<th><?= $p_ken .' • '. $p_shu .' • '. $p_tai .' • '. $p_nin .' • '. $p_gen ?></th>
+		<th><?= $p_kenjutsu .' • '. $p_shuriken .' • '. $p_taijutsu .' • '. $p_ninjutsu .' • '. $p_genjutsu ?></th>
 	</tr>
 	
 	<tr>
@@ -491,33 +496,33 @@ else
 	<tr><td></td><th></th><td></td></tr>
 	
 	<tr>
-		<td><?= $u_fla . $fla ?></td>
+		<td><?= $u_flair . $flair ?></td>
 		<th>Flair</th>
-		<td><?= $p_fla ?></td>
+		<td><?= $p_flair ?></td>
 	</tr>
 	
 	<tr>
-		<td><?= $u_pow . $pow ?></td>
+		<td><?= $u_strength . $strength ?></td>
 		<th>Power</th>
-		<td><?= $p_pow ?></td>
+		<td><?= $p_strength ?></td>
 	</tr>
 	
 	<tr>
-		<td><?= $u_agi . $agi ?></td>
+		<td><?= $u_agility . $agility ?></td>
 		<th>Speed</th>
-		<td><?= $p_agi ?></td>
+		<td><?= $p_agility ?></td>
 	</tr>
 	
 	<tr>
-		<td><?= $u_jut . $jut ?></td>
+		<td><?= $u_jutsu . $jutsu ?></td>
 		<th>Jutsu</th>
-		<td><?= $p_jut ?></td>
+		<td><?= $p_jutsu ?></td>
 	</tr>
 	
 	<tr>
-		<td><?= $u_tac . $tac ?></td>
+		<td><?= $u_tactics . $tactics ?></td>
 		<th>Tactics</th>
-		<td><?= $p_tac ?></td>
+		<td><?= $p_tactics ?></td>
 	</tr>
 	
 </table>

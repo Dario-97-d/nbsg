@@ -1,9 +1,18 @@
 nbs database
 
-user. id, vid, rank, name, password, email
-nins. id, clan, team, squad, organ, villa
-atts. id, sta, cha, fla, pow, agi, jut, tac
-clan. id, style, ken, shu, tai, nin, gen
-styl. id, tken, tshu, ttai, tnin, tgen, tskl, ntrain, ready
-stat. id, wins, patrol, anbu
-team. id, nin1, nin2
+game_users. char_id, username, email, pass_word, char_rank
+nins. char_id, clan, team, squad, organ, villa
+char_attributes. char_id, sta, cha, flair, strength, agility, jutsu, tactics
+style_attributes. char_id, style_name, kenjutsu, shuriken, taijutsu, ninjutsu, genjutsu
+skill_training.
+	char_id,
+	kenjutsu_points,
+	shuriken_points,
+	taijutsu_points,
+	ninjutsu_points,
+	genjutsu_points,
+	skill_training,
+	sessions_in_training,
+	time_ready
+stat. char_id, wins, patrol, anbu
+char_team. char_id, teammate1_id, teammate2_id

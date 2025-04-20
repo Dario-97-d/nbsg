@@ -2,7 +2,7 @@
 
 // -- Functions --
 
-$conn = mysqli_connect( 'localhost', 'root', 'uchihasasukeitachi97D', 'nbs' );
+$conn = mysqli_connect( 'localhost', 'nbsg', '6suAq/PSX]gfIpSS', 'nbsg'  );
 if ( ! $conn )
 {
     echo "Error: Unable to connect to MySQL." . PHP_EOL;
@@ -109,6 +109,10 @@ function unset_key( $search, $array )
 	$key = array_search($search, $array);
 	
 	unset($array[$key]);
+}
+
+function JS_console_log( $msg ) {
+	echo '<script>console.log("'. $msg .'");</script>';
 }
 
 ?>

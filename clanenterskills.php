@@ -1,10 +1,10 @@
 <?php
 
-include("headeron.php");
+require_once 'headeron.php';
 
-extract( mysqli_fetch_assoc( sql_query( $conn, "SELECT * FROM clan WHERE id = $uid" ) ) );
+extract( mysqli_fetch_assoc( sql_query( $conn, "SELECT * FROM style_attributes WHERE char_id = $uid" ) ) );
 
-if ( $style != '' ) exiter("clan");
+if ( $style_name != '' ) exiter("clan");
 
 if ( ! isset($_POST['xc']) ) exiter("clanenter");
 
@@ -46,17 +46,17 @@ if ( isset($_POST['start']) )
 		{
 			mysqli_multi_query(
 				$conn,
-				"UPDATE clan
+				"UPDATE style_attributes
 				SET
-					style = '$clan',
-					ken = $skills[0],
-					shu = $skills[1],
-					tai = $skills[2],
-					nin = $skills[3],
-					gen = $skills[4]
-				WHERE id = $uid;
+					style_name = '$clan',
+					kenjutsu = $skills[0],
+					shuriken = $skills[1],
+					taijutsu = $skills[2],
+					ninjutsu = $skills[3],
+					genjutsu = $skills[4]
+				WHERE char_id = $uid;
 				
-				UPDATE user SET rank = 'D' WHERE id = $uid;" ) or die( mysqli_error($conn) );
+				UPDATE game_users SET char_rank = 'D' WHERE char_id = $uid;" ) or die( mysqli_error($conn) );
 		}
 	}
 	
@@ -76,30 +76,30 @@ if ( isset($_POST['skills']) )
 	{
 		switch( array_search('+1', $_POST) )
 		{
-			case 'ken':
+			case 'kenjutsu':
 				$skills[0] += 1;
 				$skills[5] -= 1;
 				break;
 			
-			case 'shu':
+			case 'shuriken':
 				$skills[1] += 1;
 				$skills[5] -= 1;
 				break;
 			
-			case 'tai':
+			case 'taijutsu':
 				$skills[2] += 1;
 				$skills[5] -= 1;
 				break;
 			
-			case 'nin':
-				if ( $style == 'Tameru' ) exiter("clanenter");
+			case 'ninjutsu':
+				if ( $style_name == 'Tameru' ) exiter("clanenter");
 				
 				$skills[3] += 1;
 				$skills[5] -= 1;
 				break;
 			
-			case 'gen':
-				if ( $style == 'Tameru' ) exiter("clanenter");
+			case 'genjutsu':
+				if ( $style_name == 'Tameru' ) exiter("clanenter");
 				
 				$skills[4] += 1;
 				$skills[5] -= 1;
@@ -183,9 +183,9 @@ else
 				<input type="hidden" name="xc" value="<?= $clan ?>" />
 				<input type="hidden" name="skills" value="<?= implode(",", $skills) ?>" />
 				
-				<td><input type="submit" name="ken" value="+1" /></td>
-				<td><input type="submit" name="shu" value="+1" /></td>
-				<td><input type="submit" name="tai" value="+1" /></td>
+				<td><input type="submit" name="kenjutsu" value="+1" /></td>
+				<td><input type="submit" name="shuriken" value="+1" /></td>
+				<td><input type="submit" name="taijutsu" value="+1" /></td>
 				
 				<?php
 				
@@ -199,8 +199,8 @@ else
 				{
 					?>
 					
-					<td><input type="submit" name="nin" value="+1" /></td>
-					<td><input type="submit" name="gen" value="+1" /></td>
+					<td><input type="submit" name="ninjutsu" value="+1" /></td>
+					<td><input type="submit" name="genjutsu" value="+1" /></td>
 					
 					<?php
 				}

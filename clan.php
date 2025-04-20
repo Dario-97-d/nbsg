@@ -1,10 +1,10 @@
 <?php
 
-include("headeron.php");
+require_once 'headeron.php';
 
-extract( mysqli_fetch_assoc( sql_query( $conn, "SELECT style FROM clan WHERE id = $uid" ) ) );
+extract( mysqli_fetch_assoc( sql_query( $conn, "SELECT style_name FROM style_attributes WHERE char_id = $uid" ) ) );
 
-if ( $style == '' )
+if ( $style_name == '' )
 {
 	?>
 	
@@ -36,7 +36,7 @@ else
 {
 	?>
 	
-	<h1><?= $style ?></h1>
+	<h1><?= $style_name ?></h1>
 	
 	<h4>Clan members gather in the village</h4>
 	
@@ -56,31 +56,31 @@ else
 		
 		$getplayers = sql_query(
 			$conn,
-			"SELECT u.id, rank, name, level
-			FROM user u
-			JOIN atts a ON u.id = a.id
-			JOIN clan c ON u.id = c.id
-			WHERE style = '$style'
-			ORDER BY rank, level DESC
-			LIMIT 25" );
+			'SELECT u.char_id, char_rank, username, char_level
+			FROM game_users       u
+			JOIN char_attributes  a ON u.char_id = a.char_id
+			JOIN style_attributes c ON u.char_id = c.char_id
+			WHERE style_name = \''. $style_name .'\'
+			ORDER BY char_rank, char_level DESC
+			LIMIT 25' );
 		
 		while ( $row = mysqli_fetch_assoc($getplayers) )
 		{
 			?>
-			<tr<?= $uid == $row['id'] ? ' style="outline: 1px solid #0033CC;"' : '' ?>>
+			<tr<?= $uid == $row['char_id'] ? ' style="outline: 1px solid #0033CC;"' : '' ?>>
 				
-				<td><?= $row['rank'] ?></td>
+				<td><?= $row['char_rank'] ?></td>
 				
-				<td><?= $row['level'] ?></td>
+				<td><?= $row['char_level'] ?></td>
 				
 				<td>
-					<a href="nin?id=<?= $row['id'] ?>">
-						<?= $row['name'] ?>
+					<a href="nin?id=<?= $row['char_id'] ?>">
+						<?= $row['username'] ?>
 					</a>
 				</td>
 				
 				<td>
-					<a href="sendpm?to=<?= $row['name'] ?>">PM</a>
+					<a href="sendpm?to=<?= $row['username'] ?>">PM</a>
 				</td>
 				
 			</tr>

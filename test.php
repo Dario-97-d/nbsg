@@ -1,18 +1,18 @@
 <?php
 
-$ken = 7;
-$ken1 = 14;
-$ken2 = 2;
+$kenjutsu = 7;
+$kenjutsu1 = 14;
+$kenjutsu2 = 2;
 
 $start = microtime(true);
 
 for ( $i = 0; $i < 10000; ++$i )
 {
-	$kens = $ken + $ken1 + $ken2;
+	$kenjutsus = $kenjutsu + $kenjutsu1 + $kenjutsu2;
 	
-	echo $kens;
-	echo $kens;
-	echo $kens;
+	echo $kenjutsus;
+	echo $kenjutsus;
+	echo $kenjutsus;
 }
 
 $dur = ( microtime(true) * 1000 ) - ( $start * 1000 );

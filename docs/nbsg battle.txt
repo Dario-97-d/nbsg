@@ -8,7 +8,7 @@ se perde:
 TL- nada
 ML- recebe 1 ponto pelo que fez pior
 mL- recebe 1 ponto pelo que fez pior + 1 rand
-D- recebe 1 rand + 1 tai
+D- recebe 1 rand + 1 taijutsu
 mW- recebe 1 ponto pelo que fez melhor + 1 rand
 MW- recebe 1 ponto pelo que fez melhor
 TW- nada

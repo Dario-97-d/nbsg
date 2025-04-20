@@ -1,4 +1,4 @@
-score: 2*skill +att (ken-pow,shu-jut,tai-agi,nin-fla,gen-tac)
+score: 2*skill +att (kenjutsu-strength, shuriken-jutsu, taijutsu-agility, ninjutsu-flair, genjutsu-tactics)
 result: learn either skill or att (worse relation)
 
 Major L/W: +1 att(skl)

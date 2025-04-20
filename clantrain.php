@@ -1,21 +1,20 @@
 <?php
 
-include("headeron.php");
+require_once 'headeron.php';
 
 extract( sql_mfa(
 	$conn,
-	"SELECT tskl, rank, level, c.*
-	FROM styl s
-	JOIN user u ON u.id = s.id
-	JOIN atts a ON u.id = a.id
-	JOIN clan c ON u.id = c.id
-	WHERE u.id = $uid" ) );
+	'SELECT char_rank, char_level, c.*
+	FROM game_users       u
+	JOIN char_attributes  a ON u.char_id = a.char_id
+	JOIN style_attributes c ON u.char_id = c.char_id
+	WHERE u.char_id = '. $uid ) );
 
-if ( $style == '' ) exiter("clan");
+if ( $style_name == '' ) exiter("clan");
 
 ?>
 
-<h1><?= $style ?></h1>
+<h1><?= $style_name ?></h1>
 
 <h4>
 	In the training grounds of the village
@@ -33,17 +32,17 @@ if ( $style == '' ) exiter("clan");
 	</tr>
 	
 	<tr>
-		<td><?= $ken ?></td>
-		<td><?= $shu ?></td>
-		<td><?= $tai ?></td>
-		<td><?= $nin ?></td>
-		<td><?= $gen ?></td>
+		<td><?= $kenjutsu ?></td>
+		<td><?= $shuriken ?></td>
+		<td><?= $taijutsu ?></td>
+		<td><?= $ninjutsu ?></td>
+		<td><?= $genjutsu ?></td>
 	</tr>
 </table>
 
 <a href="hometrain">Train alone</a>
 
-<h2>Rank-<?= $rank ?></h2>
+<h2>Rank-<?= $char_rank ?></h2>
 
 <form action="clantrainskill" method="POST">
 	
@@ -54,7 +53,7 @@ if ( $style == '' ) exiter("clan");
 		<option>Taijutsu</option>
 		<?php
 		
-		if ( $style != 'Tameru' )
+		if ( $style_name != 'Tameru' )
 		{
 			?>
 			
@@ -74,15 +73,15 @@ if ( $style == '' ) exiter("clan");
 		
 		$getplayers = sql_query(
 			$conn,
-			"SELECT name, level, c.*
-			FROM user u
-			JOIN atts a ON u.id = a.id
-			JOIN clan c on u.id = c.id
-			WHERE style = '$style'
-			AND   rank  = '$rank'
-			AND   level BETWEEN $level - 5 AND $level + 5
-			AND   u.id <> $uid
-			ORDER BY level DESC
+			"SELECT username, char_level, c.*
+			FROM game_users       u
+			JOIN char_attributes  a ON u.char_id = a.char_id
+			JOIN style_attributes c on u.char_id = c.char_id
+			WHERE style_name = '$style_name'
+			AND   char_rank  = '$char_rank'
+			AND   char_level BETWEEN $char_level - 5 AND $char_level + 5
+			AND   u.char_id <> $uid
+			ORDER BY char_level DESC
 			LIMIT 25" );
 		
 		if ( mysqli_num_rows($getplayers) < 1 ) echo "There's no nin to train with";
@@ -102,18 +101,18 @@ if ( $style == '' ) exiter("clan");
 				?>
 				<tr>
 					
-					<td><?= $row['level']?></td>
+					<td><?= $row['char_level']?></td>
 					
 					<td>
-						<a href="nin?id=<?= $row['id'] ?>">
-							<?= $row['name'] ?>
+						<a href="nin?id=<?= $row['char_id'] ?>">
+							<?= $row['username'] ?>
 						</a>
 					</td>
 					
-					<th><?= $row['ken'] .' • '. $row['shu'] .' • '. $row['tai'] .' • '. $row['nin'] .' • '. $row['gen'] ?></th>
+					<th><?= $row['kenjutsu'] ?> • <?= $row['shuriken'] ?> • <?= $row['taijutsu'] ?> • <?= $row['ninjutsu'] ?> • <?= $row['genjutsu'] ?></th>
 					
 					<td>
-						<input type="radio" name="pick" value="<?= $row['id'] ?>" />
+						<input type="radio" name="pick" value="<?= $row['char_id'] ?>" />
 					</td>
 					
 				</tr>

@@ -12,7 +12,7 @@ if ( isset($_GET['log']) && $_GET['log'] == 'out' )
 // Login.
 if ( isset($_POST['login']) )
 {
-	if ( isset($_SESSION['uid']) ) exiter("overview");
+	if ( isset($_SESSION['uid']) ) exiter("home");
 	
 	$username = handle_name($_POST['username']);
 	
@@ -23,12 +23,10 @@ if ( isset($_POST['login']) )
 	}
 	else
 	{
-		$password = md5($_POST['password']);
-		
 		$checkuser =
 			mysqli_query(
 				$conn,
-				"SELECT id FROM user WHERE name = '$username' AND password = '$password'" )
+				'SELECT char_id FROM game_users WHERE username = \''. $username .'\' AND pass_word = \''. md5($_POST['password']) .'\'' )
 			or
 				die( mysqli_error($conn) );
 		
@@ -40,7 +38,7 @@ if ( isset($_POST['login']) )
 		{
 			$uid = mysqli_fetch_assoc($checkuser);
 			
-			$_SESSION['uid'] = $uid['id'];
+			$_SESSION['uid'] = $uid['char_id'];
 			
 			exiter("home");
 		}

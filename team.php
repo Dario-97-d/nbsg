@@ -1,46 +1,46 @@
 <?php
 
-include("headeron.php");
+require_once 'headeron.php';
 
 extract( sql_mfa(
 	$conn,
-	"SELECT level, style, rank, name, nin1, nin2, joint
-	FROM atts a
-	JOIN clan c ON a.id = c.id
-	JOIN user u ON c.id = u.id
-	JOIN team t ON u.id = t.id
-	WHERE u.id = $uid" ) );
+	"SELECT char_level, style_name, char_rank, username, teammate1_id, teammate2_id, team_exam_phase
+	FROM char_attributes  a
+	JOIN style_attributes c ON a.char_id = c.char_id
+	JOIN game_users       u ON c.char_id = u.char_id
+	JOIN char_team        t ON u.char_id = t.char_id
+	WHERE u.char_id = $uid" ) );
 
 if (
-	( $nin1 < 1 || $nin2 < 1 )
+	( $teammate1_id < 1 || $teammate2_id < 1 )
 	&&
 	is_int( $pid = array_search('Pick', $_POST) )
 	&&
-	! in_array( $pid, [ $nin1, $nin2 ] )
+	! in_array( $pid, [ $teammate1_id, $teammate2_id ] )
 	&&
-	mysqli_num_rows( sql_query( $conn, "SELECT level FROM atts WHERE id = $pid AND level <= $level" ) ) == 1 )
+	mysqli_num_rows( sql_query( $conn, "SELECT char_level FROM char_attributes WHERE char_id = $pid AND char_level <= $char_level" ) ) == 1 )
 {
 	if (
 		( $tnin =
-			( $nin1 == 0 ? 'nin1' : (
-				$nin2 == 0 ? 'nin2' : 'nada' ) )
+			( $teammate1_id == 0 ? 'teammate1_id' : (
+				$teammate2_id == 0 ? 'teammate2_id' : 'nada' ) )
 		) != 'nada' )
 	{
 		$$tnin = $pid;
 		
-		sql_query( $conn, "UPDATE team SET $tnin = $pid WHERE id = $uid" );
+		sql_query( $conn, "UPDATE char_team SET $tnin = $pid WHERE char_id = $uid" );
 	}
 }
 
 if (
 	is_int ( $pid = array_search('Sack', $_POST) )
 	&&
-	$n = array_search( $pid, [ 0, $nin1, $nin2 ] ) )
+	$n = array_search( $pid, [ 0, $teammate1_id, $teammate2_id ] ) )
 {
-	$tnin = "nin$n";
+	$tnin = 'teammate'.$n.'_id';
 	$$tnin = 0;
 	
-	sql_query( $conn, "UPDATE team SET $tnin = 0 WHERE id = $uid" );
+	sql_query( $conn, "UPDATE char_team SET $tnin = 0 WHERE char_id = $uid" );
 }
 
 ?>
@@ -55,47 +55,47 @@ if (
 	and from strangers sorted together
 </p>
 
-<h3>Team <?= $name ?></h3>
+<h3>Team <?= $username ?></h3>
 
 <table align="center" style="text-align: center" cellpadding="8" cellspacing="0">
 	<form method="POST">
 		<tr>
-			<td><?= $style ?></td>
-			<td><?= $name ?></td>
-			<td>Lv <?= $level ?></td>
+			<td><?= $style_name ?></td>
+			<td><?= $username ?></td>
+			<td>Lv <?= $char_level ?></td>
 		</tr>
 		
 		<?php
 		
-		if ( $nin1 > 0 || $nin2 > 0 )
+		if ( $teammate1_id > 0 || $teammate2_id > 0 )
 		{
 			$team = sql_query(
 				$conn,
-				"SELECT style, u.id, name, level
-				FROM clan c
-				JOIN user u ON c.id = u.id
-				JOIN atts a ON a.id = u.id
-				WHERE u.id = $nin1
-				OR u.id = $nin2
-				ORDER BY level DESC" );
+				'SELECT style_name, u.char_id, username, char_level
+				FROM style_attributes c
+				JOIN game_users       u ON c.char_id = u.char_id
+				JOIN char_attributes  a ON a.char_id = u.char_id
+				WHERE u.char_id = '. $teammate1_id .'
+				OR    u.char_id = '. $teammate2_id .'
+				ORDER BY char_level DESC' );
 			
 			while ( $member = mysqli_fetch_assoc($team) )
 			{
 				?>
 				<tr>
 					
-					<th><?= $member['style'] ?></th>
+					<th><?= $member['style_name'] ?></th>
 					
 					<td>
-						<a href="nin?id=<?= $member['id'] ?>">
-							<?=	$member['name'] ?>
+						<a href="nin?id=<?= $member['char_id'] ?>">
+							<?=	$member['username'] ?>
 						</a>
 					</td>
 					
-					<td>Lv <?= $member['level'] ?></td>
+					<td>Lv <?= $member['char_level'] ?></td>
 					
 					<td>
-						<input type="submit" name="<?= $member['id'] ?>" value="Sack" />
+						<input type="submit" name="<?= $member['char_id'] ?>" value="Sack" />
 					</td>
 					
 				</tr>
@@ -109,9 +109,9 @@ if (
 
 <?php
 
-if ( $nin1 > 0 && $nin2 > 0 )
+if ( $teammate1_id > 0 && $teammate2_id > 0 )
 {
-	if ( $rank < 'D' && $joint > 0 )
+	if ( $char_rank < 'D' && $team_exam_phase > 0 )
 	{
 		?>
 		<h3>
@@ -119,7 +119,7 @@ if ( $nin1 > 0 && $nin2 > 0 )
 		</h3>
 		<?php
 	}
-	else if ( $rank == 'D' && $joint == 0 )
+	else if ( $char_rank == 'D' && $team_exam_phase == 0 )
 	{
 		?>
 		<h3>
@@ -128,7 +128,7 @@ if ( $nin1 > 0 && $nin2 > 0 )
 		<?php
 	}
 }
-else if ( $joint == 0 )
+else if ( $team_exam_phase == 0 )
 {
 	?>
 	<h3>
@@ -141,10 +141,10 @@ else
 	echo "Train jutsu and do battle";
 }
 
-if ( $joint == 0 )
+if ( $team_exam_phase == 0 )
 {
 	?>
-	<h3>Rank-<?= $rank ?></h3>
+	<h3>Rank-<?= $char_rank ?></h3>
 	
 	<table align="center" style="text-align: center;" cellpadding="8" cellspacing="0">
 		<form method="POST">
@@ -152,14 +152,14 @@ if ( $joint == 0 )
 			
 			$picks = sql_query(
 				$conn,
-				"SELECT u.id, name, level, style
-				FROM user u
-				JOIN atts a ON u.id = a.id
-				JOIN clan c ON u.id = c.id
-				WHERE rank = '$rank'
-				AND level <= $level
-				AND u.id NOT IN($uid, $nin1, $nin2)
-				ORDER BY u.id DESC
+				"SELECT u.char_id, username, char_level, style_name
+				FROM game_users       u
+				JOIN char_attributes  a ON u.char_id = a.char_id
+				JOIN style_attributes c ON u.char_id = c.char_id
+				WHERE char_rank = '$char_rank'
+				AND char_level <= $char_level
+				AND u.char_id NOT IN($uid, $teammate1_id, $teammate2_id)
+				ORDER BY u.char_id DESC
 				LIMIT 25" );
 			
 			if ( mysqli_num_rows($picks) < 1 )
@@ -182,25 +182,25 @@ if ( $joint == 0 )
 					?>
 					<tr>
 						
-						<th><?= $row['style'] ?></th>
+						<th><?= $row['style_name'] ?></th>
 						
 						<td>
-							<a href="nin?id=<?= $row['id'] ?>">
-								<?= $row['name'] ?>
+							<a href="nin?id=<?= $row['char_id'] ?>">
+								<?= $row['username'] ?>
 							</a>
 						</td>
 						
-						<td><?= $row['level'] ?></td>
+						<td><?= $row['char_level'] ?></td>
 						
 						<td>
 							<input
 								type="submit"
-								name="<?= $row['id'] ?>"
+								name="<?= $row['char_id'] ?>"
 								value="Pick"
 								
 								<?php
 								
-								if ( $nin1 > 0 && $nin2 > 0 )
+								if ( $teammate1_id > 0 && $teammate2_id > 0 )
 								{
 									?>
 									title="Team is full" disabled
