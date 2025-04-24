@@ -2,14 +2,16 @@
 
 require_once 'headeron.php';
 
-$getplayers = sql_query(
-	$conn,
-	"SELECT u.char_id, char_rank, username, char_level, style_name
-	FROM game_users       u
-	JOIN char_attributes  a ON u.char_id = a.char_id
-	JOIN style_attributes c ON u.char_id = c.char_id
-	ORDER BY char_rank, char_level DESC
-	LIMIT 25" );
+$nins = mysqli_fetch_all(
+	sql_query(
+		$conn,
+		'SELECT u.char_id, char_rank, username, char_level, style_name
+		FROM game_users       u
+		JOIN char_attributes  a ON u.char_id = a.char_id
+		JOIN style_attributes c ON u.char_id = c.char_id
+		ORDER BY char_rank, char_level DESC
+		LIMIT 25' ),
+	MYSQLI_ASSOC );
 
 ?>
 
@@ -27,7 +29,7 @@ $getplayers = sql_query(
 	<?php
 	
 	$r = 0;
-	while ( $row = mysqli_fetch_assoc($getplayers) )
+	foreach ( $nins as $row )
 	{
 		$r++;
 		?>

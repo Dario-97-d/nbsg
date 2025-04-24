@@ -12,22 +12,49 @@ extract( sql_mfa(
 
 if ( $teammate1_id < 1 || $teammate2_id < 1 ) exiter("team");
 
-$members = sql_query(
-	$conn,
-	"SELECT char_level, c.*, username
-	FROM char_attributes  a
-	JOIN style_attributes c ON a.char_id = c.char_id
-	JOIN game_users       u ON a.char_id = u.char_id
-	WHERE a.char_id IN ($uid, $teammate1_id, $teammate2_id)
-	ORDER BY
-		CASE a.char_id
-			WHEN $uid          THEN 1
-			WHEN $teammate1_id THEN 2
-			WHEN $teammate2_id THEN 3
-		END" );
+$team_members = mysqli_fetch_all(
+	sql_query(
+		$conn,
+		'SELECT char_level, c.*, username
+		FROM char_attributes  a
+		JOIN style_attributes c ON a.char_id = c.char_id
+		JOIN game_users       u ON a.char_id = u.char_id
+		WHERE a.char_id IN ('. $uid .', '. $teammate1_id .', '. $teammate2_id .')
+		ORDER BY
+			CASE a.char_id
+				WHEN '. $uid          .' THEN 1
+				WHEN '. $teammate1_id .' THEN 2
+				WHEN '. $teammate2_id .' THEN 3
+			END' ),
+	MYSQLI_ASSOC );
 
-$nin_1 = $teammate1_id;
-$nin_2 = $teammate2_id;
+$team_kenjutsu =
+	$team_members[0]['kenjutsu'] +
+	$team_members[1]['kenjutsu'] +
+	$team_members[2]['kenjutsu'];
+$team_shuriken =
+	$team_members[0]['shuriken'] +
+	$team_members[1]['shuriken'] +
+	$team_members[2]['shuriken'];
+$team_taijutsu =
+	$team_members[0]['taijutsu'] +
+	$team_members[1]['taijutsu'] +
+	$team_members[2]['taijutsu'];
+$team_ninjutsu =
+	$team_members[0]['ninjutsu'] +
+	$team_members[1]['ninjutsu'] +
+	$team_members[2]['ninjutsu'];
+$team_genjutsu =
+	$team_members[0]['genjutsu'] +
+	$team_members[1]['genjutsu'] +
+	$team_members[2]['genjutsu'];
+
+$bar_scale = 253 / (
+	$team_kenjutsu +
+	$team_shuriken +
+	$team_taijutsu +
+	$team_ninjutsu +
+	$team_genjutsu );
 
 ?>
 
@@ -48,7 +75,7 @@ $nin_2 = $teammate2_id;
 	<?php
 	
 	$i = 0;
-	while ( $row = mysqli_fetch_assoc($members) )
+	foreach ( $team_members as $row )
 	{
 		?>
 		<tr>
@@ -64,19 +91,7 @@ $nin_2 = $teammate2_id;
 			<td><?= $row['char_level'] ?></td>
 			
 			<th>
-				<?=
-				
-				( ${'kenjutsu'. $i} = $row['kenjutsu'] )
-				." • ".
-				( ${'shuriken'. $i} = $row['shuriken'] )
-				." • ".
-				( ${'taijutsu'. $i} = $row['taijutsu'] )
-				." • ".
-				( ${'ninjutsu'. $i} = $row['ninjutsu'] )
-				." • ".
-				( ${'genjutsu'. $i} = $row['genjutsu'] )
-				
-				?>
+				<?= $row['kenjutsu'] .' • '. $row['shuriken'] .' • '. $row['taijutsu'] .' • '. $row['ninjutsu'] .' • '. $row['genjutsu'] ?>
 			</th>
 			
 		</tr>
@@ -91,33 +106,8 @@ $nin_2 = $teammate2_id;
 <h3>
 	Joint Skills
 	<br />
-	<?=
-		( $kenjutsu0 + $kenjutsu1 + $kenjutsu2 )
-		.' • '.
-		( $shuriken0 + $shuriken1 + $shuriken2 )
-		.' • '.
-		( $taijutsu0 + $taijutsu1 + $taijutsu2 )
-		.' • '.
-		( $ninjutsu0 + $ninjutsu1 + $ninjutsu2 )
-		.' • '.
-		( $genjutsu0 + $genjutsu1 + $genjutsu2 )
-	?>
+	<?= $team_kenjutsu .' • '. $team_shuriken .' • '. $team_taijutsu .' • '. $team_ninjutsu .' • '. $team_genjutsu ?>
 </h3>
-
-<?php
-
-$ratio = 253 / (
-	$kenjutsu0 + $kenjutsu1 + $kenjutsu2
-	+
-	$shuriken0 + $shuriken1 + $shuriken2
-	+
-	$taijutsu0 + $taijutsu1 + $taijutsu2
-	+
-	$ninjutsu0 + $ninjutsu1 + $ninjutsu2
-	+
-	$genjutsu0 + $genjutsu1 + $genjutsu2 );
-
-?>
 
 <table class="table-team" align="center">
 	
@@ -125,7 +115,7 @@ $ratio = 253 / (
 		<th>Kenjutsu</th>
 		
 		<td>
-			<div id="ttd" style="width: <?= round( ( $kenjutsu0 + $kenjutsu1 + $kenjutsu2 ) * $ratio ) ?>px"></div>
+			<div id="ttd" style="width: <?= round( $team_kenjutsu * $bar_scale ) ?>px"></div>
 		</td>
 	</tr>
 	
@@ -133,7 +123,7 @@ $ratio = 253 / (
 		<th>Shuriken</th>
 		
 		<td>
-			<div id="ttd" style="width: <?= round( ( $shuriken0 + $shuriken1 + $shuriken2 ) * $ratio ) ?>px"></div>
+			<div id="ttd" style="width: <?= round( $team_shuriken * $bar_scale ) ?>px"></div>
 		</td>
 	</tr>
 	
@@ -141,7 +131,7 @@ $ratio = 253 / (
 		<th>Taijutsu</th>
 		
 		<td>
-			<div id="ttd" style="width: <?= round( ( $taijutsu0 + $taijutsu1 + $taijutsu2 ) * $ratio ) ?>px"></div>
+			<div id="ttd" style="width: <?= round( $team_taijutsu * $bar_scale ) ?>px"></div>
 		</td>
 	</tr>
 	
@@ -149,7 +139,7 @@ $ratio = 253 / (
 		<th>Ninjutsu</th>
 		
 		<td>
-			<div id="ttd" style="width: <?= round( ( $ninjutsu0 + $ninjutsu1 + $ninjutsu2 ) * $ratio ) ?>px"></div>
+			<div id="ttd" style="width: <?= round( $team_ninjutsu * $bar_scale ) ?>px"></div>
 		</td>
 	</tr>
 	
@@ -157,7 +147,7 @@ $ratio = 253 / (
 		<th>Genjutsu</th>
 		
 		<td>
-			<div id="ttd" style="width: <?= round( ( $genjutsu0 + $genjutsu1 + $genjutsu2 ) * $ratio ) ?>px"></div>
+			<div id="ttd" style="width: <?= round( $team_genjutsu * $bar_scale ) ?>px"></div>
 		</td>
 	</tr>
 	
@@ -167,7 +157,7 @@ $ratio = 253 / (
 
 <form action="teamexamjoint" method="POST">
 	
-	<input type="submit" name="<?= $nin_1 .'-'. $nin_2 ?>" value="Team Battle" />
+	<input type="submit" name="<?= $teammate1_id .'-'. $teammate2_id ?>" value="Team Battle" />
 	
 </form>
 

@@ -28,6 +28,19 @@ extract(
 		WHERE u.char_id = '. $pid ),
 	EXTR_PREFIX_ALL, 'p' );
 
+$can_train_with_nin =
+	$skill_points > 4
+	&&
+	$pid != $uid
+	&&
+	$skill_training == ''
+	&&
+	$style_name === $p_style_name
+	&& (
+		$char_level - $p_char_level <= 5
+		&&
+		$p_char_level - $char_level <= 5 )
+
 ?>
 
 <h1><?= $p_username ?></h1>
@@ -71,14 +84,7 @@ if ( $uid != $pid )
 
 <?php
 
-if (
-	$skill_points > 4
-	&& $pid != $uid
-	&& $style_name == $p_style_name
-	&& (
-		$char_level - $p_char_level <= 5
-		&& $p_char_level - $char_level <= 5 )
-	&& $skill_training == '' )
+if ( $can_train_with_nin )
 {
 	?>
 	<form action="clantrainskill" method="POST">
@@ -90,7 +96,7 @@ if (
 			<option>Taijutsu</option>
 			<?php
 			
-			if ( $style_name != 'Tameru' )
+			if ( $style_name !== 'Tameru' )
 			{
 				?>
 				<option>Ninjutsu</option>

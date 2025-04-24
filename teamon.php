@@ -11,6 +11,42 @@ extract( sql_mfa(
 	JOIN char_team        t ON u.char_id = t.char_id
 	WHERE u.char_id = '. $uid ) );
 
+$has_any_teammate = $teammate_id1 > 0 || $teammate_id2 > 0;
+
+if ( $has_any_teammate )
+{
+	$team_members = mysqli_fetch_all(
+		sql_query(
+			$conn,
+			'SELECT style_name, u.char_id, username, char_level
+			FROM style_attributes c
+			JOIN game_users       u ON c.char_id = u.char_id
+			JOIN char_attributes  a ON a.char_id = u.char_id
+			WHERE u.char_id = '. $teammate1_id .'
+			OR    u.char_id = '. $teammate2_id .'
+			ORDER BY char_level DESC' ),
+		MYSQLI_ASSOC );
+}
+
+$is_team_full = $teammate1_id > 0 && $teammate2_id > 0;
+
+if ( $is_team_full )
+{
+	$nins_eligible_for_team = mysqli_fetch_all(
+		sql_query(
+			$conn,
+			'SELECT u.char_id, username, char_level, style_name
+			FROM game_users       u
+			JOIN char_attributes  a ON u.char_id = a.char_id
+			JOIN style_attributes c ON u.char_id = c.char_id
+			WHERE char_rank = \'D\'
+			AND   char_level <= '. $char_level .'
+			AND   u.char_id NOT IN('. $uid .', '. $teammate1_id .', '. $teammate2_id .')
+			ORDER BY u.char_id DESC
+			LIMIT 25' ),
+		MYSQLI_ASSOC );
+}
+
 ?>
 
 <h1>Team</h1>
@@ -35,19 +71,9 @@ extract( sql_mfa(
 		
 		<?php
 		
-		if ( $teammate_id1 > 0 || $teammate_id2 > 0 )
+		if ( $has_any_teammate )
 		{
-			$team = sql_query(
-				$conn,
-				'SELECT style_name, u.char_id, username, char_level
-				FROM style_attributes c
-				JOIN game_users       u ON c.char_id = u.char_id
-				JOIN char_attributes  a ON a.char_id = u.char_id
-				WHERE u.char_id = '. $teammate1_id .'
-				OR    u.char_id = '. $teammate2_id .'
-				ORDER BY char_level DESC' );
-			
-			while ( $member = mysqli_fetch_assoc($team) )
+			foreach ( $team_members as $row )
 			{
 				?>
 				<tr>
@@ -77,7 +103,7 @@ extract( sql_mfa(
 
 <?php
 
-if ( $teammate1_id > 0 && $teammate2_id > 0 )
+if ( $is_team_full )
 {
 	?>
 	
@@ -95,21 +121,11 @@ if ( $teammate1_id > 0 && $teammate2_id > 0 )
 		<form method="POST">
 			<?php
 			
-			$picks = sql_query(
-				$conn,
-				'SELECT u.char_id, username, char_level, style_name
-				FROM game_users       u
-				JOIN char_attributes  a ON u.char_id = a.char_id
-				JOIN style_attributes c ON u.char_id = c.char_id
-				WHERE char_rank = \'D\'
-				AND   char_level <= '. $char_level .'
-				AND   u.char_id NOT IN('. $uid .', '. $teammate1_id .', '. $teammate2_id .')
-				ORDER BY u.char_id DESC
-				LIMIT 25' );
-			
-			if ( mysqli_num_rows($picks) < 1 )
+			if ( empty( $nins_eligible_for_team ) )
 			{
-				echo "No nin available";
+				?>
+				No nin available
+				<?php
 			}
 			else
 			{
@@ -122,7 +138,7 @@ if ( $teammate1_id > 0 && $teammate2_id > 0 )
 				</tr>
 				<?php
 				
-				while ( $row = mysqli_fetch_assoc($picks) )
+				foreach ( $nins_eligible_for_team as $row )
 				{
 					?>
 					<tr>
@@ -142,7 +158,7 @@ if ( $teammate1_id > 0 && $teammate2_id > 0 )
 								type="submit"
 								name="<?= $row['char_id'] ?>"
 								value="Pick"
-								<?= ( $teammate1_id > 0 && $teammate2_id > 0 ? ' title="Team is full"disabled' : '' ) ?>
+								<?= ( $teammate1_id > 0 && $teammate2_id > 0 ? ' title="Team is full" disabled' : '' ) ?>
 							/>
 						</td>
 						

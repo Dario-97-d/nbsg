@@ -146,6 +146,8 @@ else
 	}
 }
 
+$skills_as_string = implode(",", $skills);
+
 ?>
 
 <h1><?= $clan ?></h1>
@@ -181,7 +183,7 @@ else
 		<tr>
 			<form method="POST">
 				<input type="hidden" name="xc" value="<?= $clan ?>" />
-				<input type="hidden" name="skills" value="<?= implode(",", $skills) ?>" />
+				<input type="hidden" name="skills" value="<?= $skills_as_string ?>" />
 				
 				<td><input type="submit" name="kenjutsu" value="+1" /></td>
 				<td><input type="submit" name="shuriken" value="+1" /></td>
@@ -229,7 +231,7 @@ else
 	<br />
 	<form method="POST">
 		<input type="hidden" name="xc" value="<?= $clan ?>" />
-		<input type="hidden" name="skills" value="<?= implode(",", $skills) ?>" />
+		<input type="hidden" name="skills" value="<?= $skills_as_string ?>" />
 		
 		<input type="submit" name="start" value="Start" />
 	</form>

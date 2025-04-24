@@ -21,19 +21,206 @@ if ( min( $teammate1_level, $teammate2_level ) > $user_level )
 }
 */
 
-$members = sql_query(
+$team_members = mysqli_fetch_all(
+	sql_query(
+		$conn,
+		'SELECT char_level, c.*, username
+		FROM char_attributes  a
+		JOIN style_attributes c ON a.char_id = c.char_id
+		JOIN game_users       u ON a.char_id = u.char_id
+		WHERE a.char_id IN ('. $uid .', '. $teammate1_id .', '. $teammate2_id .')
+		ORDER BY
+			CASE a.char_id
+				WHEN '. $uid          .' THEN 1
+				WHEN '. $teammate1_id .' THEN 2
+				WHEN '. $teammate2_id .' THEN 3
+			END' ),
+	MYSQLI_ASSOC );
+
+$team_kenjutsu = $team_members[0]['kenjutsu'] + $team_members[1]['kenjutsu'] + $team_members[2]['kenjutsu'];
+$team_shuriken = $team_members[0]['shuriken'] + $team_members[1]['shuriken'] + $team_members[2]['shuriken'];
+$team_taijutsu = $team_members[0]['taijutsu'] + $team_members[1]['taijutsu'] + $team_members[2]['taijutsu'];
+$team_ninjutsu = $team_members[0]['ninjutsu'] + $team_members[1]['ninjutsu'] + $team_members[2]['ninjutsu'];
+$team_genjutsu = $team_members[0]['genjutsu'] + $team_members[1]['genjutsu'] + $team_members[2]['genjutsu'];
+
+$initial_kenjutsu = $team_members[0]['kenjutsu'];
+$initial_shuriken = $team_members[0]['shuriken'];
+$initial_taijutsu = $team_members[0]['taijutsu'];
+$initial_ninjutsu = $team_members[0]['ninjutsu'];
+$initial_genjutsu = $team_members[0]['genjutsu'];
+
+$up_kenjutsu_points =
+	max(
+		round(
+			(
+				$team_members[0]['kenjutsu'] * (
+					$team_members[1]['kenjutsu'] + $team_members[2]['kenjutsu'] - $team_members[0]['kenjutsu']
+				) / (
+					$team_members[0]['char_level'] * $team_kenjutsu / (
+						$team_members[1]['char_level'] + $team_members[2]['char_level']
+					)
+				)
+			)
+		),
+	0 );
+
+$up_shuriken_points =
+	max(
+		round(
+			(
+				$team_members[0]['shuriken'] * (
+					$team_members[1]['shuriken'] + $team_members[2]['shuriken'] - $team_members[0]['shuriken']
+				) / (
+					$team_members[0]['char_level'] * $team_shuriken / (
+						$team_members[1]['char_level'] + $team_members[2]['char_level']
+					)
+				)
+			)
+		),
+	0 );
+
+$up_taijutsu_points =
+	max(
+		round(
+			(
+				$team_members[0]['taijutsu'] * (
+					$team_members[1]['taijutsu'] + $team_members[2]['taijutsu'] - $team_members[0]['taijutsu']
+				) / (
+					$team_members[0]['char_level'] * $team_taijutsu / (
+						$team_members[1]['char_level'] + $team_members[2]['char_level']
+					)
+				)
+			)
+		),
+	0 );
+
+$up_ninjutsu_points =
+	max(
+		round(
+			(
+				$team_members[0]['ninjutsu'] * (
+					$team_members[1]['ninjutsu'] + $team_members[2]['ninjutsu'] - $team_members[0]['ninjutsu']
+				) / (
+					$team_members[0]['char_level'] * $team_ninjutsu / (
+						$team_members[1]['char_level'] + $team_members[2]['char_level']
+					)
+				)
+			)
+		),
+	0 );
+
+$up_genjutsu_points =
+	max(
+		round(
+			(
+				$team_members[0]['genjutsu'] * (
+					$team_members[1]['genjutsu'] + $team_members[2]['genjutsu'] - $team_members[0]['genjutsu']
+				) / (
+					$team_members[0]['char_level'] * $team_genjutsu / (
+						$team_members[1]['char_level'] + $team_members[2]['char_level']
+					)
+				)
+			)
+		),
+	0);
+
+if ( $team_members[0]['style_name'] == 'Tameru' )
+{
+	$up_ninjutsu_points0 = 0;
+	$up_genjutsu_points0 = 0;
+}
+
+$up_kenjutsu = 0;
+$up_shuriken = 0;
+$up_taijutsu = 0;
+$up_ninjutsu = 0;
+$up_genjutsu = 0;
+
+if ( $up_kenjutsu_points > 0 )
+{
+	$kenjutsu_points += $up_kenjutsu_points;
+	
+	while ( $kenjutsu_points >= $team_members[0]['kenjutsu'] )
+	{
+		$kenjutsu_points -= $team_members[0]['kenjutsu'];
+		$up_kenjutsu++;
+	}
+	
+	$team_members[0]['kenjutsu'] += $up_kenjutsu;
+}
+
+if ( $up_shuriken_points > 0 )
+{
+	$shuriken_points += $up_shuriken_points;
+	
+	while ( $shuriken_points >= $team_members[0]['shuriken'] )
+	{
+		$shuriken_points -= $team_members[0]['shuriken'];
+		$up_shuriken++;
+	}
+	
+	$team_members[0]['shuriken'] += $up_shuriken;
+}
+
+if ( $up_taijutsu_points > 0 )
+{
+	$taijutsu_points += $up_taijutsu_points;
+	
+	while ( $taijutsu_points >= $team_members[0]['taijutsu'] )
+	{
+		$taijutsu_points -= $team_members[0]['taijutsu'];
+		$up_taijutsu++;
+	}
+	
+	$team_members[0]['taijutsu'] += $up_taijutsu;
+}
+
+if ( $up_ninjutsu_points > 0 )
+{
+	$ninjutsu_points += $up_ninjutsu_points;
+	
+	while ( $ninjutsu_points >= $team_members[0]['ninjutsu'] )
+	{
+		$ninjutsu_points -= $team_members[0]['ninjutsu'];
+		$up_ninjutsu++;
+	}
+	
+	$team_members[0]['ninjutsu'] += $up_ninjutsu;
+}
+
+if ( $up_genjutsu_points > 0 )
+{
+	$genjutsu_points += $up_genjutsu_points;
+	
+	while ( $genjutsu_points >= $team_members[0]['genjutsu'] )
+	{
+		$genjutsu_points -= $team_members[0]['genjutsu'];
+		$up_genjutsu++;
+	}
+	
+	$team_members[0]['genjutsu'] += $up_genjutsu;
+}
+
+sql_query(
 	$conn,
-	"SELECT char_level, c.*, username
-	FROM char_attributes  a
-	JOIN style_attributes c ON a.char_id = c.char_id
-	JOIN game_users       u ON a.char_id = u.char_id
-	WHERE a.char_id IN ($uid, $teammate1_id, $teammate2_id)
-	ORDER BY
-		CASE a.char_id
-			WHEN $uid          THEN 1
-			WHEN $teammate1_id THEN 2
-			WHEN $teammate2_id THEN 3
-		END" );
+	'UPDATE style_attributes SET
+		kenjutsu = kenjutsu + '. $up_kenjutsu .',
+		shuriken = shuriken + '. $up_shuriken .',
+		taijutsu = taijutsu + '. $up_taijutsu .',
+		ninjutsu = ninjutsu + '. $up_ninjutsu .',
+		genjutsu = genjutsu + '. $up_genjutsu .',
+		skill_points = skill_points - 0
+	WHERE char_id = '. $uid );
+
+sql_query(
+	$conn,
+	'UPDATE skill_training SET
+		kenjutsu_points = '. $kenjutsu_points .',
+		shuriken_points = '. $shuriken_points .',
+		taijutsu_points = '. $taijutsu_points .',
+		ninjutsu_points = '. $ninjutsu_points .',
+		genjutsu_points = '. $genjutsu_points .'
+	WHERE char_id = '. $uid );
 
 ?>
 
@@ -50,14 +237,14 @@ $members = sql_query(
 	<?php
 	
 	$i = 0;
-	while ( $row = mysqli_fetch_assoc($members) )
+	foreach ( $team_members as $row )
 	{
 		?>
 		<tr>
 			
 			<td><?= $row['style_name'] ?></td>
 			
-			<td><?= ( ${'char_level'. $i } = $row['char_level'] ) ?></td>
+			<td><?= $row['char_level'] ?></td>
 			
 			<td>
 				<a href="nin?id=<?= $row['char_id'] ?>">
@@ -66,21 +253,11 @@ $members = sql_query(
 			</td>
 			
 			<th>
-				<?= ( ${'kenjutsu'. $i} = $row['kenjutsu'] ) ?>
-				 • 
-				<?= ( ${'shuriken'. $i} = $row['shuriken'] ) ?>
-				 • 
-				<?= ( ${'taijutsu'. $i} = $row['taijutsu'] ) ?>
-				 • 
-				<?= ( ${'ninjutsu'. $i} = $row['ninjutsu'] ) ?>
-				 • 
-				<?= ( ${'genjutsu'. $i} = $row['genjutsu'] ) ?>
+				<?= $row['kenjutsu'] .' • '. $row['shuriken'] .' • '. $row['taijutsu'] .' • '. $row['ninjutsu'] .' • '. $row['genjutsu'] ?>
 			</th>
 			
 		</tr>
 		<?php
-		
-		${'style_name'. $i} = $row['style_name'];
 		
 		$i++;
 	}
@@ -90,143 +267,10 @@ $members = sql_query(
 
 <h3>Joint Skills</h3>
 
-<?php
+<?= $team_kenjutsu .' • '. $team_shuriken .' • '. $team_taijutsu .' • '. $team_ninjutsu .' • '. $team_genjutsu ?>
 
-echo
-	( $kenjutsu = $kenjutsu0 + $kenjutsu1 + $kenjutsu2 )
-	.' • '.
-	( $shuriken = $shuriken0 + $shuriken1 + $shuriken2 )
-	.' • '.
-	( $taijutsu = $taijutsu0 + $taijutsu1 + $taijutsu2 )
-	.' • '.
-	( $ninjutsu = $ninjutsu0 + $ninjutsu1 + $ninjutsu2 )
-	.' • '.
-	( $genjutsu = $genjutsu0 + $genjutsu1 + $genjutsu2 );
-
-$kenjutsui = $kenjutsu0;
-$shurikeni = $shuriken0;
-$taijutsui = $taijutsu0;
-$ninjutsui = $ninjutsu0;
-$genjutsui = $genjutsu0;
-
-$up_kenjutsu =
-	max(
-		round(
-			(
-				$kenjutsu0 * (
-					$kenjutsu1 + $kenjutsu2 - $kenjutsu0
-				) / (
-					$char_level0 * $kenjutsu / (
-						$char_level1 + $char_level2
-					)
-				)
-			)
-		),
-	0 );
-
-$up_shuriken =
-	max(
-		round(
-			(
-				$shuriken0 * (
-					$shuriken1 + $shuriken2 - $shuriken0
-				) / (
-					$char_level0 * $shuriken / (
-						$char_level1 + $char_level2
-					)
-				)
-			)
-		),
-	0);
-
-$up_taijutsu =
-	max(
-		round(
-			(
-				$taijutsu0 * (
-					$taijutsu1 + $taijutsu2 - $taijutsu0
-				) / (
-					$char_level0 * $taijutsu / (
-						$char_level1 + $char_level2
-					)
-				)
-			)
-		),
-	0);
-
-$up_ninjutsu =
-	max(
-		round(
-			(
-				$ninjutsu0 * (
-					$ninjutsu1 + $ninjutsu2 - $ninjutsu0
-				) / (
-					$char_level0 * $ninjutsu / (
-						$char_level1 + $char_level2
-					)
-				)
-			)
-		),
-	0);
-
-$up_genjutsu =
-	max(
-		round(
-			(
-				$genjutsu0 * (
-					$genjutsu1 + $genjutsu2 - $genjutsu0
-				) / (
-					$char_level0 * $genjutsu / (
-						$char_level1 + $char_level2
-					)
-				)
-			)
-		),
-	0);
-
-if ( $style_name0 == 'Tameru' )
-{
-	$up_ninjutsu0 = 0;
-	$up_genjutsu0 = 0;
-}
-
-if ( $up_kenjutsu > 0 ) $kenjutsu_points += $up_kenjutsu;
-if ( $up_shuriken > 0 ) $shuriken_points += $up_shuriken;
-if ( $up_taijutsu > 0 ) $taijutsu_points += $up_taijutsu;
-if ( $up_ninjutsu > 0 ) $ninjutsu_points += $up_ninjutsu;
-if ( $up_genjutsu > 0 ) $genjutsu_points += $up_genjutsu;
-
-while ( $kenjutsu_points >= $kenjutsu0 ) { $kenjutsu_points -= $kenjutsu0; $kenjutsu0++; }
-while ( $shuriken_points >= $shuriken0 ) { $shuriken_points -= $shuriken0; $shuriken0++; }
-while ( $taijutsu_points >= $taijutsu0 ) { $taijutsu_points -= $taijutsu0; $taijutsu0++; }
-
-while ( $ninjutsu_points >= $ninjutsu0 && $ninjutsu0 > 0 ) { $ninjutsu_points -= $ninjutsu0; $ninjutsu0++; }
-while ( $genjutsu_points >= $genjutsu0 && $genjutsu0 > 0 ) { $genjutsu_points -= $genjutsu0; $genjutsu0++; }
-
-sql_query(
-	$conn,
-	'UPDATE style_attributes SET
-		kenjutsu = '. $kenjutsu0 .',
-		shuriken = '. $shuriken0 .',
-		taijutsu = '. $taijutsu0 .',
-		ninjutsu = '. $ninjutsu0 .',
-		genjutsu = '. $genjutsu0 .',
-		skill_points = skill_points - 0
-	WHERE char_id = '. $uid );
-
-sql_query(
-	$conn,
-	'UPDATE skill_training SET
-		kenjutsu_points = '. $kenjutsu_points .',
-		shuriken_points = '. $shuriken_points .',
-		taijutsu_points = '. $taijutsu_points .',
-		ninjutsu_points = '. $ninjutsu_points .',
-		genjutsu_points = '. $genjutsu_points .'
-	WHERE char_id = '. $uid );
-
-?>
-
-<br /><br />
+<br />
+<br />
 
 <table class="table-skill" align="center">
 	<tr>
@@ -238,11 +282,11 @@ sql_query(
 	</tr>
 	
 	<tr>
-		<td><?= $kenjutsu0 ?></td>
-		<td><?= $shuriken0 ?></td>
-		<td><?= $taijutsu0 ?></td>
-		<td><?= $ninjutsu0 ?></td>
-		<td><?= $genjutsu0 ?></td>
+		<td><?= $team_members[0]['kenjutsu'] ?></td>
+		<td><?= $team_members[0]['shuriken'] ?></td>
+		<td><?= $team_members[0]['taijutsu'] ?></td>
+		<td><?= $team_members[0]['ninjutsu'] ?></td>
+		<td><?= $team_members[0]['genjutsu'] ?></td>
 	</tr>
 </table>
 
@@ -252,95 +296,95 @@ sql_query(
 	
 	<tr>
 		
-		<th><?= ( $kenjutsu0 - $kenjutsui ? '+'. ( $kenjutsu0 - $kenjutsui ) : '' ) ?></th>
+		<th><?= ( $up_kenjutsu ? '+'. $up_kenjutsu : '' ) ?></th>
 		
 		<th>Kenjutsu</th>
 		
 		<td>
 			<div id="bp">
-				<div id="bt" style="width: <?= round( $kenjutsu_points * 100 / $kenjutsu0 ) ?>px;"></div>
+				<div id="bt" style="width: <?= round( $kenjutsu_points * 100 / $team_members[0]['kenjutsu'] ) ?>px;"></div>
 			</div>
 		</td>
 		
-		<th><?= $kenjutsu_points .'/'. $kenjutsu0 ?></th>
+		<th><?= $kenjutsu_points .'/'. $team_members[0]['kenjutsu'] ?></th>
 		
-		<th><?= ( $up_kenjutsu > 0 ? '+'. $up_kenjutsu .' train' : '' ) ?></th>
+		<th><?= ( $up_kenjutsu_points > 0 ? '+'. $up_kenjutsu_points .' train' : '' ) ?></th>
 	</tr>
 	
 	<tr>
 		
-		<th><?= ( $shuriken0 - $shurikeni ? '+'. ( $shuriken0 - $shurikeni ) : '' ) ?></th>
+		<th><?= ( $up_shuriken ? '+'. $up_shuriken : '' ) ?></th>
 		
 		<th>Shuriken</th>
 		
 		<td>
 			<div id="bp">
-				<div id="bt" style="width: <?= round( $shuriken_points * 100 / $shuriken0 ) ?>px;"></div>
+				<div id="bt" style="width: <?= round( $shuriken_points * 100 / $team_members[0]['shuriken'] ) ?>px;"></div>
 			</div>
 		</td>
 		
-		<th><?= $shuriken_points .'/'. $shuriken0 ?></th>
+		<th><?= $shuriken_points .'/'. $team_members[0]['shuriken'] ?></th>
 		
-		<th><?= ( $up_shuriken > 0 ? '+'. $up_shuriken .' train' : '' ) ?></th>
+		<th><?= ( $up_shuriken_points > 0 ? '+'. $up_shuriken_points .' train' : '' ) ?></th>
 		
 	</tr>
 	
 	<tr>
 		
-		<th><?= ( $taijutsu0 - $taijutsui ? '+'. ( $taijutsu0 - $taijutsui ) : '' ) ?></th>
+		<th><?= ( $up_taijutsu ? '+'. $up_tajutsu : '' ) ?></th>
 		
 		<th>Taijutsu</th>
 		
 		<td>
 			<div id="bp">
-				<div id="bt" style="width: <?= round( $taijutsu_points * 100 / $taijutsu0 ) ?>px;"></div>
+				<div id="bt" style="width: <?= round( $taijutsu_points * 100 / $team_members[0]['taijutsu'] ) ?>px;"></div>
 			</div>
 		</td>
 		
-		<th><?= $taijutsu_points .'/'. $taijutsu0 ?></th>
+		<th><?= $taijutsu_points .'/'. $team_members[0]['taijutsu'] ?></th>
 		
-		<th><?= ( $up_taijutsu > 0 ? '+'. $up_taijutsu .' train' : '' ) ?></th>
+		<th><?= ( $up_taijutsu_points > 0 ? '+'. $up_taijutsu_points .' train' : '' ) ?></th>
 		
 	</tr>
 	
 	<?php
 	
-	if ( $style_name0 != 'Tameru' )
+	if ( $team_members[0]['style_name'] != 'Tameru' )
 	{
 		?>
 		<tr>
 			
-			<th><?= ( $ninjutsu0 - $ninjutsui ? '+'. ( $ninjutsu0 - $ninjutsui ) : '' ) ?></th>
+			<th><?= ( $up_ninjutsu ? '+'. $up_ninjutsu : '' ) ?></th>
 			
 			<th>Ninjutsu</th>
 			
 			<td>
 				<div id="bp">
-					<div id="bt" style="width: <?= round( $ninjutsu_points * 100 / $ninjutsu0 ) ?>px;"></div>
+					<div id="bt" style="width: <?= round( $ninjutsu_points * 100 / $team_members[0]['ninjutsu'] ) ?>px;"></div>
 				</div>
 			</td>
 			
-			<th><?= $ninjutsu_points .'/'. $ninjutsu0 ?></th>
+			<th><?= $ninjutsu_points .'/'. $team_members[0]['ninjutsu'] ?></th>
 			
-			<th><?= ( $up_ninjutsu > 0 ? '+'. $up_ninjutsu .' train' : '' ) ?></th>
+			<th><?= ( $up_ninjutsu_points > 0 ? '+'. $up_ninjutsu_points .' train' : '' ) ?></th>
 			
 		</tr>
 		
 		<tr>
 			
-			<th><?= ( $genjutsu0 - $genjutsui ? '+'. ( $genjutsu0 - $genjutsui ) : '' ) ?></th>
+			<th><?= ( $up_genjutsu ? '+'. $up_genjutsu : '' ) ?></th>
 			
 			<th>Genjutsu</th>
 			
 			<td>
 				<div id="bp">
-					<div id="bt" style="width: <?= round( $genjutsu_points * 100 / $genjutsu0 ) ?>px;"></div>
+					<div id="bt" style="width: <?= round( $genjutsu_points * 100 / $team_members[0]['genjutsu'] ) ?>px;"></div>
 				</div>
 			</td>
 			
-			<th><?= $genjutsu_points .'/'. $genjutsu0 ?></th>
+			<th><?= $genjutsu_points .'/'. $team_members[0]['genjutsu'] ?></th>
 			
-			<th><?= ( $up_genjutsu > 0 ? '+'. $up_genjutsu .' train' : '' ) ?></th>
+			<th><?= ( $up_genjutsu_points > 0 ? '+'. $up_genjutsu_points .' train' : '' ) ?></th>
 			
 		</tr>
 		<?php

@@ -10,7 +10,22 @@ extract( sql_mfa(
 	JOIN style_attributes c ON u.char_id = c.char_id
 	WHERE u.char_id = '. $uid ) );
 
-if ( $style_name == '' ) exiter("clan");
+if ( $style_name === '' ) exiter('clan');
+
+$clan_members_to_train_with = mysqli_fetch_all(
+	sql_query(
+		$conn,
+		'SELECT username, char_level, c.*
+		FROM game_users       u
+		JOIN char_attributes  a ON u.char_id = a.char_id
+		JOIN style_attributes c on u.char_id = c.char_id
+		WHERE style_name = \''. $style_name .'\'
+		AND   char_rank  = \''. $char_rank  .'\'
+		AND   char_level BETWEEN '. $char_level .' - 5 AND '. $char_level .' + 5
+		AND   u.char_id <> '. $uid .'
+		ORDER BY char_level DESC
+		LIMIT 25' ),
+	MYSQLI_ASSOC );
 
 ?>
 
@@ -53,13 +68,11 @@ if ( $style_name == '' ) exiter("clan");
 		<option>Taijutsu</option>
 		<?php
 		
-		if ( $style_name != 'Tameru' )
+		if ( $style_name !== 'Tameru' )
 		{
 			?>
-			
 			<option>Ninjutsu</option>
 			<option>Genjutsu</option>
-			
 			<?php
 		}
 		
@@ -71,20 +84,12 @@ if ( $style_name == '' ) exiter("clan");
 	<table align="center" style="text-align: center;" cellpadding="8" cellspacing="0">
 		<?php
 		
-		$getplayers = sql_query(
-			$conn,
-			"SELECT username, char_level, c.*
-			FROM game_users       u
-			JOIN char_attributes  a ON u.char_id = a.char_id
-			JOIN style_attributes c on u.char_id = c.char_id
-			WHERE style_name = '$style_name'
-			AND   char_rank  = '$char_rank'
-			AND   char_level BETWEEN $char_level - 5 AND $char_level + 5
-			AND   u.char_id <> $uid
-			ORDER BY char_level DESC
-			LIMIT 25" );
-		
-		if ( mysqli_num_rows($getplayers) < 1 ) echo "There's no nin to train with";
+		if ( empty( $clan_members_to_train_with ) )
+		{
+			?>
+			There's no nin to train with
+			<?php
+		}
 		else
 		{
 			?>
@@ -96,7 +101,7 @@ if ( $style_name == '' ) exiter("clan");
 			</tr>
 			<?php
 			
-			while ( $row = mysqli_fetch_assoc($getplayers) )
+			foreach ( $clan_members_to_train_with as $row )
 			{
 				?>
 				<tr>

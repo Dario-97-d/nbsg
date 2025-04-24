@@ -43,6 +43,41 @@ if (
 	sql_query( $conn, "UPDATE char_team SET $tnin = 0 WHERE char_id = $uid" );
 }
 
+$has_any_teammate = $teammate1_id > 0 || $teammate2_id > 0;
+
+if ( $has_any_teammate )
+{
+	$team_members = mysqli_fetch_all(
+		sql_query(
+			$conn,
+			'SELECT style_name, u.char_id, username, char_level
+			FROM style_attributes c
+			JOIN game_users       u ON c.char_id = u.char_id
+			JOIN char_attributes  a ON a.char_id = u.char_id
+			WHERE u.char_id = '. $teammate1_id .'
+			OR    u.char_id = '. $teammate2_id .'
+			ORDER BY char_level DESC' ),
+		MYSQLI_ASSOC );
+}
+
+if ( $team_exam_phase == 0 )
+{
+	$nins_eligible_for_team = mysqli_fetch_all(
+		sql_query(
+			$conn,
+			'SELECT u.char_id, username, char_level, style_name
+			FROM game_users       u
+			JOIN char_attributes  a ON u.char_id = a.char_id
+			JOIN style_attributes c ON u.char_id = c.char_id
+			WHERE char_rank = \''. $char_rank .'\'
+			AND char_level <= '. $char_level .'
+			AND u.char_id NOT IN('. $uid .', '. $teammate1_id .', '. $teammate2_id .')
+			ORDER BY u.char_id DESC
+			LIMIT 25' ),
+		MYSQLI_ASSOC );
+
+}
+
 ?>
 
 <h1>Team</h1>
@@ -67,35 +102,25 @@ if (
 		
 		<?php
 		
-		if ( $teammate1_id > 0 || $teammate2_id > 0 )
+		if ( $has_any_teammate )
 		{
-			$team = sql_query(
-				$conn,
-				'SELECT style_name, u.char_id, username, char_level
-				FROM style_attributes c
-				JOIN game_users       u ON c.char_id = u.char_id
-				JOIN char_attributes  a ON a.char_id = u.char_id
-				WHERE u.char_id = '. $teammate1_id .'
-				OR    u.char_id = '. $teammate2_id .'
-				ORDER BY char_level DESC' );
-			
-			while ( $member = mysqli_fetch_assoc($team) )
+			foreach ( $team_members as $row )
 			{
 				?>
 				<tr>
 					
-					<th><?= $member['style_name'] ?></th>
+					<th><?= $row['style_name'] ?></th>
 					
 					<td>
-						<a href="nin?id=<?= $member['char_id'] ?>">
-							<?=	$member['username'] ?>
+						<a href="nin?id=<?= $row['char_id'] ?>">
+							<?=	$row['username'] ?>
 						</a>
 					</td>
 					
-					<td>Lv <?= $member['char_level'] ?></td>
+					<td>Lv <?= $row['char_level'] ?></td>
 					
 					<td>
-						<input type="submit" name="<?= $member['char_id'] ?>" value="Sack" />
+						<input type="submit" name="<?= $row['char_id'] ?>" value="Sack" />
 					</td>
 					
 				</tr>
@@ -150,21 +175,11 @@ if ( $team_exam_phase == 0 )
 		<form method="POST">
 			<?php
 			
-			$picks = sql_query(
-				$conn,
-				"SELECT u.char_id, username, char_level, style_name
-				FROM game_users       u
-				JOIN char_attributes  a ON u.char_id = a.char_id
-				JOIN style_attributes c ON u.char_id = c.char_id
-				WHERE char_rank = '$char_rank'
-				AND char_level <= $char_level
-				AND u.char_id NOT IN($uid, $teammate1_id, $teammate2_id)
-				ORDER BY u.char_id DESC
-				LIMIT 25" );
-			
-			if ( mysqli_num_rows($picks) < 1 )
+			if ( empty( $nins_eligible_for_team ) )
 			{
-				echo "No nin available";
+				?>
+				No nin available
+				<?php
 			}
 			else
 			{
@@ -177,7 +192,7 @@ if ( $team_exam_phase == 0 )
 				</tr>
 				<?php
 				
-				while ( $row = mysqli_fetch_assoc($picks) )
+				foreach ( $nins_eligible_for_team as $row )
 				{
 					?>
 					<tr>

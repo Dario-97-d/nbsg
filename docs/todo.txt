@@ -2,8 +2,6 @@ TODO
 
 Refactor
 
-separate backend code from frontend code
-
 use layout file and content
 -(and keep request file with html?
 -it would be nice to have something like FRONTEND_layout()

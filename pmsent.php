@@ -9,6 +9,18 @@ if ( is_int( $msg_id = array_search('Delete', $_POST) ) )
 	echo "PM deleted";
 }
 
+$messages = mysqli_fetch_all(
+	sql_query(
+		$conn,
+		'SELECT m.*, r.char_id
+		FROM       mail       m
+		LEFT  JOIN game_users s ON s.username = m.sender_username
+		RIGHT JOIN game_users r ON r.username = m.receiver_username
+		WHERE s.char_id = '. $uid .'
+		AND seen <> 2
+		ORDER BY msg_time DESC' ),
+	MYSQLI_ASSOC );
+
 ?>
 
 <h1>PMs sent</h1>
@@ -19,23 +31,15 @@ if ( is_int( $msg_id = array_search('Delete', $_POST) ) )
 
 <?php
 
-$getpms = sql_query(
-	$conn,
-	"SELECT m.*, r.char_id
-	FROM       mail       m
-	LEFT  JOIN game_users s ON s.username = m.sender_username
-	RIGHT JOIN game_users r ON r.username = m.receiver_username
-	WHERE s.char_id = $uid
-	AND seen <> 2
-	ORDER BY msg_time DESC" );
-
-if ( mysqli_num_rows($getpms) < 1 )
+if ( empty($messages) )
 {
-	echo "No sent messages to show";
+	?>
+	No sent messages to show
+	<?php
 }
 else
 {
-	while ( $row = mysqli_fetch_assoc($getpms) )
+	foreach ( $messages as $row )
 	{
 		?>
 		

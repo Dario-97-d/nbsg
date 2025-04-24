@@ -16,6 +16,16 @@ if ( is_int( $msg_id = array_search('Set as Seen', $_POST) ) )
 	echo "PM seen";
 }
 
+$messages = mysqli_fetch_all(
+	sql_query(
+		$conn,
+		'SELECT m.*, u.char_id
+		FROM      mail    m
+		LEFT JOIN game_users u ON m.receiver_username = u.username
+		WHERE char_id = '. $uid .'
+		AND seen <> 2' ),
+	MYSQLI_ASSOC );
+
 ?>
 
 <h1>Mailbox</h1>
@@ -26,21 +36,15 @@ if ( is_int( $msg_id = array_search('Set as Seen', $_POST) ) )
 
 <?php
 
-$getpms = sql_query(
-	$conn,
-	"SELECT m.*, u.char_id
-	FROM      mail    m
-	LEFT JOIN game_users u ON m.receiver_username = u.username
-	WHERE char_id = $uid
-	AND seen <> 2" );
-
-if ( mysqli_num_rows($getpms) < 1 )
+if ( empty($messages) )
 {
-	echo "Mailbox is empty";
+	?>
+	Mailbox is empty
+	<?php
 }
 else
 {
-	while( $row = mysqli_fetch_assoc($getpms) )
+	foreach( $messages as $row )
 	{
 		?>
 		

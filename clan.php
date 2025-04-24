@@ -2,9 +2,80 @@
 
 require_once 'headeron.php';
 
-extract( mysqli_fetch_assoc( sql_query( $conn, "SELECT style_name FROM style_attributes WHERE char_id = $uid" ) ) );
+extract( mysqli_fetch_assoc( sql_query( $conn, 'SELECT style_name FROM style_attributes WHERE char_id = '. $uid ) ) );
 
-if ( $style_name == '' )
+$is_user_in_clan = $style_name !== '';
+
+if ( $is_user_in_clan )
+{
+	$clan_members = mysqli_fetch_all(
+		sql_query(
+			$conn,
+			'SELECT u.char_id, char_rank, username, char_level
+			FROM game_users       u
+			JOIN char_attributes  a ON u.char_id = a.char_id
+			JOIN style_attributes c ON u.char_id = c.char_id
+			WHERE style_name = \''. $style_name .'\'
+			ORDER BY char_rank, char_level DESC
+			LIMIT 25' ),
+		MYSQLI_ASSOC );
+}
+
+?>
+
+<?php
+
+if ( $is_user_in_clan )
+{
+	?>
+	
+	<h1><?= $style_name ?></h1>
+	
+	<h4>Clan members gather in the village</h4>
+	
+	<h2>
+		<a href="clantrain">Train</a>
+	</h2>
+	
+	<table align="center" style="text-align: center;" cellpadding="8" cellspacing="0">
+		<tr>
+			<th>rank</th>
+			<th>Lv</th>
+			<th>Nin</th>
+			<th>Send</th>
+		</tr>
+		
+		<?php
+		
+		foreach ( $clan_members as $row )
+		{
+			?>
+			<tr<?= $uid === $row['char_id'] ? ' style="outline: 1px solid #0033CC;"' : '' ?>>
+				
+				<td><?= $row['char_rank'] ?></td>
+				
+				<td><?= $row['char_level'] ?></td>
+				
+				<td>
+					<a href="nin?id=<?= $row['char_id'] ?>">
+						<?= $row['username'] ?>
+					</a>
+				</td>
+				
+				<td>
+					<a href="sendpm?to=<?= $row['username'] ?>">PM</a>
+				</td>
+				
+			</tr>
+			<?php
+		}
+		
+		?>
+	</table>
+	
+	<?php
+}
+else
 {
 	?>
 	
@@ -29,66 +100,6 @@ if ( $style_name == '' )
 	<h3>
 		<a href="clanenter">Choose Clan</a>
 	</h3>
-	
-	<?php
-}
-else
-{
-	?>
-	
-	<h1><?= $style_name ?></h1>
-	
-	<h4>Clan members gather in the village</h4>
-	
-	<h2>
-		<a href="clantrain">Train</a>
-	</h2>
-	
-	<table align="center" style="text-align: center;" cellpadding="8" cellspacing="0">
-		<tr>
-			<th>rank</th>
-			<th>Lv</th>
-			<th>Nin</th>
-			<th>Send</th>
-		</tr>
-		
-		<?php
-		
-		$getplayers = sql_query(
-			$conn,
-			'SELECT u.char_id, char_rank, username, char_level
-			FROM game_users       u
-			JOIN char_attributes  a ON u.char_id = a.char_id
-			JOIN style_attributes c ON u.char_id = c.char_id
-			WHERE style_name = \''. $style_name .'\'
-			ORDER BY char_rank, char_level DESC
-			LIMIT 25' );
-		
-		while ( $row = mysqli_fetch_assoc($getplayers) )
-		{
-			?>
-			<tr<?= $uid == $row['char_id'] ? ' style="outline: 1px solid #0033CC;"' : '' ?>>
-				
-				<td><?= $row['char_rank'] ?></td>
-				
-				<td><?= $row['char_level'] ?></td>
-				
-				<td>
-					<a href="nin?id=<?= $row['char_id'] ?>">
-						<?= $row['username'] ?>
-					</a>
-				</td>
-				
-				<td>
-					<a href="sendpm?to=<?= $row['username'] ?>">PM</a>
-				</td>
-				
-			</tr>
-			<?php
-		}
-		
-		?>
-	</table>
 	
 	<?php
 }

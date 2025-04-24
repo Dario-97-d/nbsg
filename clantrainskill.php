@@ -93,34 +93,6 @@ switch (true)
 	default: $t_up = 5; break;
 }
 
-?>
-
-<h1><?= $u_style_name ?></h1>
-
-<table align="center" style="text-align: center;">
-	
-	<tr>
-		<th width="33%"><?= $u_username ?></th>
-		<th width="33%"></th>
-		<th width="33%"><?= $p_username ?></th>
-	</tr>
-	
-	<tr>
-		<th><?=  $u_char_level ?></th>
-		<th>Lv</th>
-		<th><?=  $p_char_level ?></th>
-	</tr>
-	
-	<tr>
-		<th><?= $u_kenjutsu ?> • <?= $u_shuriken ?> • <?= $u_taijutsu ?> • <?= $u_ninjutsu ?> • <?= $u_genjutsu ?></th>
-		<th>JUTSU</th>
-		<th><?= $p_kenjutsu ?> • <?= $p_shuriken ?> • <?= $p_taijutsu ?> • <?= $p_ninjutsu ?> • <?= $p_genjutsu ?></th>
-	</tr>
-	
-</table>
-
-<?php
-
 $a_up = $p_char_level > $u_char_level ? 1 : 0;
 
 if (
@@ -168,7 +140,32 @@ sql_query(
 
 ?>
 
+<h1><?= $u_style_name ?></h1>
+
+<table align="center" style="text-align: center;">
+	
+	<tr>
+		<th width="33%"><?= $u_username ?></th>
+		<th width="33%"></th>
+		<th width="33%"><?= $p_username ?></th>
+	</tr>
+	
+	<tr>
+		<th><?=  $u_char_level ?></th>
+		<th>Lv</th>
+		<th><?=  $p_char_level ?></th>
+	</tr>
+	
+	<tr>
+		<th><?= $u_kenjutsu ?> • <?= $u_shuriken ?> • <?= $u_taijutsu ?> • <?= $u_ninjutsu ?> • <?= $u_genjutsu ?></th>
+		<th>JUTSU</th>
+		<th><?= $p_kenjutsu ?> • <?= $p_shuriken ?> • <?= $p_taijutsu ?> • <?= $p_ninjutsu ?> • <?= $p_genjutsu ?></th>
+	</tr>
+	
+</table>
+
 <br />
+
 <table class="table-skill" align="center">
 	<tr>
 		<th title="Sword Skill">kenjutsu</th>
