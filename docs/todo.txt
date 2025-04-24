@@ -1,0 +1,20 @@
+TODO
+
+Refactor
+
+separate backend code from frontend code
+
+use layout file and content
+-(and keep request file with html?
+-it would be nice to have something like FRONTEND_layout()
+-and then the html content code below
+-chatgpt: ob_start() -> html content code -> $content = ob_get_clean() -> include layout.php)
+
+UI
+
+make ui wider (64rem?)
+make ui work on mobile (maybe later if it's too much)
+
+...
+
+use SQL_functions
