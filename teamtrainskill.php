@@ -1,6 +1,8 @@
 <?php
 
-require_once 'headeron.php';
+require_once 'backend.php';
+
+if ( ! isset( $_uid ) ) exiter('index');
 
 $ids = explode( '-', array_search('Train', $_POST) );
 
@@ -9,7 +11,7 @@ extract( sql_mfa(
 	"SELECT teammate1_id, teammate2_id, s.*
 	FROM char_team      t
 	JOIN skill_training s ON t.char_id = s.char_id
-	WHERE t.char_id = $uid" ) );
+	WHERE t.char_id = $_uid" ) );
 
 if ( $teammate1_id < 1 || $teammate2_id < 1 || $teammate1_id != $ids[0] || $teammate2_id != $ids[1] ) exiter("team");
 
@@ -28,10 +30,10 @@ $team_members = mysqli_fetch_all(
 		FROM char_attributes  a
 		JOIN style_attributes c ON a.char_id = c.char_id
 		JOIN game_users       u ON a.char_id = u.char_id
-		WHERE a.char_id IN ('. $uid .', '. $teammate1_id .', '. $teammate2_id .')
+		WHERE a.char_id IN ('. $_uid .', '. $teammate1_id .', '. $teammate2_id .')
 		ORDER BY
 			CASE a.char_id
-				WHEN '. $uid          .' THEN 1
+				WHEN '. $_uid          .' THEN 1
 				WHEN '. $teammate1_id .' THEN 2
 				WHEN '. $teammate2_id .' THEN 3
 			END' ),
@@ -210,7 +212,7 @@ sql_query(
 		ninjutsu = ninjutsu + '. $up_ninjutsu .',
 		genjutsu = genjutsu + '. $up_genjutsu .',
 		skill_points = skill_points - 0
-	WHERE char_id = '. $uid );
+	WHERE char_id = '. $_uid );
 
 sql_query(
 	$conn,
@@ -220,9 +222,11 @@ sql_query(
 		taijutsu_points = '. $taijutsu_points .',
 		ninjutsu_points = '. $ninjutsu_points .',
 		genjutsu_points = '. $genjutsu_points .'
-	WHERE char_id = '. $uid );
+	WHERE char_id = '. $_uid );
 
 ?>
+
+<?php require_once 'header.php'; ?>
 
 <h1>Team Train</h1>
 
@@ -393,4 +397,4 @@ sql_query(
 	?>
 </table>
 
-<?php include("footer.php"); ?>
+<?php require_once 'footer.php'; ?>

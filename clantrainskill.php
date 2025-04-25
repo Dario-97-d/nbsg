@@ -1,6 +1,8 @@
 <?php
 
-require_once 'headeron.php';
+require_once 'backend.php';
+
+if ( ! isset( $_uid ) ) exiter('index');
 
 if (
 	! is_int( $pid = array_search('Train', $_POST) )
@@ -12,7 +14,7 @@ if (
 	exiter('clantrain');
 }
 
-if ( $uid == $pid ) exiter("nin?id=$pid");
+if ( $_uid == $pid ) exiter("nin?id=$pid");
 
 $skills = array(
 	'kenjutsu' => 'Kenjutsu',
@@ -33,7 +35,7 @@ extract(
 		JOIN style_attributes c ON a.char_id = c.char_id
 		JOIN game_users       u ON a.char_id = u.char_id
 		JOIN skill_training   s ON a.char_id = s.char_id
-		WHERE a.char_id = '. $uid ),
+		WHERE a.char_id = '. $_uid ),
 	EXTR_PREFIX_ALL, 'u' );
 
 extract(
@@ -121,7 +123,7 @@ sql_query(
 	'UPDATE char_attributes SET
 		'. $uplv .'
 		'. $att .' = '. $att .' + '. $a_up .'
-	WHERE char_id = '. $uid );
+	WHERE char_id = '. $_uid );
 
 sql_query(
 	$conn,
@@ -130,15 +132,17 @@ sql_query(
 			$skill_to_train .' = '. $skill_to_train .' + '. $up .', '
 		: '' ) .'
 		skill_points = skill_points - 5
-	WHERE char_id = '. $uid);
+	WHERE char_id = '. $_uid);
 
 sql_query(
 	$conn,
 	'UPDATE skill_training SET
 		'.$skill_to_train .'_points' .' = '. $$u_skill_to_train_points .'
-	WHERE char_id = '. $uid );
+	WHERE char_id = '. $_uid );
 
 ?>
+
+<?php require_once 'header.php'; ?>
 
 <h1><?= $u_style_name ?></h1>
 
@@ -258,6 +262,6 @@ sql_query(
 
 echo ( $uplv == '' ? '' : "Level UP <br />" ) . ( $a_up == 1 ? '+1 '. $atts[$att] : '' );
 
-include("footer.php");
+require_once 'footer.php';
 
 ?>

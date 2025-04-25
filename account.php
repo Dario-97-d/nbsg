@@ -1,8 +1,10 @@
 <?php
 
-require_once 'headeron.php';
+require_once 'backend.php';
 
-$getdata = sql_query( $conn, "SELECT * FROM game_users WHERE char_id = $uid" );
+if ( ! isset( $_uid ) ) exiter('index');
+
+$getdata = sql_query( $conn, 'SELECT * FROM game_users WHERE char_id = '. $_uid );
 
 extract( $udata = mysqli_fetch_assoc($getdata) );
 
@@ -25,7 +27,7 @@ if ( isset($_POST['chemail']) )
 		}
 		else
 		{
-			sql_query( $conn, "UPDATE game_users SET email = '$chemail' WHERE char_id = ". $_SESSION['uid'] );
+			sql_query( $conn, 'UPDATE game_users SET email = \''. $chemail .'\' WHERE char_id = '. $_uid );
 			
 			echo "Email has been updated";
 			
@@ -53,7 +55,7 @@ else if ( isset($_POST['newpw']) )
 		}
 		else
 		{
-			sql_query( $conn, "UPDATE game_users SET pass_word = '$newpw' WHERE char_id = ". $_SESSION['uid'] );
+			sql_query( $conn, 'UPDATE game_users SET pass_word = \''. $newpw .'\' WHERE char_id = '. $_uid );
 			
 			echo "Password has been updated";
 		}
@@ -61,6 +63,8 @@ else if ( isset($_POST['newpw']) )
 }
 
 ?>
+
+<?php require_once 'header.php'; ?>
 
 <h1>Settings</h1>
 
@@ -86,4 +90,4 @@ else if ( isset($_POST['newpw']) )
 	<br />
 </form>
 
-<?php include("footer.php"); ?>
+<?php require_once 'footer.php'; ?>

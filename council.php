@@ -1,4 +1,12 @@
-<?php require_once 'headeron.php'; ?>
+<?php
+
+require_once 'backend.php';
+
+if ( ! isset( $_uid ) ) exiter('index');
+
+?>
+
+<?php require_once 'header.php'; ?>
 
 <h1>Council</h1>
 
@@ -9,4 +17,4 @@
 <br />village of village of || enemy
 <br />the organization || none
 
-<?php include("footer.php"); ?>
+<?php require_once 'footer.php'; ?>

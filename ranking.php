@@ -1,6 +1,8 @@
 <?php
 
-require_once 'headeron.php';
+require_once 'backend.php';
+
+if ( ! isset( $_uid ) ) exiter('index');
 
 $nins = mysqli_fetch_all(
 	sql_query(
@@ -14,6 +16,8 @@ $nins = mysqli_fetch_all(
 	MYSQLI_ASSOC );
 
 ?>
+
+<?php require_once 'header.php'; ?>
 
 <h1>Ranking</h1>
 
@@ -56,4 +60,4 @@ $nins = mysqli_fetch_all(
 	?>
 </table>
 
-<?php include("footer.php"); ?>
+<?php require_once 'footer.php'; ?>

@@ -1,8 +1,10 @@
 <?php
 
-require_once 'headeron.php';
+require_once 'backend.php';
 
-extract( sql_mfa( $conn, 'SELECT * FROM style_attributes c JOIN skill_training s ON c.char_id = s.char_id WHERE c.char_id = '. $uid ) );
+if ( ! isset( $_uid ) ) exiter('index');
+
+extract( sql_mfa( $conn, 'SELECT * FROM style_attributes c JOIN skill_training s ON c.char_id = s.char_id WHERE c.char_id = '. $_uid ) );
 
 $trained = '';
 $done = 0;
@@ -45,7 +47,7 @@ if ( ! empty($_POST) )
 					skill_training = '$skill_training',
 					sessions_in_training = $sessions_in_training,
 					time_ready = $time_ready
-				WHERE char_id = $uid" );
+				WHERE char_id = $_uid" );
 		}
 	}
 	else if ( isset($_POST['end']) && $time_ready > time() )
@@ -80,7 +82,7 @@ if ( $done == 1 ||
 			$conn,
 			'UPDATE style_attributes SET
 				'. $skill_training .' = '. $skill_training .' + '. $up .'
-			WHERE char_id = '. $uid );
+			WHERE char_id = '. $_uid );
 		
 		sql_query(
 			$conn,
@@ -89,7 +91,7 @@ if ( $done == 1 ||
 				skill_training = \'\',
 				sessions_in_training = 0,
 				time_ready = 0
-			WHERE char_id = '. $uid );
+			WHERE char_id = '. $_uid );
 		
 		
 		if ( $up > 0 )
@@ -108,13 +110,15 @@ if ( $done == 1 ||
 				skill_training = \'\',
 				sessions_in_training = 0,
 				time_ready = 0
-			WHERE char_id = '. $uid );
+			WHERE char_id = '. $_uid );
 	}
 	
 	$skill_training = '';
 }
 
 ?>
+
+<?php require_once 'header.php'; ?>
 
 <h1>Training Grounds</h1>
 
@@ -375,6 +379,6 @@ else
 	<?php
 }
 
-include("footer.php");
+require_once 'footer.php';
 
 ?>

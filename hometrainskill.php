@@ -1,8 +1,10 @@
 <?php
 
-require_once 'headeron.php';
+require_once 'backend.php';
 
-extract( sql_mfa( $conn, "SELECT * FROM style_attributes c JOIN skill_training s ON c.char_id = s.char_id WHERE c.char_id = $uid" ) );
+if ( ! isset( $_uid ) ) exiter('index');
+
+extract( sql_mfa( $conn, "SELECT * FROM style_attributes c JOIN skill_training s ON c.char_id = s.char_id WHERE c.char_id = $_uid" ) );
 
 $trained = '';
 
@@ -47,7 +49,7 @@ if ( ! empty($_POST) )
 						skill_training       = '$skl',
 						sessions_in_training = $n,
 						ready                = $time_ready
-					WHERE char_id = $uid" );
+					WHERE char_id = $_uid" );
 		}
 	}
 	else if ( isset($_POST['end']) && $time_ready > time() )
@@ -78,7 +80,7 @@ if ( isset($skillupgrade) )
 			$conn,
 			"UPDATE style_attributes SET
 				$skill_trainings[$skill_training] = $skill_trainings[$skill_training] + 1
-			WHERE char_id = $uid" );
+			WHERE char_id = $_uid" );
 		
 		$skillupgrade = "<br />$tskills[$skill_training] +1";
 	}
@@ -90,13 +92,15 @@ if ( isset($skillupgrade) )
 			skill_training = '',
 			sessions_in_training = 0,
 			ready = 0
-		WHERE char_id = $uid" );
+		WHERE char_id = $_uid" );
 	
 	$trained = $sessions_in_training == 0 ? '' : "$tskills[$skill_training] trained(+$sessions_in_training)$skillupgrade");
 	$skill_training = '';
 }
 
 ?>
+
+<?php require_once 'header.php'; ?>
 
 <h1>
 	<a href="hometrain">Training Grounds</a>
@@ -355,6 +359,6 @@ else
 	<?php
 }
 
-include("footer.php");
+require_once 'footer.php';
 
 ?>

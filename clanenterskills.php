@@ -1,8 +1,10 @@
 <?php
 
-require_once 'headeron.php';
+require_once 'backend.php';
 
-extract( mysqli_fetch_assoc( sql_query( $conn, "SELECT * FROM style_attributes WHERE char_id = $uid" ) ) );
+if ( ! isset( $_uid ) ) exiter('index');
+
+extract( mysqli_fetch_assoc( sql_query( $conn, "SELECT * FROM style_attributes WHERE char_id = $_uid" ) ) );
 
 if ( $style_name != '' ) exiter("clan");
 
@@ -54,9 +56,9 @@ if ( isset($_POST['start']) )
 					taijutsu = $skills[2],
 					ninjutsu = $skills[3],
 					genjutsu = $skills[4]
-				WHERE char_id = $uid;
+				WHERE char_id = $_uid;
 				
-				UPDATE game_users SET char_rank = 'D' WHERE char_id = $uid;" ) or die( mysqli_error($conn) );
+				UPDATE game_users SET char_rank = 'D' WHERE char_id = $_uid;" ) or die( mysqli_error($conn) );
 		}
 	}
 	
@@ -150,6 +152,8 @@ $skills_as_string = implode(",", $skills);
 
 ?>
 
+<?php require_once 'header.php'; ?>
+
 <h1><?= $clan ?></h1>
 
 <form method="POST">
@@ -239,6 +243,6 @@ else
 	<?php
 }
 
-include("footer.php");
+require_once 'footer.php';
 
 ?>

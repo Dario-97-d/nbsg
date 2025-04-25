@@ -1,12 +1,16 @@
 <?php
 
-require_once 'headeron.php';
+require_once 'backend.php';
 
-extract( mysqli_fetch_assoc( sql_query( $conn, 'SELECT * FROM style_attributes WHERE char_id = '. $uid ) ) );
+if ( ! isset( $_uid ) ) exiter('index');
+
+extract( mysqli_fetch_assoc( sql_query( $conn, 'SELECT * FROM style_attributes WHERE char_id = '. $_uid ) ) );
 
 if ( $style_name != '' ) exiter("clan");
 
 ?>
+
+<?php require_once 'header.php'; ?>
 
 <h1>Clan Style</h1>
 
@@ -102,4 +106,4 @@ if ( $style_name != '' ) exiter("clan");
 
 Clan names: hover
 
-<?php include("footer.php"); ?>
+<?php require_once 'footer.php'; ?>

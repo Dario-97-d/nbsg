@@ -1,6 +1,8 @@
 <?php
 
-require_once 'headeron.php';
+require_once 'backend.php';
+
+if ( ! isset( $_uid ) ) exiter('index');
 
 if ( is_int( $msg_id = array_search('Delete', $_POST) ) )
 {
@@ -16,12 +18,14 @@ $messages = mysqli_fetch_all(
 		FROM       mail       m
 		LEFT  JOIN game_users s ON s.username = m.sender_username
 		RIGHT JOIN game_users r ON r.username = m.receiver_username
-		WHERE s.char_id = '. $uid .'
+		WHERE s.char_id = '. $_uid .'
 		AND seen <> 2
 		ORDER BY msg_time DESC' ),
 	MYSQLI_ASSOC );
 
 ?>
+
+<?php require_once 'header.php'; ?>
 
 <h1>PMs sent</h1>
 
@@ -77,6 +81,6 @@ else
 	}
 }
 
-include("footer.php");
+require_once 'footer.php';
 
 ?>

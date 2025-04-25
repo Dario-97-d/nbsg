@@ -1,18 +1,18 @@
 <?php
 
-include("header.php");
+require_once 'backend.php';
 
 // Logout.
 if ( isset($_GET['log']) && $_GET['log'] == 'out' )
 {
 	session_destroy();
-	exiter("index");
+	exiter('index');
 }
 
 // Login.
 if ( isset($_POST['login']) )
 {
-	if ( isset($_SESSION['uid']) ) exiter("home");
+	if ( isset( $_uid ) ) exiter('home');
 	
 	$username = handle_name($_POST['username']);
 	
@@ -36,16 +36,19 @@ if ( isset($_POST['login']) )
 		}
 		else
 		{
-			$uid = mysqli_fetch_assoc($checkuser);
-			
-			$_SESSION['uid'] = $uid['char_id'];
+			$_SESSION['uid'] = mysqli_fetch_assoc( $checkuser )['char_id'];
 			
 			exiter("home");
 		}
 	}
 }
 
-if ( ! isset($_SESSION['uid']) )
+?>
+
+<?php require_once 'header.php'; ?>
+
+<?php
+if ( ! isset( $_uid ) )
 {
 	?>
 	
@@ -70,9 +73,9 @@ if ( ! isset($_SESSION['uid']) )
 	
 	<?php
 }
-
-echo "<br />Hachi-maki";
-
-include("footer.php");
-
 ?>
+
+<br />
+Hachi-maki
+
+<?php require_once 'footer.php'; ?>

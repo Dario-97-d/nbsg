@@ -1,6 +1,8 @@
 <?php
 
-require_once 'headeron.php';
+require_once 'backend.php';
+
+if ( ! isset( $_uid ) ) exiter('index');
 
 extract( sql_mfa(
 	$conn,
@@ -8,7 +10,7 @@ extract( sql_mfa(
 	FROM char_attributes  a
 	JOIN style_attributes c ON a.char_id = c.char_id
 	JOIN game_users       u ON a.char_id = u.char_id
-	WHERE a.char_id = $uid" ) );
+	WHERE a.char_id = $_uid" ) );
 
 if (
 	in_array(
@@ -47,13 +49,15 @@ if (
 				sessions_needed_for_upgrade = sessions_needed_for_upgrade + 1,
 				training_sessions_for_use   = '. $training_sessions_for_use .',
 				'. $att .' = '. $att .' + 1
-			WHERE char_id = '. $uid );
+			WHERE char_id = '. $_uid );
 	}
 }
 
 $disabled = $training_sessions_for_use - $sessions_needed_for_upgrade < 0 ? 'disabled' : '';
 
 ?>
+
+<?php require_once 'header.php'; ?>
 
 <h1><?= $username ?></h1>
 
@@ -179,4 +183,4 @@ $disabled = $training_sessions_for_use - $sessions_needed_for_upgrade < 0 ? 'dis
 	
 </table>
 
-<?php include("footer.php"); ?>
+<?php require_once 'footer.php'; ?>

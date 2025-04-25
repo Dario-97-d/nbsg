@@ -1,6 +1,8 @@
 <?php
 
-require_once 'headeron.php';
+require_once 'backend.php';
+
+if ( ! isset( $_uid ) ) exiter('index');
 
 if ( is_int( $msg_id = array_search('Delete', $_POST) ) )
 {
@@ -22,11 +24,13 @@ $messages = mysqli_fetch_all(
 		'SELECT m.*, u.char_id
 		FROM      mail    m
 		LEFT JOIN game_users u ON m.receiver_username = u.username
-		WHERE char_id = '. $uid .'
+		WHERE char_id = '. $_uid .'
 		AND seen <> 2' ),
 	MYSQLI_ASSOC );
 
 ?>
+
+<?php require_once 'header.php'; ?>
 
 <h1>Mailbox</h1>
 
@@ -97,6 +101,6 @@ else
 	}
 }
 
-include("footer.php");
+require_once 'footer.php';
 
 ?>

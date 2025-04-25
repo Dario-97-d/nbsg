@@ -1,6 +1,8 @@
 <?php
 
-require_once 'headeron.php';
+require_once 'backend.php';
+
+if ( ! isset( $_uid ) ) exiter('index');
 
 extract( sql_mfa(
 	$conn,
@@ -8,7 +10,7 @@ extract( sql_mfa(
 	FROM game_users       u
 	JOIN char_attributes  a ON u.char_id = a.char_id
 	JOIN style_attributes c ON u.char_id = c.char_id
-	WHERE u.char_id = '. $uid ) );
+	WHERE u.char_id = '. $_uid ) );
 
 if ( $style_name === '' ) exiter('clan');
 
@@ -22,12 +24,14 @@ $clan_members_to_train_with = mysqli_fetch_all(
 		WHERE style_name = \''. $style_name .'\'
 		AND   char_rank  = \''. $char_rank  .'\'
 		AND   char_level BETWEEN '. $char_level .' - 5 AND '. $char_level .' + 5
-		AND   u.char_id <> '. $uid .'
+		AND   u.char_id <> '. $_uid .'
 		ORDER BY char_level DESC
 		LIMIT 25' ),
 	MYSQLI_ASSOC );
 
 ?>
+
+<?php require_once 'header.php'; ?>
 
 <h1><?= $style_name ?></h1>
 
@@ -130,4 +134,4 @@ $clan_members_to_train_with = mysqli_fetch_all(
 	
 </form>
 
-<?php include("footer.php"); ?>
+<?php require_once 'footer.php'; ?>

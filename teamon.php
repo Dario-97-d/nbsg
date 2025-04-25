@@ -1,6 +1,8 @@
 <?php
 
-require_once 'headeron.php';
+require_once 'backend.php';
+
+if ( ! isset( $_uid ) ) exiter('index');
 
 extract( sql_mfa(
 	$conn,
@@ -9,7 +11,7 @@ extract( sql_mfa(
 	JOIN style_attributes c ON a.char_id = c.char_id
 	JOIN game_users       u ON c.char_id = u.char_id
 	JOIN char_team        t ON u.char_id = t.char_id
-	WHERE u.char_id = '. $uid ) );
+	WHERE u.char_id = '. $_uid ) );
 
 $has_any_teammate = $teammate_id1 > 0 || $teammate_id2 > 0;
 
@@ -41,13 +43,15 @@ if ( $is_team_full )
 			JOIN style_attributes c ON u.char_id = c.char_id
 			WHERE char_rank = \'D\'
 			AND   char_level <= '. $char_level .'
-			AND   u.char_id NOT IN('. $uid .', '. $teammate1_id .', '. $teammate2_id .')
+			AND   u.char_id NOT IN('. $_uid .', '. $teammate1_id .', '. $teammate2_id .')
 			ORDER BY u.char_id DESC
 			LIMIT 25' ),
 		MYSQLI_ASSOC );
 }
 
 ?>
+
+<?php require_once 'header.php'; ?>
 
 <h1>Team</h1>
 
@@ -186,6 +190,6 @@ else
 	<?php
 }
 
-include("footer.php");
+require_once 'footer.php';
 
 ?>

@@ -1,10 +1,12 @@
 <?php
 
-require_once 'headeron.php';
+require_once 'backend.php';
+
+if ( ! isset( $_uid ) ) exiter('index');
 
 $ids = explode( '-', array_search( 'Train', $_POST ) );
 
-extract( sql_mfa( $conn, "SELECT teammate1_id, teammate2_id FROM char_team WHERE char_id = $uid" ) );
+extract( sql_mfa( $conn, "SELECT teammate1_id, teammate2_id FROM char_team WHERE char_id = $_uid" ) );
 
 if ( $teammate1_id != $ids[0] || $teammate2_id != $ids[1] ) exiter("team");
 
@@ -15,10 +17,10 @@ $members = sql_query(
 	JOIN style_attributes c ON a.char_id = c.char_id
 	JOIN game_users       u ON a.char_id = u.char_id
 	JOIN skill_training   s ON a.char_id = s.char_id
-	WHERE a.char_id IN ($uid, $teammate1_id, $teammate2_id)
+	WHERE a.char_id IN ($_uid, $teammate1_id, $teammate2_id)
 	ORDER BY
 		CASE a.char_id
-			WHEN $uid          THEN 1
+			WHEN $_uid          THEN 1
 			WHEN $teammate1_id THEN 2
 			WHEN $teammate2_id THEN 3
 		END" );
@@ -67,7 +69,7 @@ switch (true)
 			$uplv = '';
 		}
 		
-		sql_query( $conn, "UPDATE char_attributes SET $uplv $up_att = $up_att + 1 WHERE char_id = $uid" );
+		sql_query( $conn, "UPDATE char_attributes SET $uplv $up_att = $up_att + 1 WHERE char_id = $_uid" );
 		
 		$upgrade = ( $uplv != '' ? 'Lv: '. $u_char_level .'<br />' : '' ) . $atts[$up_att] . ' +1';
 		
@@ -86,7 +88,7 @@ switch (true)
 			$$skill_training += 1;
 		}
 		
-		sql_query( $conn, 'UPDATE skill_training SET $up_skill_training = '. $$skill_training .' WHERE char_id = $uid');
+		sql_query( $conn, 'UPDATE skill_training SET $up_skill_training = '. $$skill_training .' WHERE char_id = $_uid');
 		
 		$upgrade = $skill .' training: +1';
 		
@@ -105,10 +107,12 @@ if ( isset($up_skl) )
 	$upgrade = ( $up_skl == 2 ? $upgrade .'<br />' : '' ) . $skill .' +1';
 }
 
-sql_query( $conn, "UPDATE style_attributes SET $set_up_skl skill_points = skill_points - 5 WHERE char_id = $uid" );
+sql_query( $conn, "UPDATE style_attributes SET $set_up_skl skill_points = skill_points - 5 WHERE char_id = $_uid" );
 */
 
 ?>
+
+<?php require_once 'header.php'; ?>
 
 <h1>Team Train</h1>
 
@@ -170,4 +174,4 @@ sql_query( $conn, "UPDATE style_attributes SET $set_up_skl skill_points = skill_
 	
 </table>
 
-<?php include("footer.php") ?>
+<?php require_once 'footer.php'; ?>

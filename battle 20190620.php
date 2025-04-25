@@ -1,11 +1,13 @@
 <?php
 
-require_once 'headeron.php';
+require_once 'backend.php';
+
+if ( ! isset( $_uid ) ) exiter('index');
 
 // check id was provided as int.
 if ( ! is_int( $pid = array_search('Train', $_POST) ) ) exiter("clandojo");
 
-if ( $uid == $pid ) exiter("nin?id=$pid");
+if ( $_uid == $pid ) exiter("nin?id=$pid");
 
 // check skill was given.
 $skills = array(
@@ -60,9 +62,9 @@ function upatt( $c, $a, $m, $b )
 }
 
 // upgrade atts (bup: battle upgrade).
-function sql_bup ( $conn, $setupatt, $uid )
+function sql_bup ( $conn, $setupatt, $_uid )
 {
-	mysqli_query( $conn, "UPDATE char_attributes SET $setupatt WHERE char_id = $uid" ) or die( mysqli_error($conn) );
+	mysqli_query( $conn, "UPDATE char_attributes SET $setupatt WHERE char_id = $_uid" ) or die( mysqli_error($conn) );
 }
 
 // -- END functions --
@@ -71,7 +73,7 @@ function sql_bup ( $conn, $setupatt, $uid )
 extract(
 	sql_mfa(
 		$conn,
-		"SELECT a.*, c.*, username FROM char_attributes a JOIN style_attributes c ON a.char_id = c.char_id JOIN game_users u ON a.char_id = u.char_id WHERE a.char_id = $uid" ),
+		"SELECT a.*, c.*, username FROM char_attributes a JOIN style_attributes c ON a.char_id = c.char_id JOIN game_users u ON a.char_id = u.char_id WHERE a.char_id = $_uid" ),
 	EXTR_PREFIX_ALL, 'u' );
 
 extract(
@@ -182,12 +184,12 @@ $atts = array(
 // result !!
 switch ( true )
 {
-	case ( $result < 6 ):  $placard = "Major Loss"; sql_bup( $conn, $setupatt = upatt( $c, $a, 'min', $b ), $uid ); break;
-	case ( $result < 7 ):  $placard = "Minor Loss"; sql_bup( $conn, $setupatt, $uid); break;
-	case ( $result < 9 ):  $placard = "Draw";       sql_bup( $conn, $setupatt, $uid);
-													sql_query ( $conn, "UPDATE style_attributes SET taijutsu = taijutsu + 1 WHERE char_id = $uid" ); break;
-	case ( $result < 10 ): $placard = "Minor Win";  sql_bup( $conn, $setupatt, $uid ); break;
-	case ( $result < 12 ): $placard = "Major Win";  sql_bup( $conn, $setupatt = upatt( $c, $a, 'max', $b ), $uid ); break;
+	case ( $result < 6 ):  $placard = "Major Loss"; sql_bup( $conn, $setupatt = upatt( $c, $a, 'min', $b ), $_uid ); break;
+	case ( $result < 7 ):  $placard = "Minor Loss"; sql_bup( $conn, $setupatt, $_uid); break;
+	case ( $result < 9 ):  $placard = "Draw";       sql_bup( $conn, $setupatt, $_uid);
+													sql_query ( $conn, "UPDATE style_attributes SET taijutsu = taijutsu + 1 WHERE char_id = $_uid" ); break;
+	case ( $result < 10 ): $placard = "Minor Win";  sql_bup( $conn, $setupatt, $_uid ); break;
+	case ( $result < 12 ): $placard = "Major Win";  sql_bup( $conn, $setupatt = upatt( $c, $a, 'max', $b ), $_uid ); break;
 	
 	default:
 		echo "switch_result Error";
@@ -226,7 +228,7 @@ switch ( true )
 	
 	case ( $result < 6 || $result >= 10 ):
 		$placard = "There's some gap";
-		sql_query( $conn, "UPDATE char_attributes SET $up_att = $up_att + 1 WHERE char_id = $uid" );
+		sql_query( $conn, "UPDATE char_attributes SET $up_att = $up_att + 1 WHERE char_id = $_uid" );
 		$upgrade = $atts[$up_att] ." +1";
 		$$up_att = "+1";
 		break;
@@ -261,13 +263,13 @@ switch ( true )
 			
 			if ( $up_att == $ranatt )
 			{
-				sql_query( $conn, "UPDATE char_attributes SET $uplv $up_att = $up_att + 2 WHERE char_id = $uid");
+				sql_query( $conn, "UPDATE char_attributes SET $uplv $up_att = $up_att + 2 WHERE char_id = $_uid");
 				$upgrade = $atts[$up_att] ." +2";
 				$$up_att = "+2";
 			}
 			else
 			{
-				sql_query( $conn, "UPDATE char_attributes SET $uplv $up_att = $up_att + 1, $ranatt = $ranatt + 1 WHERE char_id = $uid");
+				sql_query( $conn, "UPDATE char_attributes SET $uplv $up_att = $up_att + 1, $ranatt = $ranatt + 1 WHERE char_id = $_uid");
 				$upgrade = $atts[$up_att] ." +1<br />". $atts[$ranatt] ." +1";
 				$$up_att = "+1";
 				$$ranatt = "+1";
@@ -276,7 +278,7 @@ switch ( true )
 		else
 		{
 			$$up_skill = 1;
-			sql_query( $conn, "UPDATE style_attributes SET $up_skill = $up_skill + 1 WHERE char_id = $uid");
+			sql_query( $conn, "UPDATE style_attributes SET $up_skill = $up_skill + 1 WHERE char_id = $_uid");
 			
 			if (
 				floor(
@@ -290,7 +292,7 @@ switch ( true )
 			}
 			else $uplv = '';
 			
-			sql_query( $conn, "UPDATE char_attributes SET $uplv $ranatt = $ranatt+1 WHERE char_id = $uid");
+			sql_query( $conn, "UPDATE char_attributes SET $uplv $ranatt = $ranatt+1 WHERE char_id = $_uid");
 			$$ranatt = "+1";
 			$upgrade = $skills[$up_skill] ." +1<br />". $atts[$ranatt] ." +1";
 		}
@@ -298,7 +300,7 @@ switch ( true )
 	case ( $result < 9 || $result >= 7 ):
 		$placard = "Evenly matched";
 		$$up_skill = 1;
-		sql_query( $conn, "UPDATE style_attributes SET $up_skill = $up_skill + 1 WHERE char_id = $uid");
+		sql_query( $conn, "UPDATE style_attributes SET $up_skill = $up_skill + 1 WHERE char_id = $_uid");
 		
 		if (
 			floor(
@@ -314,13 +316,13 @@ switch ( true )
 		
 		if ( $up_att == $ranatt )
 		{
-			sql_query( $conn, "UPDATE char_attributes SET $uplv $up_att = $up_att + 2 WHERE char_id = $uid");
+			sql_query( $conn, "UPDATE char_attributes SET $uplv $up_att = $up_att + 2 WHERE char_id = $_uid");
 			$upgrade = $skills[$up_skill] ." +1<br />". $atts[$up_att] ." +2";
 			$$up_att = "+2";
 		}
 		else
 		{
-			sql_query( $conn, "UPDATE char_attributes SET $uplv $up_att = $up_att + 1, $ranatt = $ranatt + 1 WHERE char_id = $uid");
+			sql_query( $conn, "UPDATE char_attributes SET $uplv $up_att = $up_att + 1, $ranatt = $ranatt + 1 WHERE char_id = $_uid");
 			$upgrade = $skills[$up_skill] ." +1<br />". $atts[$up_att] ." +1<br />". $atts[$ranatt] ." +1";
 			$$up_att = "+1";
 			$$ranatt = "+1";
@@ -457,11 +459,13 @@ else
 	}
 	else $uplv = '';
 	
-	sql_query( $conn, "UPDATE char_attributes SET $uplv $set_up_att". ( $rna == 1 ? ', ' : '' ) ." $set_ranatt WHERE char_id = $uid");
-	sql_query( $conn, "UPDATE style_attributes SET $set_up_skl skill_points = skill_points - 5 WHERE char_id = $uid");
+	sql_query( $conn, "UPDATE char_attributes SET $uplv $set_up_att". ( $rna == 1 ? ', ' : '' ) ." $set_ranatt WHERE char_id = $_uid");
+	sql_query( $conn, "UPDATE style_attributes SET $set_up_skl skill_points = skill_points - 5 WHERE char_id = $_uid");
 }*/
 
 ?>
+
+<?php require_once 'header.php'; ?>
 
 <h1>Battle</h1>
 
@@ -548,4 +552,4 @@ else
 
 <?= $upgrade ?>
 
-<?php include("footer.php"); ?>
+<?php require_once 'footer.php'; ?>

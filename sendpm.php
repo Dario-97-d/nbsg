@@ -1,6 +1,8 @@
 <?php
 
-require_once 'headeron.php';
+require_once 'backend.php';
+
+if ( ! isset( $_uid ) ) exiter('index');
 
 $player = '';
 $msg_text = '';
@@ -41,7 +43,7 @@ if ( isset($_POST['sendpm']) )
 		}
 		else
 		{
-			$user = mysqli_fetch_assoc( sql_query( $conn, "SELECT username FROM game_users WHERE char_id = $uid" ) );
+			$user = mysqli_fetch_assoc( sql_query( $conn, "SELECT username FROM game_users WHERE char_id = $_uid" ) );
 			
 			sql_prepstate(
 				$conn,
@@ -57,6 +59,8 @@ if ( isset($_POST['sendpm']) )
 }
 
 ?>
+
+<?php require_once 'header.php'; ?>
 
 <h1>Private Message</h1>
 
@@ -75,4 +79,4 @@ if ( isset($_POST['sendpm']) )
 	<input type="submit" name="sendpm" value="Send" />
 </form>
 
-<?php include("footer.php") ?>
+<?php require_once 'footer.php'; ?>

@@ -1,6 +1,8 @@
 <?php
 
-require_once 'headeron.php';
+require_once 'backend.php';
+
+if ( ! isset( $_uid ) ) exiter('index');
 
 extract( sql_mfa(
 	$conn,
@@ -9,7 +11,7 @@ extract( sql_mfa(
 	JOIN game_users       u ON t.char_id = u.char_id
 	JOIN char_attributes  a ON u.char_id = a.char_id
 	JOIN style_attributes c ON u.char_id = c.char_id
-	WHERE u.char_id = '. $uid ) );
+	WHERE u.char_id = '. $_uid ) );
 
 if ( $teammate1_id < 1 || $teammate2_id < 1 ) exiter("team");
 
@@ -40,6 +42,8 @@ $bar_scale = 253 / (
 	$team_genjutsu );
 
 ?>
+
+<?php require_once 'header.php'; ?>
 
 <h1>Team <?= $username ?></h1>
 
@@ -167,4 +171,4 @@ $bar_scale = 253 / (
 	
 </form>
 
-<?php include("footer.php"); ?>
+<?php require_once 'footer.php'; ?>

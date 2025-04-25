@@ -1,6 +1,8 @@
 <?php
 
-require_once 'headeron.php';
+require_once 'backend.php';
+
+if ( ! isset( $_uid ) ) exiter('index');
 
 $ids = explode('-', array_search('Team Battle', $_POST));
 
@@ -11,7 +13,7 @@ extract( sql_mfa(
 	JOIN game_users       u ON t.char_id = u.char_id
 	JOIN style_attributes c ON u.char_id = c.char_id
 	JOIN skill_training   s ON c.char_id = s.char_id
-	WHERE u.char_id = '. $uid ) );
+	WHERE u.char_id = '. $_uid ) );
 
 if (
 	$char_rank != 'D'
@@ -32,10 +34,10 @@ $team_members = mysqli_fetch_all(
 		FROM char_attributes  a
 		JOIN style_attributes c ON a.char_id = c.char_id
 		JOIN game_users       u ON a.char_id = u.char_id
-		WHERE a.char_id IN ('. $uid .', '. $teammate1_id .', '. $teammate2_id .')
+		WHERE a.char_id IN ('. $_uid .', '. $teammate1_id .', '. $teammate2_id .')
 		ORDER BY
 			CASE a.char_id
-				WHEN '. $uid .'          THEN 1
+				WHEN '. $_uid .'          THEN 1
 				WHEN '. $teammate1_id .' THEN 2
 				WHEN '. $teammate2_id .' THEN 3
 			END' ),
@@ -130,9 +132,11 @@ sql_query(
 		agility    = agility    + '. $up_agility  .',
 		jutsu      = jutsu      + '. $up_jutsu    .',
 		tactics    = tactics    + '. $up_tactics  .'
-	WHERE char_id = '. $uid );
+	WHERE char_id = '. $_uid );
 
 ?>
+
+<?php require_once 'header.php'; ?>
 
 <h1>Team Exam</h1>
 
@@ -256,7 +260,7 @@ if ( ( $team_members[0]['char_level'] + $team_members[1]['char_level'] + $team_m
 	</h4>
 	<?php
 	
-	sql_query( $conn, 'UPDATE char_team SET team_exam_phase = 1 WHERE char_id = '. $uid );
+	sql_query( $conn, 'UPDATE char_team SET team_exam_phase = 1 WHERE char_id = '. $_uid );
 }
 else
 {
@@ -327,4 +331,4 @@ else
 	
 </table>
 
-<?php include("footer.php"); ?>
+<?php require_once 'footer.php'; ?>

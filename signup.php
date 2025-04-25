@@ -1,8 +1,8 @@
 <?php
 
-include("header.php");
+require_once 'backend.php';
 
-if ( isset($_SESSION['uid']) ) exiter("home");
+if ( isset( $_uid ) ) exiter('home');
 
 $username = '';
 $email = '';
@@ -50,9 +50,7 @@ if ( isset($_POST['signup']) )
 						'CALL sp_register_userchar(\''. $username .'\', \''. $email .'\', \''. md5($password) .'\')' )
 					or die( mysqli_error($conn) );
 				
-				$sql_mfa_register = mysqli_fetch_assoc( $sql_register );
-				
-				$_SESSION['uid'] = $sql_mfa_register['char_id'];
+				$_SESSION['uid'] = mysqli_fetch_assoc( $sql_register )['char_id'];
 				
 				exiter("clan");
 			}
@@ -61,6 +59,8 @@ if ( isset($_POST['signup']) )
 }
 
 ?>
+
+<?php require_once 'header.php'; ?>
 
 <h1>Sign up</h1>
 
@@ -77,4 +77,4 @@ if ( isset($_POST['signup']) )
 	<br /><input type="submit" class="button1" name="signup" value="Start" />
 </form>
 
-<?php include("footer.php"); ?>
+<?php require_once 'footer.php'; ?>

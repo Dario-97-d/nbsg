@@ -1,8 +1,10 @@
 <?php
 
-require_once 'headeron.php';
+require_once 'backend.php';
 
-extract( mysqli_fetch_assoc( sql_query( $conn, 'SELECT style_name FROM style_attributes WHERE char_id = '. $uid ) ) );
+if ( ! isset( $_uid ) ) exiter('index');
+
+extract( mysqli_fetch_assoc( sql_query( $conn, 'SELECT style_name FROM style_attributes WHERE char_id = '. $_uid ) ) );
 
 $is_user_in_clan = $style_name !== '';
 
@@ -22,6 +24,8 @@ if ( $is_user_in_clan )
 }
 
 ?>
+
+<?php require_once 'header.php'; ?>
 
 <?php
 
@@ -50,7 +54,7 @@ if ( $is_user_in_clan )
 		foreach ( $clan_members as $row )
 		{
 			?>
-			<tr<?= $uid === $row['char_id'] ? ' style="outline: 1px solid #0033CC;"' : '' ?>>
+			<tr<?= $_uid === $row['char_id'] ? ' style="outline: 1px solid #0033CC;"' : '' ?>>
 				
 				<td><?= $row['char_rank'] ?></td>
 				
@@ -104,6 +108,6 @@ else
 	<?php
 }
 
-include("footer.php");
+require_once 'footer.php';
 
 ?>

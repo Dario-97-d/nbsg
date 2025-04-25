@@ -10,16 +10,12 @@
 
 <div class="hfer">
 	<?php
-	
-	session_start();
-	
-	if ( isset($_SESSION['uid']) )
+	if ( isset( $_uid ) )
 	{
 		?>
 		<a style="float: left; padding-left: 16px;" href="index?log=out">Log out</a>
 		<?php
 	}
-	
 	?>
 	
 	<a href="index"><b>8-maki</b></a>
@@ -28,12 +24,8 @@
 <div id="container">
 	<div id="menu">
 		<?php
-		
-		include("functions.php");
-		
-		if ( isset($_SESSION['uid']) )
+		if ( isset( $_uid ) )
 		{
-			$uid = $_SESSION['uid'];
 			?>
 			
 			<h5><a href="home" title="Overview" accesskey="g">GERAL</a></h5>
@@ -65,7 +57,8 @@
 		{
 			?>
 			<?php
-		}?>
+		}
+		?>
 	</div>
 	
 	<div id="content"></div>

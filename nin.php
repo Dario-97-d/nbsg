@@ -1,13 +1,15 @@
 <?php
 
-require_once 'headeron.php';
+require_once 'backend.php';
+
+if ( ! isset( $_uid ) ) exiter('index');
 
 if (
 	! isset($_GET['id'])
 	||
 	! ctype_digit( $pid = $_GET['id']) )
 {
-	$pid = $uid;
+	$pid = $_uid;
 }
 
 extract( sql_mfa(
@@ -16,7 +18,7 @@ extract( sql_mfa(
 	FROM char_attributes  a
 	JOIN style_attributes c ON a.char_id = c.char_id
 	JOIN skill_training   s ON a.char_id = s.char_id
-	WHERE a.char_id = '. $uid ) );
+	WHERE a.char_id = '. $_uid ) );
 
 extract(
 	sql_mfa(
@@ -31,7 +33,7 @@ extract(
 $can_train_with_nin =
 	$skill_points > 4
 	&&
-	$pid != $uid
+	$pid != $_uid
 	&&
 	$skill_training == ''
 	&&
@@ -43,13 +45,15 @@ $can_train_with_nin =
 
 ?>
 
+<?php require_once 'header.php'; ?>
+
 <h1><?= $p_username ?></h1>
 
 <h3><?= $p_style_name ?></h3>
 
 <?php
 
-if ( $uid != $pid )
+if ( $_uid != $pid )
 {
 	?>
 	<h3>
@@ -169,4 +173,4 @@ if ( true )
 <br />missions:
 <br />patrol - anbu
 
-<?php include("footer.php"); ?>
+<?php require_once 'footer.php'; ?>
