@@ -100,7 +100,7 @@ if ( isset($skillupgrade) )
 
 ?>
 
-<?php require_once 'header.php'; ?>
+<?php LAYOUT_wrap_onwards(); ?>
 
 <h1>
 	<a href="hometrain">Training Grounds</a>
@@ -358,7 +358,5 @@ else
 	
 	<?php
 }
-
-require_once 'footer.php';
 
 ?>

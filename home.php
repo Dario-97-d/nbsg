@@ -57,7 +57,7 @@ $disabled = $training_sessions_for_use - $sessions_needed_for_upgrade < 0 ? 'dis
 
 ?>
 
-<?php require_once 'header.php'; ?>
+<?php LAYOUT_wrap_onwards(); ?>
 
 <h1><?= $username ?></h1>
 
@@ -182,5 +182,3 @@ $disabled = $training_sessions_for_use - $sessions_needed_for_upgrade < 0 ? 'dis
 	</tr>
 	
 </table>
-
-<?php require_once 'footer.php'; ?>

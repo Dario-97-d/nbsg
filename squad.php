@@ -6,7 +6,7 @@ if ( ! isset( $_uid ) ) exiter('index');
 
 ?>
 
-<?php require_once 'header.php'; ?>
+<?php LAYOUT_wrap_onwards(); ?>
 
 <h1>Squad</h1>
 
@@ -17,5 +17,3 @@ if ( ! isset( $_uid ) ) exiter('index');
 <br />list of squad members
 <br />
 <br />player - rank - lv - style
-
-<?php require_once 'footer.php'; ?>

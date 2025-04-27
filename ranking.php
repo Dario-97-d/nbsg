@@ -17,7 +17,7 @@ $nins = mysqli_fetch_all(
 
 ?>
 
-<?php require_once 'header.php'; ?>
+<?php LAYOUT_wrap_onwards(); ?>
 
 <h1>Ranking</h1>
 
@@ -59,5 +59,3 @@ $nins = mysqli_fetch_all(
 	
 	?>
 </table>
-
-<?php require_once 'footer.php'; ?>

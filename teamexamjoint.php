@@ -136,7 +136,7 @@ sql_query(
 
 ?>
 
-<?php require_once 'header.php'; ?>
+<?php LAYOUT_wrap_onwards(); ?>
 
 <h1>Team Exam</h1>
 
@@ -330,5 +330,3 @@ else
 	</tr>
 	
 </table>
-
-<?php require_once 'footer.php'; ?>

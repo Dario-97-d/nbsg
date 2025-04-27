@@ -25,7 +25,7 @@ if ( $is_user_in_clan )
 
 ?>
 
-<?php require_once 'header.php'; ?>
+<?php LAYOUT_wrap_onwards(); ?>
 
 <?php
 
@@ -107,7 +107,5 @@ else
 	
 	<?php
 }
-
-require_once 'footer.php';
 
 ?>

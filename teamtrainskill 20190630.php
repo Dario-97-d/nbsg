@@ -112,7 +112,7 @@ sql_query( $conn, "UPDATE style_attributes SET $set_up_skl skill_points = skill_
 
 ?>
 
-<?php require_once 'header.php'; ?>
+<?php LAYOUT_wrap_onwards(); ?>
 
 <h1>Team Train</h1>
 
@@ -173,5 +173,3 @@ sql_query( $conn, "UPDATE style_attributes SET $set_up_skl skill_points = skill_
 	</tr>
 	
 </table>
-
-<?php require_once 'footer.php'; ?>

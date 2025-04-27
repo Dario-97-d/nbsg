@@ -43,7 +43,7 @@ $bar_scale = 253 / (
 
 ?>
 
-<?php require_once 'header.php'; ?>
+<?php LAYOUT_wrap_onwards(); ?>
 
 <h1>Team <?= $username ?></h1>
 
@@ -170,5 +170,3 @@ $bar_scale = 253 / (
 	<input type="submit" name="<?= $teammate1_id .'-'. $teammate2_id ?>" value="Train" />
 	
 </form>
-
-<?php require_once 'footer.php'; ?>

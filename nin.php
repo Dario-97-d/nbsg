@@ -45,7 +45,7 @@ $can_train_with_nin =
 
 ?>
 
-<?php require_once 'header.php'; ?>
+<?php LAYOUT_wrap_onwards(); ?>
 
 <h1><?= $p_username ?></h1>
 
@@ -172,5 +172,3 @@ if ( true )
 <br />
 <br />missions:
 <br />patrol - anbu
-
-<?php require_once 'footer.php'; ?>

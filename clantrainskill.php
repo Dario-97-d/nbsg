@@ -97,6 +97,8 @@ switch (true)
 
 $a_up = $p_char_level > $u_char_level ? 1 : 0;
 
+$att_up_message = $a_up > 0 ? '+'. $a_up .' '. $atts[$att] : '';
+
 if (
 	floor(
 		( $u_flair + $u_strength + $u_agility + $u_jutsu + $u_tactics + $a_up )
@@ -107,6 +109,8 @@ if (
 	$u_char_level += 1;
 }
 else $uplv = '';
+
+$lv_up_message = $uplv !== '' ? 'Level UP!' : '';
 
 $$u_skill_to_train_points += $t_up;
 $up = 0;
@@ -142,7 +146,7 @@ sql_query(
 
 ?>
 
-<?php require_once 'header.php'; ?>
+<?php LAYOUT_wrap_onwards(); ?>
 
 <h1><?= $u_style_name ?></h1>
 
@@ -258,10 +262,11 @@ sql_query(
 	
 </table>
 
-<?php
+<?php if ( $lv_up_message ) : ?>
+    <?= $lv_up_message ?>
+	<br />
+<?php endif; ?>
 
-echo ( $uplv == '' ? '' : "Level UP <br />" ) . ( $a_up == 1 ? '+1 '. $atts[$att] : '' );
-
-require_once 'footer.php';
-
-?>
+<?php if ( $att_up_message ) : ?>
+    <?= $att_up_message ?>
+<?php endif; ?>

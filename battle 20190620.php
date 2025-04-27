@@ -465,7 +465,7 @@ else
 
 ?>
 
-<?php require_once 'header.php'; ?>
+<?php LAYOUT_wrap_onwards(); ?>
 
 <h1>Battle</h1>
 
@@ -551,5 +551,3 @@ else
 <br />
 
 <?= $upgrade ?>
-
-<?php require_once 'footer.php'; ?>

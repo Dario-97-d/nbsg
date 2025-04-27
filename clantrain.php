@@ -31,7 +31,7 @@ $clan_members_to_train_with = mysqli_fetch_all(
 
 ?>
 
-<?php require_once 'header.php'; ?>
+<?php LAYOUT_wrap_onwards(); ?>
 
 <h1><?= $style_name ?></h1>
 
@@ -133,5 +133,3 @@ $clan_members_to_train_with = mysqli_fetch_all(
 	</table>
 	
 </form>
-
-<?php require_once 'footer.php'; ?>

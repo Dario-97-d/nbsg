@@ -10,7 +10,7 @@ if ( $style_name != '' ) exiter("clan");
 
 ?>
 
-<?php require_once 'header.php'; ?>
+<?php LAYOUT_wrap_onwards(); ?>
 
 <h1>Clan Style</h1>
 
@@ -105,5 +105,3 @@ if ( $style_name != '' ) exiter("clan");
 </p>
 
 Clan names: hover
-
-<?php require_once 'footer.php'; ?>

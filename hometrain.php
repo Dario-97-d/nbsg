@@ -118,7 +118,7 @@ if ( $done == 1 ||
 
 ?>
 
-<?php require_once 'header.php'; ?>
+<?php LAYOUT_wrap_onwards(); ?>
 
 <h1>Training Grounds</h1>
 
@@ -378,7 +378,5 @@ else
 	
 	<?php
 }
-
-require_once 'footer.php';
 
 ?>

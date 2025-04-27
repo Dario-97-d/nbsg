@@ -60,7 +60,7 @@ $bar_scale = 253 / (
 
 ?>
 
-<?php require_once 'header.php'; ?>
+<?php LAYOUT_wrap_onwards(); ?>
 
 <h1>
 	Team
@@ -168,5 +168,3 @@ $bar_scale = 253 / (
 3v3 battle
 <br />
 standard bots
-
-<?php require_once 'footer.php'; ?>

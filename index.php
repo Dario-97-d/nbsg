@@ -45,7 +45,7 @@ if ( isset($_POST['login']) )
 
 ?>
 
-<?php require_once 'header.php'; ?>
+<?php LAYOUT_wrap_onwards(); ?>
 
 <?php
 if ( ! isset( $_uid ) )
@@ -77,5 +77,3 @@ if ( ! isset( $_uid ) )
 
 <br />
 Hachi-maki
-
-<?php require_once 'footer.php'; ?>

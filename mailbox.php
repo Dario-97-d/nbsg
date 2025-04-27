@@ -30,7 +30,7 @@ $messages = mysqli_fetch_all(
 
 ?>
 
-<?php require_once 'header.php'; ?>
+<?php LAYOUT_wrap_onwards(); ?>
 
 <h1>Mailbox</h1>
 
@@ -100,7 +100,5 @@ else
 		<?php
 	}
 }
-
-require_once 'footer.php';
 
 ?>

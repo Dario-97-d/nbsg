@@ -64,7 +64,7 @@ else if ( isset($_POST['newpw']) )
 
 ?>
 
-<?php require_once 'header.php'; ?>
+<?php LAYOUT_wrap_onwards(); ?>
 
 <h1>Settings</h1>
 
@@ -89,5 +89,3 @@ else if ( isset($_POST['newpw']) )
 	<br /><input type="submit" value="Change Password" />
 	<br />
 </form>
-
-<?php require_once 'footer.php'; ?>

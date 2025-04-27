@@ -51,7 +51,7 @@ if ( $is_team_full )
 
 ?>
 
-<?php require_once 'header.php'; ?>
+<?php LAYOUT_wrap_onwards(); ?>
 
 <h1>Team</h1>
 
@@ -189,7 +189,5 @@ else
 	</h3>
 	<?php
 }
-
-require_once 'footer.php';
 
 ?>

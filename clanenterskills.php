@@ -152,7 +152,7 @@ $skills_as_string = implode(",", $skills);
 
 ?>
 
-<?php require_once 'header.php'; ?>
+<?php LAYOUT_wrap_onwards(); ?>
 
 <h1><?= $clan ?></h1>
 
@@ -242,7 +242,5 @@ else
 	
 	<?php
 }
-
-require_once 'footer.php';
 
 ?>

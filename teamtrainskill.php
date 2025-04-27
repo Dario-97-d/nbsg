@@ -226,7 +226,7 @@ sql_query(
 
 ?>
 
-<?php require_once 'header.php'; ?>
+<?php LAYOUT_wrap_onwards(); ?>
 
 <h1>Team Train</h1>
 
@@ -396,5 +396,3 @@ sql_query(
 	
 	?>
 </table>
-
-<?php require_once 'footer.php'; ?>

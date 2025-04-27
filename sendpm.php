@@ -60,7 +60,7 @@ if ( isset($_POST['sendpm']) )
 
 ?>
 
-<?php require_once 'header.php'; ?>
+<?php LAYOUT_wrap_onwards(); ?>
 
 <h1>Private Message</h1>
 
@@ -78,5 +78,3 @@ if ( isset($_POST['sendpm']) )
 	<br />
 	<input type="submit" name="sendpm" value="Send" />
 </form>
-
-<?php require_once 'footer.php'; ?>

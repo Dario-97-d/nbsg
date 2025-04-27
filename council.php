@@ -6,7 +6,7 @@ if ( ! isset( $_uid ) ) exiter('index');
 
 ?>
 
-<?php require_once 'header.php'; ?>
+<?php LAYOUT_wrap_onwards(); ?>
 
 <h1>Council</h1>
 
@@ -16,5 +16,3 @@ if ( ! isset( $_uid ) ) exiter('index');
 <br />
 <br />village of village of || enemy
 <br />the organization || none
-
-<?php require_once 'footer.php'; ?>

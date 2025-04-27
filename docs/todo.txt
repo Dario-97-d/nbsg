@@ -1,13 +1,5 @@
 TODO
 
-Refactor
-
-use layout file and content
--(and keep request file with html?
--it would be nice to have something like FRONTEND_layout()
--and then the html content code below
--chatgpt: ob_start() -> html content code -> $content = ob_get_clean() -> include layout.php)
-
 UI
 
 make ui wider (64rem?)

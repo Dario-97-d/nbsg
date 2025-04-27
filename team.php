@@ -82,7 +82,7 @@ if ( $team_exam_phase == 0 )
 
 ?>
 
-<?php require_once 'header.php'; ?>
+<?php LAYOUT_wrap_onwards(); ?>
 
 <h1>Team</h1>
 
@@ -241,7 +241,5 @@ if ( $team_exam_phase == 0 )
 	</table>
 	<?php
 }
-
-require_once 'footer.php';
 
 ?>

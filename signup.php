@@ -60,7 +60,7 @@ if ( isset($_POST['signup']) )
 
 ?>
 
-<?php require_once 'header.php'; ?>
+<?php LAYOUT_wrap_onwards(); ?>
 
 <h1>Sign up</h1>
 
@@ -76,5 +76,3 @@ if ( isset($_POST['signup']) )
 	<br />
 	<br /><input type="submit" class="button1" name="signup" value="Start" />
 </form>
-
-<?php require_once 'footer.php'; ?>

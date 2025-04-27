@@ -115,4 +115,19 @@ function JS_console_log( $msg ) {
 	echo '<script>console.log("'. $msg .'");</script>';
 }
 
+function LAYOUT_wrap_onwards()
+{
+	ob_start();
+	
+	register_shutdown_function(
+		function ()
+		{
+			global $_uid;
+			
+			$_LAYOUT_VIEW_CONTENT = ob_get_clean();
+			
+			require_once 'layout.php';
+		});
+}
+
 ?>
