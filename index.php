@@ -1,6 +1,6 @@
 <?php
 
-require_once 'backend.php';
+require_once 'backend/backstart.php';
 
 // Logout.
 if ( isset($_GET['log']) && $_GET['log'] == 'out' )
@@ -12,7 +12,7 @@ if ( isset($_GET['log']) && $_GET['log'] == 'out' )
 // Login.
 if ( isset($_POST['login']) )
 {
-	if ( isset( $_uid ) ) exiter('home');
+	if ( isset( $_uid ) ) exiter('char-home');
 	
 	$username = handle_name($_POST['username']);
 	
@@ -38,7 +38,7 @@ if ( isset($_POST['login']) )
 		{
 			$_SESSION['uid'] = mysqli_fetch_assoc( $checkuser )['char_id'];
 			
-			exiter("home");
+			exiter('char-home');
 		}
 	}
 }
@@ -67,7 +67,7 @@ if ( ! isset( $_uid ) )
 		<input type="submit" class="button1" name="login" value="Login" />
 	</form>
 	
-	<a href="signup">Sign up</a>
+	<a href="user-register">Sign up</a>
 	
 	<hr>
 	

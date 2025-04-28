@@ -1,5 +1,7 @@
 TODO
 
+Update game flow and meaning through the pages
+
 UI
 
 make ui wider (64rem?)

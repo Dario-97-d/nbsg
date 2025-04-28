@@ -12,8 +12,8 @@ team
 squad
 intel
 
-mailbox
-pmsent
-sendpm
+mail-received
+mail-sent
+mail-write
 
 account

@@ -8,5 +8,6 @@ if ( ! isset( $_uid ) ) exiter('index');
 
 <?php LAYOUT_wrap_onwards(); ?>
 
-<h1>Battle</h1>
-<h3>P1 vs P2</h3>
+<h1>Intel</h1>
+
+<br />choose village - go on intel mission
