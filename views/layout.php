@@ -11,7 +11,7 @@
 <div class="hfer">
 	<?php if ( isset( $_uid ) ) : ?>
 	
-	<a style="float: left; padding-left: 16px;" href="index?log=out">Log out</a>
+	<a style="float: left; padding-left: 16px;" href="logout">Log out</a>
 	
 	<?php endif; ?>
 	

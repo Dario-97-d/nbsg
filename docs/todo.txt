@@ -1,6 +1,6 @@
 TODO
 
-Update game flow and meaning through the pages
+Use functions files for business processes
 
 UI
 

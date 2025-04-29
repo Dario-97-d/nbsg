@@ -62,7 +62,7 @@ if ( isset($_POST['user-register']) )
 
 <?php LAYOUT_wrap_onwards(); ?>
 
-<h1>Sign up</h1>
+<h1>Register</h1>
 
 <form method="POST">
 	Username:
@@ -76,3 +76,7 @@ if ( isset($_POST['user-register']) )
 	<br />
 	<br /><input type="submit" class="button1" name="user-register" value="Start" />
 </form>
+
+<a href="user-login">Login</a>
+
+<hr>
