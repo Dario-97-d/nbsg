@@ -2,8 +2,8 @@
 
 // -- Functions --
 
-$conn = mysqli_connect( 'localhost', 'nbsg', '6suAq/PSX]gfIpSS', 'nbsg'  );
-if ( ! $conn )
+$_CONN = mysqli_connect( 'localhost', 'nbsg', '6suAq/PSX]gfIpSS', 'nbsg'  );
+if ( ! $_CONN )
 {
     echo "Error: Unable to connect to MySQL." . PHP_EOL;
     echo "Debugging errno: " . mysqli_connect_errno() . PHP_EOL;
@@ -74,41 +74,18 @@ function handle_email( $email )
 	return $email;
 }
 
-function sql_query( $conn, $query )
+function sql_query( $query )
 {
-	$result = mysqli_query ($conn, $query ) or die( mysqli_error($conn) );
+	global $_CONN;
+	
+	$result = mysqli_query ( $_CONN, $query ) or die( mysqli_error( $_CONN ) );
 	
 	return $result;
 }
 
-function sql_mfa( $conn, $query )
+function sql_mfa( $query )
 {
-	$result = mysqli_fetch_assoc( mysqli_query( $conn, $query ) ) or die( mysqli_error($conn) );
-	
-	return $result;
-}
-
-function sql_prepstate( $conn, $query, $types, $values )
-{
-	$stmt = mysqli_prepare( $conn, $query ) or die( mysqli_error($conn) );
-	
-	mysqli_stmt_bind_param( $stmt, $types, $values );
-	mysqli_stmt_execute($stmt);
-	mysqli_stmt_close($stmt);
-}
-
-function getdata( $conn, $query, $prefix )
-{
-	extract(
-		mysqli_fetch_assoc( sql_query( $conn, $query ) ),
-		EXTR_PREFIX_ALL, $prefix);
-}
-
-function unset_key( $search, $array )
-{
-	$key = array_search($search, $array);
-	
-	unset($array[$key]);
+	return mysqli_fetch_assoc( sql_query( $query ) );
 }
 
 function JS_console_log( $msg ) {
@@ -128,6 +105,26 @@ function LAYOUT_wrap_onwards()
 			
 			require_once __DIR__ .'/../views/layout.php';
 		});
+}
+
+function SQL_perform_transaction( $query )
+{
+	global $_CONN;
+	
+	mysqli_begin_transaction( $_CONN );
+	
+	$result = mysqli_query( $_CONN, $query );
+	
+	if ( $result && mysqli_affected_rows( $_CONN ) === 1 )
+	{
+		mysqli_commit( $_CONN );
+		return true;
+	}
+	else
+	{
+		mysqli_rollback( $_CONN );
+		return false;
+	}
 }
 
 ?>

@@ -29,7 +29,6 @@ $skill_to_train = array_search( $skill = $_POST['skill'], $skills );
 
 extract(
 	sql_mfa(
-		$conn,
 		'SELECT a.*, c.*, username, char_rank, s.*
 		FROM char_attributes  a
 		JOIN style_attributes c ON a.char_id = c.char_id
@@ -40,7 +39,6 @@ extract(
 
 extract(
 	sql_mfa(
-		$conn,
 		'SELECT char_level, c.*, username, char_rank
 		FROM char_attributes  a
 		JOIN style_attributes c ON a.char_id = c.char_id
@@ -123,14 +121,12 @@ while ( $$u_skill_to_train_points >= $$u_skill_to_train )
 }
 
 sql_query(
-	$conn,
 	'UPDATE char_attributes SET
 		'. $uplv .'
 		'. $att .' = '. $att .' + '. $a_up .'
 	WHERE char_id = '. $_uid );
 
 sql_query(
-	$conn,
 	'UPDATE style_attributes SET
 		'. ( $up > 0 ?
 			$skill_to_train .' = '. $skill_to_train .' + '. $up .', '
@@ -139,7 +135,6 @@ sql_query(
 	WHERE char_id = '. $_uid);
 
 sql_query(
-	$conn,
 	'UPDATE skill_training SET
 		'.$skill_to_train .'_points' .' = '. $$u_skill_to_train_points .'
 	WHERE char_id = '. $_uid );

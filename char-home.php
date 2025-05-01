@@ -5,7 +5,6 @@ require_once 'backend/backstart.php';
 if ( ! isset( $_uid ) ) exiter('index');
 
 extract( sql_mfa(
-	$conn,
 	"SELECT a.*, c.*, username, char_rank
 	FROM char_attributes  a
 	JOIN style_attributes c ON a.char_id = c.char_id
@@ -43,7 +42,6 @@ if (
 		}
 		
 		sql_query(
-			$conn,
 			'UPDATE char_attributes SET
 				'. $uplv .'
 				sessions_needed_for_upgrade = sessions_needed_for_upgrade + 1,

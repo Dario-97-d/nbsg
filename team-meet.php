@@ -5,7 +5,6 @@ require_once 'backend/backstart.php';
 if ( ! isset( $_uid ) ) exiter('index');
 
 extract( sql_mfa(
-	$conn,
 	"SELECT char_level, style_name, char_rank, username, teammate1_id, teammate2_id, team_exam_phase
 	FROM char_attributes  a
 	JOIN style_attributes c ON a.char_id = c.char_id
@@ -20,7 +19,7 @@ if (
 	&&
 	! in_array( $pid, [ $teammate1_id, $teammate2_id ] )
 	&&
-	mysqli_num_rows( sql_query( $conn, "SELECT char_level FROM char_attributes WHERE char_id = $pid AND char_level <= $char_level" ) ) == 1 )
+	mysqli_num_rows( sql_query("SELECT char_level FROM char_attributes WHERE char_id = $pid AND char_level <= $char_level") ) == 1 )
 {
 	if (
 		( $tnin =
@@ -30,7 +29,7 @@ if (
 	{
 		$$tnin = $pid;
 		
-		sql_query( $conn, "UPDATE char_team SET $tnin = $pid WHERE char_id = $_uid" );
+		sql_query("UPDATE char_team SET $tnin = $pid WHERE char_id = $_uid");
 	}
 }
 
@@ -42,7 +41,7 @@ if (
 	$tnin = 'teammate'.$n.'_id';
 	$$tnin = 0;
 	
-	sql_query( $conn, "UPDATE char_team SET $tnin = 0 WHERE char_id = $_uid" );
+	sql_query("UPDATE char_team SET $tnin = 0 WHERE char_id = $_uid");
 }
 
 $has_any_teammate = $teammate1_id > 0 || $teammate2_id > 0;
@@ -51,7 +50,6 @@ if ( $has_any_teammate )
 {
 	$team_members = mysqli_fetch_all(
 		sql_query(
-			$conn,
 			'SELECT style_name, u.char_id, username, char_level
 			FROM style_attributes c
 			JOIN game_users       u ON c.char_id = u.char_id
@@ -66,7 +64,6 @@ if ( $team_exam_phase == 0 )
 {
 	$nins_eligible_for_team = mysqli_fetch_all(
 		sql_query(
-			$conn,
 			'SELECT u.char_id, username, char_level, style_name
 			FROM game_users       u
 			JOIN char_attributes  a ON u.char_id = a.char_id

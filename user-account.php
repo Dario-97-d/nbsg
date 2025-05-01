@@ -4,7 +4,7 @@ require_once 'backend/backstart.php';
 
 if ( ! isset( $_uid ) ) exiter('index');
 
-$getdata = sql_query( $conn, 'SELECT * FROM game_users WHERE char_id = '. $_uid );
+$getdata = sql_query( 'SELECT * FROM game_users WHERE char_id = '. $_uid );
 
 extract( $udata = mysqli_fetch_assoc($getdata) );
 
@@ -27,7 +27,7 @@ if ( isset($_POST['chemail']) )
 		}
 		else
 		{
-			sql_query( $conn, 'UPDATE game_users SET email = \''. $chemail .'\' WHERE char_id = '. $_uid );
+			sql_query( 'UPDATE game_users SET email = \''. $chemail .'\' WHERE char_id = '. $_uid );
 			
 			echo "Email has been updated";
 			
@@ -55,7 +55,7 @@ else if ( isset($_POST['newpw']) )
 		}
 		else
 		{
-			sql_query( $conn, 'UPDATE game_users SET pass_word = \''. $newpw .'\' WHERE char_id = '. $_uid );
+			sql_query( 'UPDATE game_users SET pass_word = \''. $newpw .'\' WHERE char_id = '. $_uid );
 			
 			echo "Password has been updated";
 		}

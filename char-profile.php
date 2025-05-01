@@ -13,7 +13,6 @@ if (
 }
 
 extract( sql_mfa(
-	$conn,
 	'SELECT char_level, style_name, skill_points, skill_training
 	FROM char_attributes  a
 	JOIN style_attributes c ON a.char_id = c.char_id
@@ -22,7 +21,6 @@ extract( sql_mfa(
 
 extract(
 	sql_mfa(
-		$conn,
 		'SELECT a.*, c.*, username, char_rank
 		FROM char_attributes  a
 		JOIN style_attributes c ON a.char_id = c.char_id

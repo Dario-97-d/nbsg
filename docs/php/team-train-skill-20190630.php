@@ -6,12 +6,11 @@ if ( ! isset( $_uid ) ) exiter('index');
 
 $ids = explode( '-', array_search( 'Train', $_POST ) );
 
-extract( sql_mfa( $conn, "SELECT teammate1_id, teammate2_id FROM char_team WHERE char_id = $_uid" ) );
+extract( sql_mfa("SELECT teammate1_id, teammate2_id FROM char_team WHERE char_id = $_uid") );
 
 if ( $teammate1_id != $ids[0] || $teammate2_id != $ids[1] ) exiter('team-meet');
 
 $members = sql_query(
-	$conn,
 	"SELECT a.*, c.*, username
 	FROM char_attributes  a
 	JOIN style_attributes c ON a.char_id = c.char_id
@@ -69,7 +68,7 @@ switch (true)
 			$uplv = '';
 		}
 		
-		sql_query( $conn, "UPDATE char_attributes SET $uplv $up_att = $up_att + 1 WHERE char_id = $_uid" );
+		sql_query("UPDATE char_attributes SET $uplv $up_att = $up_att + 1 WHERE char_id = $_uid");
 		
 		$upgrade = ( $uplv != '' ? 'Lv: '. $u_char_level .'<br />' : '' ) . $atts[$up_att] . ' +1';
 		
@@ -88,7 +87,7 @@ switch (true)
 			$$skill_training += 1;
 		}
 		
-		sql_query( $conn, 'UPDATE skill_training SET $up_skill_training = '. $$skill_training .' WHERE char_id = $_uid');
+		sql_query('UPDATE skill_training SET $up_skill_training = '. $$skill_training .' WHERE char_id = $_uid');
 		
 		$upgrade = $skill .' training: +1';
 		
@@ -107,7 +106,7 @@ if ( isset($up_skl) )
 	$upgrade = ( $up_skl == 2 ? $upgrade .'<br />' : '' ) . $skill .' +1';
 }
 
-sql_query( $conn, "UPDATE style_attributes SET $set_up_skl skill_points = skill_points - 5 WHERE char_id = $_uid" );
+sql_query("UPDATE style_attributes SET $set_up_skl skill_points = skill_points - 5 WHERE char_id = $_uid");
 */
 
 ?>

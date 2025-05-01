@@ -16,12 +16,8 @@ if ( isset($_POST['login']) )
 	}
 	else
 	{
-		$checkuser =
-			mysqli_query(
-				$conn,
-				'SELECT char_id FROM game_users WHERE username = \''. $username .'\' AND pass_word = \''. md5($_POST['password']) .'\'' )
-			or
-				die( mysqli_error($conn) );
+		$checkuser = sql_query(
+			'SELECT char_id FROM game_users WHERE username = \''. $username .'\' AND pass_word = \''. md5($_POST['password']) .'\'' );
 		
 		if ( mysqli_num_rows($checkuser) != 1 )
 		{

@@ -4,7 +4,7 @@ require_once 'backend/backstart.php';
 
 if ( ! isset( $_uid ) ) exiter('index');
 
-extract( mysqli_fetch_assoc( sql_query( $conn, "SELECT * FROM style_attributes WHERE char_id = $_uid" ) ) );
+extract( sql_mfa("SELECT * FROM style_attributes WHERE char_id = $_uid") );
 
 if ( $style_name != '' ) exiter('clan-hall');
 
@@ -47,7 +47,7 @@ if ( isset($_POST['start']) )
 		else
 		{
 			mysqli_multi_query(
-				$conn,
+				$_CONN,
 				"UPDATE style_attributes
 				SET
 					style_name = '$clan',
@@ -58,7 +58,7 @@ if ( isset($_POST['start']) )
 					genjutsu = $skills[4]
 				WHERE char_id = $_uid;
 				
-				UPDATE game_users SET char_rank = 'D' WHERE char_id = $_uid;" ) or die( mysqli_error($conn) );
+				UPDATE game_users SET char_rank = 'D' WHERE char_id = $_uid;" ) or die( mysqli_error( $_CONN ) );
 		}
 	}
 	

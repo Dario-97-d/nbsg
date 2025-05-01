@@ -4,7 +4,7 @@ require_once 'backend/backstart.php';
 
 if ( ! isset( $_uid ) ) exiter('index');
 
-extract( mysqli_fetch_assoc( sql_query( $conn, 'SELECT * FROM style_attributes WHERE char_id = '. $_uid ) ) );
+extract( sql_mfa( 'SELECT * FROM style_attributes WHERE char_id = '. $_uid ) );
 
 if ( $style_name != '' ) exiter('clan-hall');
 

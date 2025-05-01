@@ -6,7 +6,6 @@ if ( ! isset( $_uid ) ) exiter('index');
 
 $nins = mysqli_fetch_all(
 	sql_query(
-		$conn,
 		'SELECT u.char_id, char_rank, username, char_level, style_name
 		FROM game_users       u
 		JOIN char_attributes  a ON u.char_id = a.char_id

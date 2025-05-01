@@ -5,7 +5,6 @@ require_once 'backend/backstart.php';
 if ( ! isset( $_uid ) ) exiter('index');
 
 extract( sql_mfa(
-	$conn,
 	"SELECT teammate1_id, teammate2_id, username, char_rank
 	FROM char_team        t
 	JOIN game_users       u ON t.char_id = u.char_id
@@ -16,7 +15,6 @@ if ( $teammate1_id < 1 || $teammate2_id < 1 ) exiter('team-meet');
 
 $team_members = mysqli_fetch_all(
 	sql_query(
-		$conn,
 		'SELECT char_level, c.*, username
 		FROM char_attributes  a
 		JOIN style_attributes c ON a.char_id = c.char_id

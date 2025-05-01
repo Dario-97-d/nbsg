@@ -4,7 +4,7 @@ require_once 'backend/backstart.php';
 
 if ( ! isset( $_uid ) ) exiter('index');
 
-extract( mysqli_fetch_assoc( sql_query( $conn, 'SELECT style_name FROM style_attributes WHERE char_id = '. $_uid ) ) );
+extract( sql_mfa('SELECT style_name FROM style_attributes WHERE char_id = '. $_uid) );
 
 $is_user_in_clan = $style_name !== '';
 
@@ -12,7 +12,6 @@ if ( $is_user_in_clan )
 {
 	$clan_members = mysqli_fetch_all(
 		sql_query(
-			$conn,
 			'SELECT u.char_id, char_rank, username, char_level
 			FROM game_users       u
 			JOIN char_attributes  a ON u.char_id = a.char_id

@@ -6,14 +6,13 @@ if ( ! isset( $_uid ) ) exiter('index');
 
 if ( is_int( $msg_id = array_search('Delete', $_POST) ) )
 {
-	sql_query( $conn, 'UPDATE mail SET seen = 2 WHERE msg_id = '. $msg_id );
+	sql_query( 'UPDATE mail SET seen = 2 WHERE msg_id = '. $msg_id );
 	
 	echo "PM deleted";
 }
 
 $messages = mysqli_fetch_all(
 	sql_query(
-		$conn,
 		'SELECT m.*, r.char_id
 		FROM       mail       m
 		LEFT  JOIN game_users s ON s.username = m.sender_username

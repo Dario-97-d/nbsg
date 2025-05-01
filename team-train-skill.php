@@ -7,7 +7,6 @@ if ( ! isset( $_uid ) ) exiter('index');
 $ids = explode( '-', array_search('Train', $_POST) );
 
 extract( sql_mfa(
-	$conn,
 	"SELECT teammate1_id, teammate2_id, s.*
 	FROM char_team      t
 	JOIN skill_training s ON t.char_id = s.char_id
@@ -25,7 +24,6 @@ if ( min( $teammate1_level, $teammate2_level ) > $user_level )
 
 $team_members = mysqli_fetch_all(
 	sql_query(
-		$conn,
 		'SELECT char_level, c.*, username
 		FROM char_attributes  a
 		JOIN style_attributes c ON a.char_id = c.char_id
@@ -204,7 +202,6 @@ if ( $up_genjutsu_points > 0 )
 }
 
 sql_query(
-	$conn,
 	'UPDATE style_attributes SET
 		kenjutsu = kenjutsu + '. $up_kenjutsu .',
 		shuriken = shuriken + '. $up_shuriken .',
@@ -215,7 +212,6 @@ sql_query(
 	WHERE char_id = '. $_uid );
 
 sql_query(
-	$conn,
 	'UPDATE skill_training SET
 		kenjutsu_points = '. $kenjutsu_points .',
 		shuriken_points = '. $shuriken_points .',

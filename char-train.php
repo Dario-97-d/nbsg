@@ -4,7 +4,7 @@ require_once 'backend/backstart.php';
 
 if ( ! isset( $_uid ) ) exiter('index');
 
-extract( sql_mfa( $conn, 'SELECT * FROM style_attributes c JOIN skill_training s ON c.char_id = s.char_id WHERE c.char_id = '. $_uid ) );
+extract( sql_mfa( 'SELECT * FROM style_attributes c JOIN skill_training s ON c.char_id = s.char_id WHERE c.char_id = '. $_uid ) );
 
 $trained = '';
 $done = 0;
@@ -42,7 +42,6 @@ if ( ! empty($_POST) )
 			$time_ready = time() + ($sessions_in_training * 1800);
 			
 			sql_query(
-				$conn,
 				"UPDATE skill_training SET
 					skill_training = '$skill_training',
 					sessions_in_training = $sessions_in_training,
@@ -79,13 +78,11 @@ if ( $done == 1 ||
 		}
 		
 		sql_query(
-			$conn,
 			'UPDATE style_attributes SET
 				'. $skill_training .' = '. $skill_training .' + '. $up .'
 			WHERE char_id = '. $_uid );
 		
 		sql_query(
-			$conn,
 			'UPDATE skill_training SET
 				'. $skill_to_upgrade .' = '. $$skill_to_upgrade .',
 				skill_training = \'\',
@@ -104,7 +101,6 @@ if ( $done == 1 ||
 	else
 	{
 		sql_query(
-			$conn,
 			'UPDATE skill_training SET
 				'. $skill_to_upgrade .' = '. $$skill_training .',
 				skill_training = \'\',

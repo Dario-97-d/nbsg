@@ -16,7 +16,7 @@ if ( isset($_POST['user-register']) )
 		// $username returns error.
 		echo $username;
 	}
-	else if ( mysqli_num_rows( sql_query( $conn, "SELECT char_id FROM game_users WHERE username = '$username'" ) ) > 0)
+	else if ( mysqli_num_rows( sql_query("SELECT char_id FROM game_users WHERE username = '$username'") ) > 0)
 	{
 		echo $username ." already in use";
 	}
@@ -29,7 +29,7 @@ if ( isset($_POST['user-register']) )
 			// $email returns error.
 			echo $email;
 		}
-		else if ( mysqli_num_rows( sql_query( $conn, "SELECT char_id FROM game_users WHERE email = '$email'" ) ) > 0 )
+		else if ( mysqli_num_rows( sql_query("SELECT char_id FROM game_users WHERE email = '$email'") ) > 0 )
 		{
 			echo $email ." already in use";
 		}
@@ -44,11 +44,7 @@ if ( isset($_POST['user-register']) )
 			}
 			else
 			{
-				$sql_register =
-					mysqli_query(
-						$conn,
-						'CALL sp_register_userchar(\''. $username .'\', \''. $email .'\', \''. md5($password) .'\')' )
-					or die( mysqli_error($conn) );
+				$sql_register = sql_query('CALL sp_register_userchar(\''. $username .'\', \''. $email .'\', \''. md5($password) .'\')' );
 				
 				$_SESSION['uid'] = mysqli_fetch_assoc( $sql_register )['char_id'];
 				

@@ -5,7 +5,6 @@ require_once 'backend/backstart.php';
 if ( ! isset( $_uid ) ) exiter('index');
 
 extract( sql_mfa(
-	$conn,
 	'SELECT char_rank, char_level, c.*
 	FROM game_users       u
 	JOIN char_attributes  a ON u.char_id = a.char_id
@@ -16,7 +15,6 @@ if ( $style_name === '' ) exiter('clan-hall');
 
 $clan_members_to_train_with = mysqli_fetch_all(
 	sql_query(
-		$conn,
 		'SELECT username, char_level, c.*
 		FROM game_users       u
 		JOIN char_attributes  a ON u.char_id = a.char_id

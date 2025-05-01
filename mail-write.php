@@ -28,7 +28,7 @@ if ( isset($_POST['mail-write']) )
 		// $receiver_username returns error.
 		echo $receiver_username;
 	}
-	else if ( mysqli_num_rows( sql_query( $conn, "SELECT char_id FROM game_users WHERE username = '$receiver_username'" ) ) != 1)
+	else if ( mysqli_num_rows( sql_query("SELECT char_id FROM game_users WHERE username = '$receiver_username'") ) != 1)
 	{
 		echo $receiver_username ." not found";
 	}
@@ -43,13 +43,19 @@ if ( isset($_POST['mail-write']) )
 		}
 		else
 		{
-			$user = mysqli_fetch_assoc( sql_query( $conn, "SELECT username FROM game_users WHERE char_id = $_uid" ) );
+			$user = sql_mfa('SELECT username FROM game_users WHERE char_id = '. $_uid);
 			
-			sql_prepstate(
-				$conn,
-				"INSERT INTO mail (sender_username, receiver_username, msg_text, seen)
-				VALUES ('". $user['username'] ."', '". $receiver_username ."', ?, 0)",
-				"s", $msg_text);
+			SQL_perform_transaction(
+				'INSERT INTO mail (
+					sender_username,
+					receiver_username,
+					msg_text,
+					seen)
+				VALUES (
+					\''. $user['username']  .'\',
+					\''. $receiver_username .'\',
+					\''. $msg_text          .'\',
+					0)' );
 			
 			echo "PM sent";
 			

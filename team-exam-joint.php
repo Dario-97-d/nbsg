@@ -7,7 +7,6 @@ if ( ! isset( $_uid ) ) exiter('index');
 $ids = explode('-', array_search('Team Battle', $_POST));
 
 extract( sql_mfa(
-	$conn,
 	'SELECT teammate1_id, teammate2_id, team_exam_phase, username, char_rank, style_name, skill_training
 	FROM char_team        t
 	JOIN game_users       u ON t.char_id = u.char_id
@@ -29,7 +28,6 @@ if (
 
 $team_members = mysqli_fetch_all(
 	sql_query(
-		$conn,
 		'SELECT char_level, c.*, username
 		FROM char_attributes  a
 		JOIN style_attributes c ON a.char_id = c.char_id
@@ -124,7 +122,6 @@ switch ( $style_name )
 }
 
 sql_query(
-	$conn,
 	'UPDATE char_attributes SET
 		char_level = char_level + 2,
 		flair      = flair      + '. $up_flair    .',
@@ -260,7 +257,7 @@ if ( ( $team_members[0]['char_level'] + $team_members[1]['char_level'] + $team_m
 	</h4>
 	<?php
 	
-	sql_query( $conn, 'UPDATE char_team SET team_exam_phase = 1 WHERE char_id = '. $_uid );
+	sql_query( 'UPDATE char_team SET team_exam_phase = 1 WHERE char_id = '. $_uid );
 }
 else
 {
