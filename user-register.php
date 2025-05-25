@@ -14,11 +14,11 @@ if ( isset($_POST['user-register']) )
 	if ( strlen($username) > 16 )
 	{
 		// $username returns error.
-		echo $username;
+		JS_add_message( $username );
 	}
 	else if ( mysqli_num_rows( sql_query("SELECT char_id FROM game_users WHERE username = '$username'") ) > 0)
 	{
-		echo $username ." already in use";
+		JS_add_message( 'Username '. $username .' is already taken.' );
 	}
 	else
 	{
@@ -27,11 +27,11 @@ if ( isset($_POST['user-register']) )
 		if ( strlen($email) > 48 )
 		{
 			// $email returns error.
-			echo $email;
+			JS_add_message( $email );
 		}
 		else if ( mysqli_num_rows( sql_query("SELECT char_id FROM game_users WHERE email = '$email'") ) > 0 )
 		{
-			echo $email ." already in use";
+			JS_add_message( 'Email '. $email .' is already taken.');
 		}
 		else
 		{
@@ -40,7 +40,7 @@ if ( isset($_POST['user-register']) )
 			
 			if ( $slpw < 8 || $slpw > 32 )
 			{
-				echo "Password must be 8-32 chars long";
+				JS_add_message( 'Password must be 8-32 chars long.');
 			}
 			else
 			{

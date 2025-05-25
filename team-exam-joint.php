@@ -118,7 +118,7 @@ switch ( $style_name )
 		$up_flair += $train;
 		break;
 	
-	default: echo 'switch_style Error'; break;
+	default: PM_add_message('switch_style Error'); break;
 }
 
 sql_query(

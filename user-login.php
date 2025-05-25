@@ -12,7 +12,7 @@ if ( isset($_POST['login']) )
 	if ( strlen($username) > 16 )
 	{
 		// $username returns error.
-		echo $username;
+		JS_add_message( $username );
 	}
 	else
 	{
@@ -21,7 +21,7 @@ if ( isset($_POST['login']) )
 		
 		if ( mysqli_num_rows($checkuser) != 1 )
 		{
-			echo "Invalid Username / Password Combination";
+			JS_add_message('Invalid Username / Password combination');
 		}
 		else
 		{

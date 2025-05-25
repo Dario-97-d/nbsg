@@ -26,11 +26,11 @@ if ( isset($_POST['mail-write']) )
 	if ( strlen($receiver_username) > 16 )
 	{
 		// $receiver_username returns error.
-		echo $receiver_username;
+		JS_add_message( $receiver_username );
 	}
 	else if ( mysqli_num_rows( sql_query("SELECT char_id FROM game_users WHERE username = '$receiver_username'") ) != 1)
 	{
-		echo $receiver_username ." not found";
+		JS_add_message( $receiver_username .' not found'. );
 	}
 	else
 	{
@@ -39,7 +39,7 @@ if ( isset($_POST['mail-write']) )
 		if ( $slpmt < 1 || $slpmt > 800)
 		{
 			// 800 ?
-			echo "Number of chars in text must be 1-800";
+			JS_add_message('Number of chars in text must be 1-800');
 		}
 		else
 		{
@@ -57,7 +57,7 @@ if ( isset($_POST['mail-write']) )
 					\''. $msg_text          .'\',
 					0)' );
 			
-			echo "PM sent";
+			JS_add_message('PM sent.');
 			
 			exiter('mail-sent');
 		}

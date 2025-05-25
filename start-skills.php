@@ -72,7 +72,8 @@ if ( isset($_POST['skills']) )
 	if ( $skills[5] < 1)
 	{
 		// echo not working: it seems when coming from F5(refresh) POST[skills] is!set.
-		echo "Can't upgrade more";
+		// it was echo before JS_add_message().
+		JS_add_message('Can\'t upgrade more');
 	}
 	else
 	{
@@ -144,7 +145,7 @@ else
 			$skills = [ 1, 1, 1, 1, 3, 3 ];
 			break;
 		
-		default: echo 'switch Error'; break;
+		default: JS_add_message('switch Error'); break;
 	}
 }
 

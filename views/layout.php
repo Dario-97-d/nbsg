@@ -57,9 +57,11 @@
 	</div>
 	
 	<div id="content">
-	
-	<?= $_LAYOUT_VIEW_CONTENT ?>
-	
+		
+		<?= JS_render_messages() ?>
+		
+		<?= $_LAYOUT_VIEW_CONTENT ?>
+		
 	</div>
 </div>
 

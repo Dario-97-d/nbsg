@@ -8,7 +8,7 @@ if ( is_int( $msg_id = array_search('Delete', $_POST) ) )
 {
 	sql_query( 'UPDATE mail SET seen = 2 WHERE msg_id = '. $msg_id );
 	
-	echo "PM deleted";
+	JS_add_message('PM deleted.');
 }
 
 $messages = mysqli_fetch_all(

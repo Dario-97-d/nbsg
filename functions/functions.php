@@ -88,8 +88,38 @@ function sql_mfa( $query )
 	return mysqli_fetch_assoc( sql_query( $query ) );
 }
 
-function JS_console_log( $msg ) {
+$_JS_messages;
+
+function JS_add_message( $msg )
+{
+	global $_JS_messages;
+	
+	if ( isset( $_JS_messages ) && is_array( $_JS_messages ) )
+	{
+		$_JS_messages[] = $msg;
+	}
+	else
+	{
+		$_JS_messages = [ $msg ];
+	}
+}
+
+function JS_console_log( $msg )
+{
 	echo '<script>console.log("'. $msg .'");</script>';
+}
+
+function JS_render_messages()
+{
+	global $_JS_messages;
+	
+	if ( isset( $_JS_messages ) && is_array( $_JS_messages ) )
+	{
+		foreach ( $_JS_messages as $msg )
+		{
+			echo '<br>'. $msg;
+		}
+	}
 }
 
 function LAYOUT_wrap_onwards()

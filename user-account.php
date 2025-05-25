@@ -14,7 +14,7 @@ if ( isset($_POST['chemail']) )
 	
 	if ( $pw != $pass_word )
 	{
-		echo "Wrong password";
+		JS_add_message('Wrong password');
 	}
 	else
 	{
@@ -23,13 +23,13 @@ if ( isset($_POST['chemail']) )
 		if ( strlen($chemail) > 48 )
 		{
 			// $chemail returns error.
-			echo $chemail;
+			JS_add_message( $chemail );
 		}
 		else
 		{
 			sql_query( 'UPDATE game_users SET email = \''. $chemail .'\' WHERE char_id = '. $_uid );
 			
-			echo "Email has been updated";
+			JS_add_message('Email has been updated');
 			
 			$email = $chemail;
 		}
@@ -41,7 +41,7 @@ else if ( isset($_POST['newpw']) )
 	
 	if ( $oldpw != $pass_word )
 	{
-		echo "Wrong password";
+		JS_add_message('Wrong password');
 	}
 	else
 	{
@@ -51,13 +51,13 @@ else if ( isset($_POST['newpw']) )
 		
 		if ( $slpw < 8 || $slpw > 32 )
 		{
-			echo "Password must be 8-32 chars long";
+			JS_add_message('Password must be 8-32 chars long');
 		}
 		else
 		{
 			sql_query( 'UPDATE game_users SET pass_word = \''. $newpw .'\' WHERE char_id = '. $_uid );
 			
-			echo "Password has been updated";
+			JS_add_message('Password has been updated');
 		}
 	}
 }
