@@ -1,5 +1,11 @@
-html { display: table; margin: auto; }
-body { text-align: center; }
+html {
+	display: table;
+	margin: auto;
+}
+body {
+	text-align: center;
+	background-color: rgba(0,0,0,0.5);
+}
 
 a {
 	color: #884400;

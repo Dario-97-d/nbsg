@@ -1,8 +1,8 @@
 <?php
 
-require_once 'backend/backstart.php';
+  require_once 'backend/backstart.php';
 
-if ( ! isset( $_uid ) ) exiter('index');
+  if ( ! isset( $_uid ) ) exiter('index');
 
 ?>
 
@@ -10,10 +10,21 @@ if ( ! isset( $_uid ) ) exiter('index');
 
 <h1>Squad</h1>
 
-<br />squad_name
 <br />
-<br />-go on patrol mission
+
+squad_name
+
 <br />
-<br />list of squad members
 <br />
-<br />player - rank - lv - style
+
+-go on patrol mission
+
+<br />
+<br />
+
+list of squad members
+
+<br />
+<br />
+
+player - rank - lv - style

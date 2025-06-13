@@ -1,18 +1,11 @@
 <?php
 
-require_once 'backend/backstart.php';
+  require_once 'backend/backstart.php';
+  require_once 'functions/features/rank.php';
 
-if ( ! isset( $_uid ) ) exiter('index');
-
-$nins = mysqli_fetch_all(
-	sql_query(
-		'SELECT u.char_id, char_rank, username, char_level, style_name
-		FROM game_users       u
-		JOIN char_attributes  a ON u.char_id = a.char_id
-		JOIN style_attributes c ON u.char_id = c.char_id
-		ORDER BY char_rank, char_level DESC
-		LIMIT 25' ),
-	MYSQLI_ASSOC );
+  if ( ! isset( $_uid ) ) exiter('index');
+  
+  $_chars = RANK_get_chars();
 
 ?>
 
@@ -21,40 +14,38 @@ $nins = mysqli_fetch_all(
 <h1>Ranking</h1>
 
 <table align="center" style="text-align: center;" cellpadding="8" cellspacing="0">
-	<tr>
-		<th>#</th>
-		<th>Clan</th>
-		<th>Nin</th>
-		<th>rank</th>
-		<th>Lv</th>
-	</tr>
-	
-	<?php
-	
-	$r = 0;
-	foreach ( $nins as $row )
-	{
-		$r++;
-		?>
-		<tr>
-			
-			<th><?= $r ?></th>
-			
-			<td><?= $row['style_name'] ?></td>
-			
-			<td>
-				<a href="char-profile?id=<?= $row['char_id'] ?>">
-					<?= $row['username'] ?>
-				</a>
-			</td>
-			
-			<td><?= $row['char_rank'] ?></td>
-			
-			<td><?= $row['char_level'] ?></td>
-			
-		</tr>
-		<?php
-	}
-	
-	?>
+  <tr>
+    <th>#</th>
+    <th>Clan</th>
+    <th>Char</th>
+    <th>Rank</th>
+    <th>Lv</th>
+  </tr>
+  
+  <?php
+  $r = 0;
+  foreach ( $_chars as $row )
+  {
+    $r++;
+    ?>
+    <tr>
+      
+      <th><?= $r ?></th>
+      
+      <td><?= $row['style_name'] ?></td>
+      
+      <td>
+        <a href="char-profile?id=<?= $row['char_id'] ?>">
+          <?= $row['username'] ?>
+        </a>
+      </td>
+      
+      <td><?= $row['char_rank'] ?></td>
+      
+      <td><?= $row['char_level'] ?></td>
+      
+    </tr>
+    <?php
+  }
+  ?>
 </table>

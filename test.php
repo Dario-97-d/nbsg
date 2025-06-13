@@ -8,11 +8,11 @@ $start = microtime(true);
 
 for ( $i = 0; $i < 10000; ++$i )
 {
-	$kenjutsus = $kenjutsu + $kenjutsu1 + $kenjutsu2;
-	
-	echo $kenjutsus;
-	echo $kenjutsus;
-	echo $kenjutsus;
+  $kenjutsus = $kenjutsu + $kenjutsu1 + $kenjutsu2;
+  
+  echo $kenjutsus;
+  echo $kenjutsus;
+  echo $kenjutsus;
 }
 
 $dur = ( microtime(true) * 1000 ) - ( $start * 1000 );

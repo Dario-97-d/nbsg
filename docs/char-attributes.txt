@@ -1,0 +1,12 @@
+nbsg char attributes
+
+Level -> floor-average of attributes
+
+Jutsu    -> Skill    (Shuriken)
+Strength -> Power    (Kenjutsu)
+Agility  -> Reach    (Taijutsu)
+Flair    -> Critical (Ninjutsu)
+Strategy -> Planning (Genjutsu)
+
+these attributes are developed through game time and activity experience (1 point per 30 minutes, max 50?).
+at every significant battle, the player gets *uncontrolled* (?) attribute upgrades. (or just get upgrade points)

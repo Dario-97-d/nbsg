@@ -1,26 +1,19 @@
 <?php
 
-require_once 'backend/backstart.php';
-
-if ( ! isset( $_uid ) ) exiter('index');
-
-if ( is_int( $msg_id = array_search('Delete', $_POST) ) )
-{
-	sql_query( 'UPDATE mail SET seen = 2 WHERE msg_id = '. $msg_id );
-	
-	JS_add_message('PM deleted.');
-}
-
-$messages = mysqli_fetch_all(
-	sql_query(
-		'SELECT m.*, r.char_id
-		FROM       mail       m
-		LEFT  JOIN game_users s ON s.username = m.sender_username
-		RIGHT JOIN game_users r ON r.username = m.receiver_username
-		WHERE s.char_id = '. $_uid .'
-		AND seen <> 2
-		ORDER BY msg_time DESC' ),
-	MYSQLI_ASSOC );
+  require_once 'backend/backstart.php';
+  require_once 'functions/features/mail.php';
+  
+  if ( ! isset( $_uid ) ) exiter('index');
+  
+  // -- Delete Message --
+  if ( isset( $_POST['delete-msg-id'] ) )
+  {
+    MAIL_delete_message( $_POST['delete-msg-id'] );
+    
+    JS_add_message('PM deleted.');
+  }
+  
+  $_messages = MAIL_get_sent();
 
 ?>
 
@@ -29,55 +22,52 @@ $messages = mysqli_fetch_all(
 <h1>PMs sent</h1>
 
 <h2>
-	<a href="mail-received">Mailbox</a> || <a href="mail-write">Send pm</a> || <a href="mail-sent">PMs sent</a>
+  <a href="mail-received">Mailbox</a> || <a href="mail-write">Send pm</a> || <a href="mail-sent">PMs sent</a>
 </h2>
 
-<?php
-
-if ( empty($messages) )
+<?php if ( empty( $_messages ) )
 {
-	?>
-	No sent messages to show
-	<?php
+  ?>
+  No sent messages to show
+  <?php
 }
 else
 {
-	foreach ( $messages as $row )
-	{
-		?>
-		
-		<b>
-			
-			<?= $row['msg_time'] ?>
-			
-		</b> || <b>
-			
-			PM to:
-			
-		</b> <a href="char-profile?id=<?= $row['char_id'] ?>">
-			
-			<?= $row['receiver_username']?>
-			
-		</a> <b>
-			
-			<?= $row['seen'] == 0 ? 'Not s' : 'S' ?>een
-			
-		</b> || <a href="mail-write?to=<?= $row['sender_username'] ?>">
-			
-			Send PM
-			
-		</a>
-		
-		<textarea name="msg-text" disabled><?= $row['msg_text'] ?></textarea>
-		
-		<br />
-		
-		<form action="mail-sent" method="POST">
-			<input type="submit" name="<?= $row['msg_id'] ?>" value="Delete" />
-		</form>
-		
-		<?php
-	}
+  foreach ( $_messages as $row )
+  {
+    ?>
+    
+    <b>
+      
+      <?= $row['msg_time'] ?>
+      
+    </b> || <b>
+      
+      PM to:
+      
+    </b> <a href="char-profile?id=<?= $row['receiver_id'] ?>">
+      
+      <?= $row['receiver_username']?>
+      
+    </a> <b>
+      
+      <?= $row['seen'] == 0 ? 'Not s' : 'S' ?>een
+      
+    </b> || <a href="mail-write?to-username=<?= $row['receiver_username'] ?>">
+      
+      Send PM
+      
+    </a>
+    
+    <textarea name="msg-text" disabled><?= $row['msg_text'] ?></textarea>
+    
+    <br />
+    
+    <form method="POST">      
+      <button type="submit" name="delete-msg-id" value="<?= $row['msg_id'] ?>">Delete</button>
+    </form>
+    
+    <?php
+  }
 }
-
 ?>

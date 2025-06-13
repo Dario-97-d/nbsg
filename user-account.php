@@ -1,91 +1,94 @@
 <?php
 
-require_once 'backend/backstart.php';
-
-if ( ! isset( $_uid ) ) exiter('index');
-
-$getdata = sql_query( 'SELECT * FROM game_users WHERE char_id = '. $_uid );
-
-extract( $udata = mysqli_fetch_assoc($getdata) );
-
-if ( isset($_POST['chemail']) )
-{
-	$pw = md5($_POST['pw']);
-	
-	if ( $pw != $pass_word )
-	{
-		JS_add_message('Wrong password');
-	}
-	else
-	{
-		$chemail = handle_email( $_POST['chemail'] );
-		
-		if ( strlen($chemail) > 48 )
-		{
-			// $chemail returns error.
-			JS_add_message( $chemail );
-		}
-		else
-		{
-			sql_query( 'UPDATE game_users SET email = \''. $chemail .'\' WHERE char_id = '. $_uid );
-			
-			JS_add_message('Email has been updated');
-			
-			$email = $chemail;
-		}
-	}
-}
-else if ( isset($_POST['newpw']) )
-{
-	$oldpw = md5($_POST['oldpw']);
-	
-	if ( $oldpw != $pass_word )
-	{
-		JS_add_message('Wrong password');
-	}
-	else
-	{
-		$newpw = md5($_POST['newpw']);
-		
-		$slpw = strlen($newpw);
-		
-		if ( $slpw < 8 || $slpw > 32 )
-		{
-			JS_add_message('Password must be 8-32 chars long');
-		}
-		else
-		{
-			sql_query( 'UPDATE game_users SET pass_word = \''. $newpw .'\' WHERE char_id = '. $_uid );
-			
-			JS_add_message('Password has been updated');
-		}
-	}
-}
+  require_once 'backend/backstart.php';
+  require_once 'functions/features/user.php';
+  
+  if ( ! isset( $_uid ) ) exiter('index');
+  
+  // -- Update Email --
+  if ( isset( $_POST['new-email'] ) )
+  {
+    $update_email = USER_update_email( $_POST['new-email'], $_POST['password'] ?? '' );
+    
+    // Success or failure message.
+    JS_add_message( is_string( $update_email ) ? $update_email : 'Email updated!' );
+  }
+  
+  // -- Update Password --
+  if ( isset( $_POST['new-password'] ) )
+  {
+    $update_password = USER_update_password( $_POST['new-password'], $_POST['password'] ?? '' );
+    
+    // Success or failure message.
+    JS_add_message( is_string( $update_password ) ? $update_password : 'Password updated!' );
+  }
+  
+  $_email = USER_get_current_email();
 
 ?>
 
 <?php LAYOUT_wrap_onwards(); ?>
 
-<h1>Settings</h1>
+<h1>Account Settings</h1>
 
-<form method="POST">
-	<br />New e-mail:
-	<br /><input type="email" style="color: gray; width: 256px;" name="chemail" value="<?= $email ?>" maxlength="48" />
-	<br />
-	<br />Password:
-	<br /><input type="password" name="pw" />
-	<br />
-	<br /><input type="submit" value="Change E-mail" />
-	<br />
-</form>
+<!-- Update Email -->
+<section>
+  <br />
+  <h2>Update Email</h2>
 
-<form method="POST">
-	<br />Old password:
-	<br /><input type="password" name="oldpw" />
-	<br />
-	<br />New password:
-	<br /><input type="password" name="newpw" />
-	<br />
-	<br /><input type="submit" value="Change Password" />
-	<br />
-</form>
+  <form method="POST">
+    
+    New e-mail:
+    <br />
+    
+    <input type="email" style="width: 256px; text-align: center;" name="new-email" maxlength="48" placeholder="<?= $_email ?>" />
+    
+    <br />
+    <br />
+    
+    Password:
+    <br />
+    
+    <input type="password" name="password" />
+    
+    <br />
+    <br />
+    
+    <button type="submit">Update Email</button>
+    
+    <br />
+    
+  </form>
+</section>
+
+<!-- Update Password -->
+<section>
+  <br />
+  <h2>Update Password</h2>
+  
+  <form method="POST">
+    
+    Old password:
+    
+    <br />
+    
+    <input type="password" name="password" />
+    
+    <br />
+    <br />
+    
+    New password:
+    
+    <br />
+    
+    <input type="password" name="new-password" />
+    
+    <br />
+    <br />
+    
+    <button type="submit">Update Password</button>
+    
+    <br />
+    
+  </form>
+</section>

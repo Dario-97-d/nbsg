@@ -32,14 +32,14 @@ CREATE TABLE IF NOT EXISTS style_attributes (
 
 CREATE TABLE IF NOT EXISTS skill_training (
 	char_id INT PRIMARY KEY,
-	kenjutsu_points      INT NOT NULL DEFAULT 0,
-	shuriken_points      INT NOT NULL DEFAULT 0,
-	taijutsu_points      INT NOT NULL DEFAULT 0,
-	ninjutsu_points      INT NOT NULL DEFAULT 0,
-	genjutsu_points      INT NOT NULL DEFAULT 0,
+	kenjutsu_points      INT        NOT NULL DEFAULT 0,
+	shuriken_points      INT        NOT NULL DEFAULT 0,
+	taijutsu_points      INT        NOT NULL DEFAULT 0,
+	ninjutsu_points      INT        NOT NULL DEFAULT 0,
+	genjutsu_points      INT        NOT NULL DEFAULT 0,
 	skill_training       VARCHAR(8) NOT NULL DEFAULT '',
-	sessions_in_training INT NOT NULL DEFAULT 0,
-	time_ready           INT NOT NULL DEFAULT 0
+	sessions_in_training INT        NOT NULL DEFAULT 0,
+	time_ready           DATETIME   NOT NULL DEFAULT 0
 ) ENGINE = InnoDB;
 
 CREATE TABLE IF NOT EXISTS stats (

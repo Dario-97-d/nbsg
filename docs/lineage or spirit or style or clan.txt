@@ -1,0 +1,64 @@
+lineage/spirit (nbsg -> naruto)
+
+Skills
+- Ninjutsu -> Fire
+- Shuriken -> Wind
+- Kenjutsu -> Lightning
+- Taijutsu -> Earth
+- Genjutsu -> Water
+
+Special skills
+- Bijuu -> Fire
+- Kage Bunshin -> Wind
+- Kuchiyose -> Light
+- Hachimon Tonkou -> Earth
+- Sharingan -> Water
+
+Mangekyo
+- Amaterasu - Fire (Ninjutsu)
+- Tsukuyomi - Genjutsu, Sharingan, Water
+- Susanno'o - Earth (Taijutsu)
+- Kamui     - Wind, Movement, 
+- Izanagi   - Lightning, Fate, Kenjutsu
+
+Environ -> Element -> Skill -> Special -> Supreme
+- Steppe -> Fire  -> Ninjutsu -> Chakura Moodo  -> Placed fire (Amaterasu/Housenka)
+- Desert -> Wind  -> Shuriken -> Multiplication -> Teleportation (Kamui/Shunshin)
+- Jungle -> Light -> Kenjutsu -> Invocation     -> Body Power Enhancement (Susanno'o/Jinchuuriki)
+- Rocks  -> Earth -> Taijutsu -> Full Fitness   -> Body Substitution (Izanagi/Kawarimi)
+- Delta  -> Water -> Genjutsu -> Eye-jutsu      -> Supreme Illusion (Tsukuyomi/Kotoamatsukami)
+
+Natural effects
+- Fire  -> Heat
+- Wind  -> Movement
+- Light -> Electricity
+- Earth -> Hardness
+- Water -> Shape
+
+# Loose ideas:
+
+Spirit of Water <-> Bruce Lee <-> Rock Lee ninja style (so Water and Tai-only could span in same village)
+Rock/Earth -> rock lee (so not water?)
+
+# Defining character:
+
+Main skill:
+- Kenjutsu (samurai, seven mist swordsmen)
+- Genjutsu (itachi, kurenai)
+- Taijutsu-only (rock lee, maito gai)
+- Nin-Taijutsu (neji, hinata)
+- Nin Fire (sasuke)
+- Nin Wind (temari)
+- Nin Light (kakashi)
+- Nin Earth (hashirama)
+- Nin Water (tobirama)
+- Nin Energy (naruto)
+- Nin Invocation (jiraiya)
+- Nin ...
+
+# Maybe lose this feature clan/style/lineage/spirit and just let one develop however intended.
+
+a user wanting to develop a rock lee kind of char keeps ninjutsu and genjutsu at level 1
+- solve skill upgrades on multiplayer action to avoid developping unwanted skills
+
+Associate meaning and symbols to villages

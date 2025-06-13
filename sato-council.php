@@ -1,8 +1,8 @@
 <?php
 
-require_once 'backend/backstart.php';
+  require_once 'backend/backstart.php';
 
-if ( ! isset( $_uid ) ) exiter('index');
+  if ( ! isset( $_uid ) ) exiter('index');
 
 ?>
 
@@ -10,9 +10,20 @@ if ( ! isset( $_uid ) ) exiter('index');
 
 <h1>Council</h1>
 
-<br />diplomacy
 <br />
-<br />list of organizations / villages || status
+
+diplomacy
+
 <br />
-<br />village of village of || enemy
-<br />the organization || none
+<br />
+
+list of organizations / villages || status
+
+<br />
+<br />
+
+village of village of || enemy
+
+<br />
+
+the organization || none

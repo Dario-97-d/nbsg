@@ -1,8 +1,8 @@
 <?php
 
-require_once 'backend/backstart.php';
-
-if ( ! isset( $_uid ) ) exiter('index');
+  require_once 'backend/backstart.php';
+  
+  if ( ! isset( $_uid ) ) exiter('index');
 
 ?>
 

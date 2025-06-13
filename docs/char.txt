@@ -1,0 +1,15 @@
+nbsg char:
+
+new order for attributes:
+- jutsu
+- strength
+- agility
+- flair
+- tactics
+
+new order for skills
+- shuriken
+- kenjutsu
+- taijutsu
+- ninjutsu
+- genjutsu

@@ -1,169 +1,129 @@
 <?php
 
-require_once 'backend/backstart.php';
+  require_once 'backend/backstart.php';
+  require_once 'functions/features/char/char-profile.php';
 
-if ( ! isset( $_uid ) ) exiter('index');
+  if ( ! isset( $_uid ) ) exiter('index');
 
-if (
-	! isset($_GET['id'])
-	||
-	! ctype_digit( $pid = $_GET['id']) )
-{
-	$pid = $_uid;
-}
+  if ( ! VALIDATE_Char_id( $_GET['id'] ?? null ) ) $_pid = $_uid;
+  else $_pid = $_GET['id'];
 
-extract( sql_mfa(
-	'SELECT char_level, style_name, skill_points, skill_training
-	FROM char_attributes  a
-	JOIN style_attributes c ON a.char_id = c.char_id
-	JOIN skill_training   s ON a.char_id = s.char_id
-	WHERE a.char_id = '. $_uid ) );
+  $_own = CHAR_Profile_get_own_info();
 
-extract(
-	sql_mfa(
-		'SELECT a.*, c.*, username, char_rank
-		FROM char_attributes  a
-		JOIN style_attributes c ON a.char_id = c.char_id
-		JOIN game_users       u ON a.char_id = u.char_id
-		WHERE u.char_id = '. $pid ),
-	EXTR_PREFIX_ALL, 'p' );
+  $_profile = CHAR_Profile_get( $_pid );
 
-$can_train_with_nin =
-	$skill_points > 4
-	&&
-	$pid != $_uid
-	&&
-	$skill_training == ''
-	&&
-	$style_name === $p_style_name
-	&& (
-		$char_level - $p_char_level <= 5
-		&&
-		$p_char_level - $char_level <= 5 )
+  $_can_train = CHAR_Profile_can_train_with( $_own, $_profile );
 
 ?>
 
 <?php LAYOUT_wrap_onwards(); ?>
 
-<h1><?= $p_username ?></h1>
+<h1><?= $_profile['username'] ?></h1>
 
-<h3><?= $p_style_name ?></h3>
+<h3><?= $_profile['style_name'] ?></h3>
 
-<?php
-
-if ( $_uid != $pid )
+<?php if ( $_pid != $_uid )
 {
-	?>
-	<h3>
-		<a href="mail-write?to=<?= $p_username ?>">pm</a>
-	</h3>
-	<?php
+  ?>
+  <h3>
+    <a href="mail-write?to-username=<?= $_profile['username'] ?>">pm</a>
+  </h3>
+  <?php
 }
-
 ?>
 
 <table class="table-skill" align="center">
-	<tr>
-		<th title="Sword Skill">kenjutsu</th>
-		<th title="Shuriken Skill">shuriken</th>
-		<th title="Melee Skill">taijutsu</th>
-		<th title="Elemental Skill">ninjutsu</th>
-		<th title="Illusion Skill">genjutsu</th>
-	</tr>
-	
-	<tr>
-		<td><?= $p_kenjutsu ?></td>
-		<td><?= $p_shuriken ?></td>
-		<td><?= $p_taijutsu ?></td>
-		<td><?= $p_ninjutsu ?></td>
-		<td><?= $p_genjutsu ?></td>
-	</tr>
+  <tr>
+    <th title="Sword Skill">kenjutsu</th>
+    <th title="Shuriken Skill">shuriken</th>
+    <th title="Melee Skill">taijutsu</th>
+    <th title="Elemental Skill">ninjutsu</th>
+    <th title="Illusion Skill">genjutsu</th>
+  </tr>
+  
+  <tr>
+    <td><?= $_profile['kenjutsu'] ?></td>
+    <td><?= $_profile['shuriken'] ?></td>
+    <td><?= $_profile['taijutsu'] ?></td>
+    <td><?= $_profile['ninjutsu'] ?></td>
+    <td><?= $_profile['genjutsu'] ?></td>
+  </tr>
 </table>
 
 <br />
 
-<b>Skill Points: <?= $skill_points ?> / 5</b>
+<b>Skill Points: <?= $_own['skill_points'] ?> / 5</b>
 
-<?php
-
-if ( $can_train_with_nin )
+<?php if ( $_can_train )
 {
-	?>
-	<form action="clan-train-skill" method="POST">
-		<select class="select-skill" name="skill">
-			<option hidden>-- skill --</option>
-			
-			<option>Kenjutsu</option>
-			<option>Shuriken</option>
-			<option>Taijutsu</option>
-			<?php
-			
-			if ( $style_name !== 'Tameru' )
-			{
-				?>
-				<option>Ninjutsu</option>
-				<option>Genjutsu</option>
-				<?php
-			}
-			
-			?>
-		</select>
-		
-		<input type="submit" name="<?= $pid ?>" value="Train" />
-	</form>
-	<?php
+  ?>
+  <form action="clan-train-skill" method="POST">
+    <select class="select-skill" name="skill-name">
+      <option hidden>-- Skill --</option>
+      <option value="kenjutsu">Kenjutsu</option>
+      <option value="shuriken">Shuriken</option>
+      <option value="taijutsu">Taijutsu</option>
+      
+      <?php if ( $_own['style_name'] !== 'Tameru' )
+      {
+        ?>
+        <option value="ninjutsu">Ninjutsu</option>
+        <option value="genjutsu">Genjutsu</option>
+        <?php
+      }
+      ?>
+    </select>
+    
+    <button type="submit" name="char-id" value="<?= $_pid ?>">Train</button>
+  </form>
+  <?php
 }
-
 ?>
 
 <p>
-	Rank-<?= $p_char_rank ?>
-	<br />
-	<b title="Average of stats">Lv <?= $p_char_level ?></b>
+  Rank-<?= $_profile['char_rank'] ?>
+  <br />
+  <b title="Average of stats">Lv <?= $_profile['char_level'] ?></b>
 </p>
 
-<?php
-
-//if ( in_bonds )
-if ( true )
+<?php if ( true ) //if ( in_bonds )
 {
-	?>
-	<table align="center">
-		
-		<tr>
-			<td title="Critical">Flair</td>
-			
-			<td><?= $p_flair ?></td>
-		</tr>
-		
-		<tr>
-			<td title="Strength">Power</td>
-			
-			<td><?= $p_strength ?></td>
-		</tr>
-		
-		<tr>
-			<td title="Reach">Speed</td>
-			
-			<td><?= $p_agility ?></td>
-		</tr>
-		
-		<tr>
-			<td title="Effect">Jutsu</td>
-			
-			<td><?= $p_jutsu ?></td>
-		</tr>
-		
-		<tr>
-			<td title="Planning">Tactics</td>
-			
-			<td><?= $p_tactics ?></td>
-		</tr>
-		
-	</table>
-	<?php
+  ?>
+  <table align="center">
+    
+    <tr>
+      <td title="Critical">Flair</td>
+      
+      <td><?= $_profile['flair'] ?></td>
+    </tr>
+    
+    <tr>
+      <td title="Strength">Power</td>
+      
+      <td><?= $_profile['strength'] ?></td>
+    </tr>
+    
+    <tr>
+      <td title="Reach">Speed</td>
+      
+      <td><?= $_profile['agility'] ?></td>
+    </tr>
+    
+    <tr>
+      <td title="Effect">Jutsu</td>
+      
+      <td><?= $_profile['jutsu'] ?></td>
+    </tr>
+    
+    <tr>
+      <td title="Planning">Tactics</td>
+      
+      <td><?= $_profile['tactics'] ?></td>
+    </tr>
+    
+  </table>
+  <?php
 }
-
 ?>
 
 <br />pvp wins

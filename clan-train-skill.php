@@ -1,267 +1,183 @@
 <?php
 
-require_once 'backend/backstart.php';
+  require_once 'backend/backstart.php';
+  require_once 'functions/features/clan/clan-train.php';
 
-if ( ! isset( $_uid ) ) exiter('index');
+  if ( ! isset( $_uid ) ) exiter('index');
 
-if (
-	! is_int( $pid = array_search('Train', $_POST) )
-	&&
-	! (
-		isset($_POST['pick']) && $pid = intval($_POST['pick']) )
-	)
-{
-	exiter('clan-train');
-}
+  // Ensure a char id was given.
+  if ( ! isset( $_POST['char-id'] ) ) exiter('clan-train');
 
-if ( $_uid == $pid ) exiter('char-profile?id='. $pid);
+  // Ensure the given char id is not the user's id.
+  if ( $_POST['char-id'] == $_uid ) exiter('char-profile?id='. $_uid);
 
-$skills = array(
-	'kenjutsu' => 'Kenjutsu',
-	'shuriken' => 'Shuriken',
-	'taijutsu' => 'Taijutsu',
-	'ninjutsu' => 'Ninjutsu',
-	'genjutsu' => 'Genjutsu' );
-
-if ( ! in_array($_POST['skill'], $skills) ) exiter('char-profile?id='. $pid);
-
-$skill_to_train = array_search( $skill = $_POST['skill'], $skills );
-
-extract(
-	sql_mfa(
-		'SELECT a.*, c.*, username, char_rank, s.*
-		FROM char_attributes  a
-		JOIN style_attributes c ON a.char_id = c.char_id
-		JOIN game_users       u ON a.char_id = u.char_id
-		JOIN skill_training   s ON a.char_id = s.char_id
-		WHERE a.char_id = '. $_uid ),
-	EXTR_PREFIX_ALL, 'u' );
-
-extract(
-	sql_mfa(
-		'SELECT char_level, c.*, username, char_rank
-		FROM char_attributes  a
-		JOIN style_attributes c ON a.char_id = c.char_id
-		JOIN game_users       u ON a.char_id = u.char_id
-		WHERE a.char_id = '. $pid ),
-	EXTR_PREFIX_ALL, 'p' );
-
-if (
-	$u_skill_points < 5               ||
-	$u_char_level - $p_char_level > 5 ||
-	$p_char_level - $u_char_level > 5 ||
-	$u_style_name != $p_style_name    ||
-	$u_char_rank  != $p_char_rank )
-{
-	exiter('char-profile?id='. $pid);
-}
-
-$atts = array(
-	'flair'    => 'Flair',
-	'strength' => 'Power',
-	'agility'  => 'Speed',
-	'jutsu'    => 'Jutsu',
-	'tactics'  => 'Tactics' );
-
-$skills_to_atts = array(
-	'ninjutsu' => 'flair',
-	'kenjutsu' => 'strength',
-	'taijutsu' => 'agility',
-	'shuriken' => 'jutsu',
-	'genjutsu' => 'tactics' );
-
-$att = $skills_to_atts[$skill_to_train];
-
-$p_skill_to_train = 'p_'. $skill_to_train;
-$u_skill_to_train = 'u_'. $skill_to_train;
-$u_skill_to_train_points = 'u_'. $skill_to_train .'_points';
-
-$result = ( $u_char_level * ( $$u_skill_to_train ** 2 ) ) / ( $p_char_level * ( $$p_skill_to_train ** 2) ) * 32;
-
-switch (true)
-{
-	case ( ! is_numeric($result) ):
-		echo "switch_result Error";
-		break;
-	
-	case ( $result < 16 || $result >= 48 ): $t_up = 0; break;
-	case ( $result < 24 || $result >= 40 ): $t_up = 1; break;
-	case ( $result < 28 || $result >= 36 ): $t_up = 2; break;
-	case ( $result < 30 || $result >= 34 ): $t_up = 3; break;
-	case ( $result < 31 || $result >= 33 ): $t_up = 4; break;
-	
-	default: $t_up = 5; break;
-}
-
-$a_up = $p_char_level > $u_char_level ? 1 : 0;
-
-$att_up_message = $a_up > 0 ? '+'. $a_up .' '. $atts[$att] : '';
-
-if (
-	floor(
-		( $u_flair + $u_strength + $u_agility + $u_jutsu + $u_tactics + $a_up )
-		/ 5 )
-	> $u_char_level )
-{
-	$uplv = 'char_level = char_level + 1, ';
-	$u_char_level += 1;
-}
-else $uplv = '';
-
-$lv_up_message = $uplv !== '' ? 'Level UP!' : '';
-
-$$u_skill_to_train_points += $t_up;
-$up = 0;
-
-while ( $$u_skill_to_train_points >= $$u_skill_to_train )
-{
-	$$u_skill_to_train_points -= $$u_skill_to_train;
-	$$u_skill_to_train += 1;
-	$up++;
-}
-
-sql_query(
-	'UPDATE char_attributes SET
-		'. $uplv .'
-		'. $att .' = '. $att .' + '. $a_up .'
-	WHERE char_id = '. $_uid );
-
-sql_query(
-	'UPDATE style_attributes SET
-		'. ( $up > 0 ?
-			$skill_to_train .' = '. $skill_to_train .' + '. $up .', '
-		: '' ) .'
-		skill_points = skill_points - 5
-	WHERE char_id = '. $_uid);
-
-sql_query(
-	'UPDATE skill_training SET
-		'.$skill_to_train .'_points' .' = '. $$u_skill_to_train_points .'
-	WHERE char_id = '. $_uid );
+  // Ensure a skill name was given.
+  if ( ! isset( $_POST['skill-name'] ) ) exiter('clan-train');
+  
+  $_skill = strtolower( $_POST['skill-name'] );
+  
+  $_own   = CLAN_Train_get_own_char( $_skill );
+  $_other = CLAN_Train_get_other_char( $_POST['char-id'] );
+  
+  $_training = CLAN_Train_with_other_char( $_own, $_other, $_skill );
+  
+  if ( ! is_array( $_training ) )
+  {
+    exiter('index');
+  }
 
 ?>
 
 <?php LAYOUT_wrap_onwards(); ?>
 
-<h1><?= $u_style_name ?></h1>
+<h1><?= $_own['style_name'] ?></h1>
 
 <table align="center" style="text-align: center;">
-	
-	<tr>
-		<th width="33%"><?= $u_username ?></th>
-		<th width="33%"></th>
-		<th width="33%"><?= $p_username ?></th>
-	</tr>
-	
-	<tr>
-		<th><?=  $u_char_level ?></th>
-		<th>Lv</th>
-		<th><?=  $p_char_level ?></th>
-	</tr>
-	
-	<tr>
-		<th><?= $u_kenjutsu ?> • <?= $u_shuriken ?> • <?= $u_taijutsu ?> • <?= $u_ninjutsu ?> • <?= $u_genjutsu ?></th>
-		<th>JUTSU</th>
-		<th><?= $p_kenjutsu ?> • <?= $p_shuriken ?> • <?= $p_taijutsu ?> • <?= $p_ninjutsu ?> • <?= $p_genjutsu ?></th>
-	</tr>
-	
+  <tr>
+    <th width="33%"><?= $_own[  'username'] ?></th>
+    <th width="33%"></th>
+    <th width="33%"><?= $_other['username'] ?></th>
+  </tr>
+  
+  <tr>
+    <th><?=  $_own[  'char_level'] ?></th>
+    <th>Lv</th>
+    <th><?=  $_other['char_level'] ?></th>
+  </tr>
+  
+  <tr>
+    <th>
+      <?=
+        $_own['kenjutsu']
+        .' • '.
+        $_own['shuriken']
+        .' • '.
+        $_own['taijutsu']
+        .' • '.
+        $_own['ninjutsu']
+        .' • '.
+        $_own['genjutsu']
+      ?>
+    </th>
+    
+    <th>JUTSU</th>
+    
+    <th>
+      <?=
+        $_other['kenjutsu']
+        .' • '.
+        $_other['shuriken']
+        .' • '.
+        $_other['taijutsu']
+        .' • '.
+        $_other['ninjutsu']
+        .' • '.
+        $_other['genjutsu']
+      ?>
+    </th>
+  </tr>
 </table>
 
 <br />
 
 <table class="table-skill" align="center">
-	<tr>
-		<th title="Sword Skill">kenjutsu</th>
-		<th title="Shuriken Skill">shuriken</th>
-		<th title="Melee Skill">taijutsu</th>
-		<th title="Elemental Skill">ninjutsu</th>
-		<th title="Illusion Skill">genjutsu</th>
-	</tr>
-	
-	<tr>
-		<td><?= $u_kenjutsu ?></td>
-		<td><?= $u_shuriken ?></td>
-		<td><?= $u_taijutsu ?></td>
-		<td><?= $u_ninjutsu ?></td>
-		<td><?= $u_genjutsu ?></td>
-	</tr>
+  <tr>
+    <th title="Sword Skill">kenjutsu</th>
+    <th title="Shuriken Skill">shuriken</th>
+    <th title="Melee Skill">taijutsu</th>
+    <th title="Elemental Skill">ninjutsu</th>
+    <th title="Illusion Skill">genjutsu</th>
+  </tr>
+  
+  <tr>
+    <td><?= $_own['kenjutsu'] ?></td>
+    <td><?= $_own['shuriken'] ?></td>
+    <td><?= $_own['taijutsu'] ?></td>
+    <td><?= $_own['ninjutsu'] ?></td>
+    <td><?= $_own['genjutsu'] ?></td>
+  </tr>
 </table>
 
 <br />
 
 <table id="table-train" align="center" cellspacing="3">
-	<tr>
-		
-		<?= ( $up > 0 ? "<th>+ $up</th>" : '' ) ?>
-		
-		<th><?= $skill ?></th>
-		
-		<td>
-			<div id="bp">
-				<div id="bt" style="width: <?= round( $$u_skill_to_train_points * 100 / $$u_skill_to_train ) ?>px;"></div>
-			</div>
-		</td>
-		
-		<th><?= $$u_skill_to_train_points .'/'. ${'u_'. $skill_to_train} ?></th>
-		
-		<th><?= "+$t_up train" ?></th>
-	
-	</tr>
+  <tr>
+    
+    <?php if ( $_training['skill_upgrade'] )
+    {
+      ?>
+      <th>+ <?= $_training['skill_upgrade'] ?></th>
+      <?php
+    }
+    ?>
+    
+    <th><?= ucfirst( $_skill ) ?></th>
+    
+    <td>
+      <div id="bp">
+        <div id="bt" style="width: <?= round( $_own[ $_skill .'_points'] * 100 / $_own[ $_skill ] ) ?>px;"></div>
+      </div>
+    </td>
+    
+    <th><?= $_own[ $_skill .'_points'] .'/'. $_own[ $_skill ] ?></th>
+    
+    
+    <th>+<?= $_training['trained_points'] ?></th>
+  
+  </tr>
 </table>
+
+<?php if ( $_training['level_up'] )
+{
+  ?>
+  Level UP!
+  <br />
+  <?php
+}
+?>
 
 <table align="center">
-	
-	<tr>
-		<th colspan="3" title="Average of stats">Lv <?= $u_char_level ?></th>
-	</tr>
-	
-	<tr>
-		<th>Stat</th>
-		<th width="50px">#</th>
-		<td>Effect</td>
-	</tr>
-	
-	<form method="POST">
-		
-		<tr>
-			<th>Flair</th>
-			<th><?= $u_flair ?></td>
-			<td>Critical</td>
-		</tr>
-		
-		<tr>
-			<th>Power</th>
-			<th><?= $u_strength ?></td>
-			<td>Strength</td>
-		</tr>
-		
-		<tr>
-			<th>Speed</th>
-			<th><?= $u_agility ?></td>
-			<td>Reach</td>
-		</tr>
-		
-		<tr>
-			<th>Jutsu</th>
-			<th><?= $u_jutsu ?></td>
-			<td>Skill</td>
-		</tr>
-		
-		<tr>
-			<th>Tactics</th>
-			<th><?= $u_tactics ?></td>
-			<td>Planning</td>
-		</tr>
-		
-	</form>
-	
+  <tr>
+    <th colspan="3" title="Average of stats">Lv <?= $_own['char_level'] ?></th>
+  </tr>
+  
+  <tr>
+    <th>Stat</th>
+    <th width="50px">#</th>
+    <td>Effect</td>
+  </tr>
+  
+  <form method="POST">
+    
+    <tr>
+      <th>Flair</th>
+      <th><?= $_own['flair'] ?></td>
+      <td>Critical</td>
+    </tr>
+    
+    <tr>
+      <th>Power</th>
+      <th><?= $_own['strength'] ?></td>
+      <td>Strength</td>
+    </tr>
+    
+    <tr>
+      <th>Speed</th>
+      <th><?= $_own['agility'] ?></td>
+      <td>Reach</td>
+    </tr>
+    
+    <tr>
+      <th>Jutsu</th>
+      <th><?= $_own['jutsu'] ?></td>
+      <td>Skill</td>
+    </tr>
+    
+    <tr>
+      <th>Tactics</th>
+      <th><?= $_own['tactics'] ?></td>
+      <td>Planning</td>
+    </tr>
+    
+  </form>
 </table>
-
-<?php if ( $lv_up_message ) : ?>
-    <?= $lv_up_message ?>
-	<br />
-<?php endif; ?>
-
-<?php if ( $att_up_message ) : ?>
-    <?= $att_up_message ?>
-<?php endif; ?>

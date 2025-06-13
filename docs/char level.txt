@@ -1,3 +1,0 @@
-nbsg leveling up
-
-it seems char_level is based on the average of char_attributes
