@@ -26,7 +26,7 @@
 
 <h1>Team Exam</h1>
 
-<table class="table-team" align="center" style="text-align: center;">
+<table class="table-generic">
   
   <tr>
     <th width="33%">
@@ -36,7 +36,7 @@
     </th>
     
     <th width="10%">Lv</th>
-    <th width="14%">VS</th>
+    <td width="14%">VS</td>
     <th width="10%">Lv</th>
     
     <th width="33%">
@@ -68,65 +68,72 @@
     <?php
   }
   ?>
-  
-  <tr><td colspan="5"></td></tr>
+</table>
+
+<table class="">
+  <tr>
+    <td width="33%"></td>
+    <td width="34%"></td>
+    <td width="33%"></td>
+  </tr>
   
   <tr>
-    <td colspan="2">
-      <div id="ttd" style="width: <?= round( $_team_bar_widths['kenjutsu'] ) ?>px; float: right"></div>
+    <td>
+      <div class="team-skill-bar" style="width: <?= round( $_team_bar_widths['kenjutsu'] ) ?>px; float: right"></div>
     </td>
     
     <th>Kenjutsu</th>
     
-    <td colspan="2">
-      <div id="ttd" style="width: <?= round( $_bots_bar_widths['kenjutsu'] ) ?>px"></td>
-    </tr>
+    <td>
+      <div class="team-skill-bar" style="width: <?= round( $_bots_bar_widths['kenjutsu'] ) ?>px"></div>
+    </td>
+  </tr>
   
   <tr>
-    <td colspan="2">
-      <div id="ttd" style="width: <?= round( $_team_bar_widths['shuriken'] ) ?>px; float: right"></div>
+    <td>
+      <div class="team-skill-bar" style="width: <?= round( $_team_bar_widths['shuriken'] ) ?>px; float: right"></div>
     </td>
     
     <th>Shuriken</th>
     
-    <td colspan="2">
-      <div id="ttd" style="width: <?= round( $_bots_bar_widths['shuriken'] ) ?>px"></div>
+    <td>
+      <div class="team-skill-bar" style="width: <?= round( $_bots_bar_widths['shuriken'] ) ?>px"></div>
     </td>
   </tr>
   
   <tr>
-    <td colspan="2">
-      <div id="ttd" style="width: <?= round( $_team_bar_widths['taijutsu'] ) ?>px; float: right"></div>
+    <td>
+      <div class="team-skill-bar" style="width: <?= round( $_team_bar_widths['taijutsu'] ) ?>px; float: right"></div>
     </td>
     
     <th>Taijutsu</th>
     
-    <td colspan="2">
-      <div id="ttd" style="width: <?= round( $_bots_bar_widths['taijutsu'] ) ?>px"></div>
+    <td>
+      <div class="team-skill-bar" style="width: <?= round( $_bots_bar_widths['taijutsu'] ) ?>px"></div>
     </td>
   </tr>
   
   <tr>
-    <td colspan="2">
-      <div id="ttd" style="width: <?= round( $_team_bar_widths['ninjutsu'] ) ?>px; float: right"></div>
+    <td>
+      <div class="team-skill-bar" style="width: <?= round( $_team_bar_widths['ninjutsu'] ) ?>px; float: right"></div>
     </td>
     
     <th>Ninjutsu</th>
     
-    <td colspan="2">
-      <div id="ttd" style="width: <?= round( $_bots_bar_widths['ninjutsu'] ) ?>px"></div>
+    <td>
+      <div class="team-skill-bar" style="width: <?= round( $_bots_bar_widths['ninjutsu'] ) ?>px"></div>
     </td>
   </tr>
   
   <tr>
-    <td colspan="2">
-      <div id="ttd" style="width: <?= round( $_team_bar_widths['genjutsu'] ) ?>px; float: right"></div>
+    <td>
+      <div class="team-skill-bar" style="width: <?= round( $_team_bar_widths['genjutsu'] ) ?>px; float: right"></div>
     </td>
     
     <th>Genjutsu</th>
     
-    <td colspan="2">
-      <div id="ttd" style="width: <?= round( $_bots_bar_widths['genjutsu'] ) ?>px"></div>
+    <td>
+      <div class="team-skill-bar" style="width: <?= round( $_bots_bar_widths['genjutsu'] ) ?>px"></div>
     </td>
   </tr>
   
@@ -138,7 +145,7 @@
   <h4>
     Team exam is done.
     <br />
-    A pvp battle will be prepared to proceed graduation
+    A pvp battle will be prepared to proceed graduation.
   </h4>
   <?php
 }
@@ -150,7 +157,7 @@ else
 }
 ?>
 
-<table align="center">
+<table>
   
   <tr>
     <th colspan="2">
@@ -159,7 +166,7 @@ else
   </tr>
   
   <tr>
-    <td title="Critical">Flair</td>
+    <td>Flair</td>
     
     <td>
       <?= $_char['flair'] ?>
@@ -169,7 +176,7 @@ else
   </tr>
   
   <tr>
-    <td title="Strength">Power</td>
+    <td>Power</td>
     
     <td>
       <?= $_char['strength'] ?>
@@ -179,7 +186,7 @@ else
   </tr>
   
   <tr>
-    <td title="Reach">Speed</td>
+    <td>Speed</td>
     
     <td>
       <?= $_char['agility'] ?>
@@ -189,7 +196,7 @@ else
   </tr>
   
   <tr>
-    <td title="Effect">Jutsu</td>
+    <td>Jutsu</td>
     
     <td>
       <?= $_char['jutsu'] ?>
@@ -199,7 +206,7 @@ else
   </tr>
   
   <tr>
-    <td title="Planning">Tactics</td>
+    <td>Tactics</td>
     
     <td>
       <?= $_char['tactics'] ?>

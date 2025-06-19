@@ -15,15 +15,21 @@ function TEAM_Exam_get_bots_skill_ratios()
     'genjutsu' => intval( substr(         time(), -1, 1) ) + 3
   ];
   
-  $bar_scale = 125 / array_sum( $bots );
+  $total = array_sum( $bots );
   
-  $bots['kenjutsu'] *= $bar_scale;
-  $bots['shuriken'] *= $bar_scale;
-  $bots['taijutsu'] *= $bar_scale;
-  $bots['ninjutsu'] *= $bar_scale;
-  $bots['genjutsu'] *= $bar_scale;
+  $bar_scale = $total > 25 ?
+    ( 2 - ( 25 / $total ) ) * 100 / $total
+    :
+    100 / $total;
   
-  return $bots;
+  return
+  [
+    'kenjutsu' => round( $bots['kenjutsu'] * $bar_scale ),
+    'shuriken' => round( $bots['shuriken'] * $bar_scale ),
+    'taijutsu' => round( $bots['taijutsu'] * $bar_scale ),
+    'ninjutsu' => round( $bots['ninjutsu'] * $bar_scale ),
+    'genjutsu' => round( $bots['genjutsu'] * $bar_scale )
+  ];
 }
 
 function TEAM_Exam_get_char()
@@ -92,11 +98,11 @@ function TEAM_Exam_get_team_skill_ratios( $team_skills )
   
   return
   [
-    'kenjutsu' => $team_skills['kenjutsu'] * $bar_scale,
-    'shuriken' => $team_skills['shuriken'] * $bar_scale,
-    'taijutsu' => $team_skills['taijutsu'] * $bar_scale,
-    'ninjutsu' => $team_skills['ninjutsu'] * $bar_scale,
-    'genjutsu' => $team_skills['genjutsu'] * $bar_scale,
+    'kenjutsu' => round( $team_skills['kenjutsu'] * $bar_scale ),
+    'shuriken' => round( $team_skills['shuriken'] * $bar_scale ),
+    'taijutsu' => round( $team_skills['taijutsu'] * $bar_scale ),
+    'ninjutsu' => round( $team_skills['ninjutsu'] * $bar_scale ),
+    'genjutsu' => round( $team_skills['genjutsu'] * $bar_scale )
   ];
 }
 
@@ -120,9 +126,11 @@ function TEAM_Exam_is_allowed()
   return $is_allowed && mysqli_num_rows( $is_allowed );
 }
 
-function TEAM_Exam_is_passed( $char, $teammates, $team )
+function TEAM_Exam_is_passed( $char, $teammates, $team_skills )
 {
   global $_uid;
+  
+  $team_total_skills = array_sum( $team_skills );
   
   $is_passed =
   (
@@ -130,7 +138,7 @@ function TEAM_Exam_is_passed( $char, $teammates, $team )
     $teammates[0]['char_level'] +
     $teammates[1]['char_level']
   )
-  * ( $team['total_skills'] ** 2 )
+  * ( $team_total_skills ** 2 )
   > 6250;
   
   if ( $is_passed )
@@ -139,23 +147,26 @@ function TEAM_Exam_is_passed( $char, $teammates, $team )
       UPDATE char_team
       SET    team_exam_phase = 1
       WHERE  char_id = '. $_uid .'
+      AND    team_exam_phase = 0
     ');
   }
   
   return $is_passed;
 }
 
-function TEAM_Exam_upgrade_char_attributes( $char, $team )
+function TEAM_Exam_upgrade_char_attributes( $char, $team_skills )
 {
   global $_uid;
   
+  $total_skills = array_sum( $team_skills );
+  
   $upgrade =
   [
-    'flair'    => round( 9 * $team['ninjutsu'] / $team['total_skills'] ),
-    'strength' => round( 9 * $team['kenjutsu'] / $team['total_skills'] ),
-    'agility'  => round( 9 * $team['taijutsu'] / $team['total_skills'] ),
-    'jutsu'    => round( 9 * $team['shuriken'] / $team['total_skills'] ),
-    'tactics'  => round( 9 * $team['genjutsu'] / $team['total_skills'] )
+    'flair'    => round( 9 * $team_skills['ninjutsu'] / $total_skills ),
+    'strength' => round( 9 * $team_skills['kenjutsu'] / $total_skills ),
+    'agility'  => round( 9 * $team_skills['taijutsu'] / $total_skills ),
+    'jutsu'    => round( 9 * $team_skills['shuriken'] / $total_skills ),
+    'tactics'  => round( 9 * $team_skills['genjutsu'] / $total_skills )
   ];
 
   $train = 10 - array_sum( $upgrade );
@@ -185,7 +196,8 @@ function TEAM_Exam_upgrade_char_attributes( $char, $team )
   }
   
   sql_transaction('
-    UPDATE char_attributes
+    UPDATE char_attributes a
+    JOIN   char_team       t
     SET
       char_level = char_level + 2,
       flair      = flair      + '. $upgrade['flair'   ] .',
@@ -199,6 +211,7 @@ function TEAM_Exam_upgrade_char_attributes( $char, $team )
     AND   agility  = '. $char['agility']  .'
     AND   jutsu    = '. $char['jutsu']    .'
     AND   tactics  = '. $char['tactics']  .'
+    AND   team_exam_phase = 0
   ');
   
   return $upgrade;

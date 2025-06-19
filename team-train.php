@@ -1,7 +1,7 @@
 <?php
 
   require_once 'backend/backstart.php';
-  require_once 'functions/features/team-train.php';
+  require_once 'functions/features/team/team-train.php';
   
   if ( ! isset( $_uid ) ) exiter('index');
   
@@ -22,37 +22,20 @@
 <h1>Team <?= $_char['username'] ?></h1>
 
 <h4>
-  In a forest between villages
+  In a forest between villages,
   <br />
-  room is there for nin to train
+  room is there for chars to train.
 </h4>
 
-<table class="table-skill" align="center">
-  
-  <tr>
-    <th title="Sword Skill">kenjutsu</th>
-    <th title="Shuriken Skill">shuriken</th>
-    <th title="Melee Skill">taijutsu</th>
-    <th title="Elemental Skill">ninjutsu</th>
-    <th title="Illusion Skill">genjutsu</th>
-  </tr>
-  
-  <tr>
-    <td><?= $_char['kenjutsu'] ?></td>
-    <td><?= $_char['shuriken'] ?></td>
-    <td><?= $_char['taijutsu'] ?></td>
-    <td><?= $_char['ninjutsu'] ?></td>
-    <td><?= $_char['genjutsu'] ?></td>
-  </tr>
-</table>
+<?= VIEW_Char_skills( $_char ); ?>
 
 <h2>Rank-<?= $_char['char_rank'] ?></h2>
 
-<table align="center" style="text-align: center;" cellpadding="8" cellspacing="0">
+<table class="table-generic">
   <tr>
     <th>Clan</th>
     <th>Lv</th>
-    <th>Nin</th>
+    <th>Char</th>
     <th>Jutsu</th>
   </tr>
   
@@ -75,17 +58,7 @@
       </td>
       
       <th>
-        <?=
-          $row['kenjutsu']
-          .' • '.
-          $row['shuriken']
-          .' • '.
-          $row['taijutsu']
-          .' • '.
-          $row['ninjutsu']
-          .' • '.
-          $row['genjutsu']
-        ?>
+        <?= VIEW_Skills_inline( $row ) ?>
       </th>
       
     </tr>
@@ -96,28 +69,18 @@
 
 <h3>Joint Skills</h3>
 
-<?=
-  $_team_skills['kenjutsu']
-  .' • '.
-  $_team_skills['shuriken']
-  .' • '.
-  $_team_skills['taijutsu']
-  .' • '.
-  $_team_skills['ninjutsu']
-  .' • '.
-  $_team_skills['genjutsu']
-?>
+<?= VIEW_Skills_inline( $_team_skills ) ?>
 
 <br />
 <br />
 
-<table class="table-team" align="center">
+<table class="">
   
   <tr>
     <th>Kenjutsu</th>
     
     <td>
-      <div id="ttd" style="width: <?= $_bar_widths['kenjutsu'] ?>px"></div>
+      <div class="team-skill-bar" style="width: <?= $_bar_widths['kenjutsu'] ?>px"></div>
     </td>
   </tr>
   
@@ -125,7 +88,7 @@
     <th>Shuriken</th>
     
     <td>
-      <div id="ttd" style="width: <?= $_bar_widths['shuriken'] ?>px"></div>
+      <div class="team-skill-bar" style="width: <?= $_bar_widths['shuriken'] ?>px"></div>
     </td>
   </tr>
   
@@ -133,7 +96,7 @@
     <th>Taijutsu</th>
     
     <td>
-      <div id="ttd" style="width: <?= $_bar_widths['taijutsu'] ?>px"></div>
+      <div class="team-skill-bar" style="width: <?= $_bar_widths['taijutsu'] ?>px"></div>
     </td>
   </tr>
   
@@ -141,7 +104,7 @@
     <th>Ninjutsu</th>
     
     <td>
-      <div id="ttd" style="width: <?= $_bar_widths['ninjutsu'] ?>px"></div>
+      <div class="team-skill-bar" style="width: <?= $_bar_widths['ninjutsu'] ?>px"></div>
     </td>
   </tr>
   
@@ -149,7 +112,7 @@
     <th>Genjutsu</th>
     
     <td>
-      <div id="ttd" style="width: <?= $_bar_widths['genjutsu'] ?>px"></div>
+      <div class="team-skill-bar" style="width: <?= $_bar_widths['genjutsu'] ?>px"></div>
     </td>
   </tr>
   
@@ -158,7 +121,5 @@
 <br />
 
 <form action="team-train-skill" method="POST">
-  
   <button type="submit" name="team-train-skill">Train</button>
-  
 </form>

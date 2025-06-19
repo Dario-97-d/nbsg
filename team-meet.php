@@ -29,18 +29,18 @@
 
 <h1>Team</h1>
 
-<p style="padding: 0 32px;">
-  Training is more effective as a team
+<p>
+  Training is more effective as a team.
   <br />
   A team may be started from bonds
   <br />
-  and from strangers sorted together
+  and from strangers sorted together.
 </p>
 
 <h3>Team <?= $_char['username'] ?></h3>
 
-<table align="center" style="text-align: center;" cellpadding="8" cellspacing="0">
-  <form method="POST">
+<form method="POST">
+  <table class="table-generic">
     <tr>
       <th><?=    $_char['style_name'] ?></th>
       <td><?=    $_char['username']   ?></td>
@@ -73,8 +73,8 @@
       }
     }
     ?>    
-  </form>
-</table>
+  </table>
+</form>
 
 <?php if ( $_char['is_team_full'] )
 {
@@ -106,7 +106,7 @@ else if ( ! $_char['has_passed_team_exam'] )
 else
 {
   ?>
-  Train jutsu and do battle
+  Train jutsu and do battle.
   <?php
 }
 
@@ -115,12 +115,12 @@ if ( ! $_char['has_passed_team_exam'] )
   ?>
   <h3>Rank-<?= $_char['char_rank'] ?></h3>
   
-  <table align="center" style="text-align: center;" cellpadding="8" cellspacing="0">
-    <form method="POST">
+  <form method="POST">
+    <table class="table-generic">
       <?php if ( empty( $_chars_for_team ) )
       {
         ?>
-        No nin available
+        No char available.
         <?php
       }
       else
@@ -128,7 +128,7 @@ if ( ! $_char['has_passed_team_exam'] )
         ?>
         <tr>
           <th>Clan</th>
-          <th>Nin</th>
+          <th>Char</th>
           <th>Lv</th>
           <th>Select</th>
         </tr>
@@ -160,7 +160,8 @@ if ( ! $_char['has_passed_team_exam'] )
                   <?php
                 }
                 ?>
-                >Pick
+                >
+                Pick
               </button>
             </td>
             
@@ -169,8 +170,8 @@ if ( ! $_char['has_passed_team_exam'] )
         }
       }
       ?>
-    </form>
-  </table>
+    </table>
+  </form>
   <?php
 }
 ?>

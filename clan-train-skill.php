@@ -32,10 +32,10 @@
 
 <h1><?= $_own['style_name'] ?></h1>
 
-<table align="center" style="text-align: center;">
+<table class="">
   <tr>
     <th width="33%"><?= $_own[  'username'] ?></th>
-    <th width="33%"></th>
+    <th></th>
     <th width="33%"><?= $_other['username'] ?></th>
   </tr>
   
@@ -47,60 +47,24 @@
   
   <tr>
     <th>
-      <?=
-        $_own['kenjutsu']
-        .' • '.
-        $_own['shuriken']
-        .' • '.
-        $_own['taijutsu']
-        .' • '.
-        $_own['ninjutsu']
-        .' • '.
-        $_own['genjutsu']
-      ?>
+      <?= VIEW_Skills_inline( $_own ) ?>
     </th>
     
     <th>JUTSU</th>
     
     <th>
-      <?=
-        $_other['kenjutsu']
-        .' • '.
-        $_other['shuriken']
-        .' • '.
-        $_other['taijutsu']
-        .' • '.
-        $_other['ninjutsu']
-        .' • '.
-        $_other['genjutsu']
-      ?>
+      <?= VIEW_Skills_inline( $_other ) ?>
     </th>
   </tr>
 </table>
 
 <br />
 
-<table class="table-skill" align="center">
-  <tr>
-    <th title="Sword Skill">kenjutsu</th>
-    <th title="Shuriken Skill">shuriken</th>
-    <th title="Melee Skill">taijutsu</th>
-    <th title="Elemental Skill">ninjutsu</th>
-    <th title="Illusion Skill">genjutsu</th>
-  </tr>
-  
-  <tr>
-    <td><?= $_own['kenjutsu'] ?></td>
-    <td><?= $_own['shuriken'] ?></td>
-    <td><?= $_own['taijutsu'] ?></td>
-    <td><?= $_own['ninjutsu'] ?></td>
-    <td><?= $_own['genjutsu'] ?></td>
-  </tr>
-</table>
+<?= VIEW_Char_skills( $_own ); ?>
 
 <br />
 
-<table id="table-train" align="center" cellspacing="3">
+<table cellspacing="4">
   <tr>
     
     <?php if ( $_training['skill_upgrade'] )
@@ -114,8 +78,8 @@
     <th><?= ucfirst( $_skill ) ?></th>
     
     <td>
-      <div id="bp">
-        <div id="bt" style="width: <?= round( $_own[ $_skill .'_points'] * 100 / $_own[ $_skill ] ) ?>px;"></div>
+      <div class="skill-training-frame">
+        <div class="skill-training-bar" style="width: <?= round( $_own[ $_skill .'_points'] * 100 / $_own[ $_skill ] ) ?>px;"></div>
       </div>
     </td>
     
@@ -136,9 +100,9 @@
 }
 ?>
 
-<table align="center">
+<table>
   <tr>
-    <th colspan="3" title="Average of stats">Lv <?= $_own['char_level'] ?></th>
+    <th colspan="3">Lv <?= $_own['char_level'] ?></th>
   </tr>
   
   <tr>
@@ -147,37 +111,34 @@
     <td>Effect</td>
   </tr>
   
-  <form method="POST">
-    
-    <tr>
-      <th>Flair</th>
-      <th><?= $_own['flair'] ?></td>
-      <td>Critical</td>
-    </tr>
-    
-    <tr>
-      <th>Power</th>
-      <th><?= $_own['strength'] ?></td>
-      <td>Strength</td>
-    </tr>
-    
-    <tr>
-      <th>Speed</th>
-      <th><?= $_own['agility'] ?></td>
-      <td>Reach</td>
-    </tr>
-    
-    <tr>
-      <th>Jutsu</th>
-      <th><?= $_own['jutsu'] ?></td>
-      <td>Skill</td>
-    </tr>
-    
-    <tr>
-      <th>Tactics</th>
-      <th><?= $_own['tactics'] ?></td>
-      <td>Planning</td>
-    </tr>
-    
-  </form>
+  <tr>
+    <th>Flair</th>
+    <th><?= $_own['flair'] ?></td>
+    <td>Critical</td>
+  </tr>
+  
+  <tr>
+    <th>Power</th>
+    <th><?= $_own['strength'] ?></td>
+    <td>Strength</td>
+  </tr>
+  
+  <tr>
+    <th>Speed</th>
+    <th><?= $_own['agility'] ?></td>
+    <td>Reach</td>
+  </tr>
+  
+  <tr>
+    <th>Jutsu</th>
+    <th><?= $_own['jutsu'] ?></td>
+    <td>Skill</td>
+  </tr>
+  
+  <tr>
+    <th>Tactics</th>
+    <th><?= $_own['tactics'] ?></td>
+    <td>Planning</td>
+  </tr>
+  
 </table>

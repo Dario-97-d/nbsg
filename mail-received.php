@@ -29,14 +29,12 @@
 
 <h1>Mailbox</h1>
 
-<h2>
-  <a href="mail-received">Mailbox</a> || <a href="mail-write">Send pm</a> || <a href="mail-sent">PMs sent</a>
-</h2>
+<?= VIEW_Mail_navbar() ?>
 
 <?php if ( empty( $_messages ) )
 {
   ?>
-  Mailbox is empty
+  Mailbox is empty.
   <?php
 }
 else
@@ -70,7 +68,7 @@ else
     <textarea name="msg-text" disabled><?= $row['msg_text'] ?></textarea>
     
     <form method="POST">
-      <table align="center">
+      <table>
         <?php if ( $row['seen'] !== 1 )
         {
           ?>

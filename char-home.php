@@ -6,9 +6,9 @@
   if ( ! isset( $_uid ) ) exiter('index');
 
   // -- Train Attribute --
-  if ( isset( $_POST['train-attribute'] ) )
+  if ( isset( $_POST['upgrade-attribute'] ) )
   {
-    CHAR_Home_increment_attribute( $_POST['train-attribute'] );
+    CHAR_Home_increment_attribute( $_POST['upgrade-attribute'] );
   }
 
   $_char = CHAR_Home_get();
@@ -23,47 +23,22 @@
 
 <h3><?= $_char['style_name'] ?></h3>
 
-<table class="table-skill" align="center">
-  <tr>
-    <th title="Sword Skill">kenjutsu</th>
-    <th title="Shuriken Skill">shuriken</th>
-    <th title="Melee Skill">taijutsu</th>
-    <th title="Elemental Skill">ninjutsu</th>
-    <th title="Illusion Skill">genjutsu</th>
-  </tr>
-  
-  <tr>
-    <td><?= $_char['kenjutsu'] ?></td>
-    <td><?= $_char['shuriken'] ?></td>
-    <td><?= $_char['taijutsu'] ?></td>
-    <td><?= $_char['ninjutsu'] ?></td>
-    <td><?= $_char['genjutsu'] ?></td>
-  </tr>
-</table>
+<?= VIEW_Char_skills( $_char ) ?>
 
 <h3>
   <a href="char-train">Train</a>
 </h3>
 
-<table align="center">
+<h4>
+  Rank-<?= $_char['char_rank'] ?>
   
-  <tr>
-    <th colspan="4" title="Average of stats">
-      Rank-<?= $_char['char_rank'] ?>
-      <br />
-      Lv <?=   $_char['char_level'] ?>
-    </th>
-  </tr>
+  <br />
   
-  <tr>
-    <th>Stat</th>
-    
-    <th colspan="2" width="50px">#</th>
-    
-    <td>Effect</td>
-  </tr>
-  
-  <form method="POST">
+  Lv <?= $_char['char_level'] ?>
+</h4>
+
+<form method="POST">
+  <table class="">
     
     <tr>
       
@@ -72,7 +47,7 @@
       <td style="text-align: right;"><?= $_char['flair'] ?></td>
       
       <td>
-        <button type="submit" name="train-attribute" value="flair" <?= $_disabled ?>>+</button>
+        <button type="submit" name="upgrade-attribute" value="flair" <?= $_disabled ?>>+</button>
       </td>
       
       <td>Critical</td>
@@ -86,7 +61,7 @@
       <td style="text-align: right;"><?= $_char['strength'] ?></td>
       
       <td>
-        <button type="submit" name="train-attribute" value="strength" <?= $_disabled ?>>+</button>
+        <button type="submit" name="upgrade-attribute" value="strength" <?= $_disabled ?>>+</button>
       </td>
       
       <td>Strength</td>
@@ -100,7 +75,7 @@
       <td style="text-align: right;"><?= $_char['agility'] ?></td>
       
       <td>
-        <button type="submit" name="train-attribute" value="agility" <?= $_disabled ?>>+</button>
+        <button type="submit" name="upgrade-attribute" value="agility" <?= $_disabled ?>>+</button>
       </td>
       
       <td>Reach</td>
@@ -114,7 +89,7 @@
       <td style="text-align: right;"><?= $_char['jutsu'] ?></td>
       
       <td>
-        <button type="submit" name="train-attribute" value="jutsu" <?= $_disabled ?>>+</button>
+        <button type="submit" name="upgrade-attribute" value="jutsu" <?= $_disabled ?>>+</button>
       </td>
       
       <td>Skill</td>
@@ -128,21 +103,24 @@
       <td style="text-align: right;"><?= $_char['tactics'] ?></td>
       
       <td>
-        <button type="submit" name="train-attribute" value="tactics" <?= $_disabled ?>>+</button>
+        <button type="submit" name="upgrade-attribute" value="tactics" <?= $_disabled ?>>+</button>
       </td>
       
       <td>Planning</td>
       
     </tr>
     
-  </form>
-  
-  <tr>
-    <td style="text-align: right">Need:</td>
+    <tr><th colspan="4"></th></tr>
     
-    <th><?= $_char['sessions_needed_for_upgrade'] ?></th>
+    <tr><th colspan="4">Attribute points</th></tr>
     
-    <td colspan="2">Stats: <?= $_char['training_sessions_for_use'] ?>/50</td>
-  </tr>
-  
-</table>
+    <tr>
+      <td style="text-align: right;">Needs:</td>
+      
+      <td><?= $_char['sessions_needed_for_upgrade'] ?></td>
+      
+      <td colspan="2" style="text-align: center;">Has: <b><?= $_char['training_sessions_for_use'] ?></b> /50</td>
+    </tr>
+    
+  </table>
+</form>

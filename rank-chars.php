@@ -13,7 +13,7 @@
 
 <h1>Ranking</h1>
 
-<table align="center" style="text-align: center;" cellpadding="8" cellspacing="0">
+<table class="table-generic">
   <tr>
     <th>#</th>
     <th>Clan</th>

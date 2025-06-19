@@ -1,7 +1,6 @@
 <?php
 
   require_once 'backend/backstart.php';
-  require_once 'functions/features/clan.php';
   require_once 'functions/features/start.php';
 
   if ( ! isset( $_uid ) ) exiter('index');
@@ -53,13 +52,13 @@
 <h3><a href="start-clan">Restart</a></h3>
 
 <form action="start-skills?clan-name=<?= $_clan_name ?>" method="POST">
-  <table class="table-skill" align="center">
+  <table class="table-char-skills">
     <tr>
-      <th title="Sword Skill">kenjutsu</th>
-      <th title="Shuriken Skill">shuriken</th>
-      <th title="Melee Skill">taijutsu</th>
-      <th title="Elemental Skill">ninjutsu</th>
-      <th title="Illusion Skill">genjutsu</th>
+      <th>kenjutsu</th>
+      <th>shuriken</th>
+      <th>taijutsu</th>
+      <th>ninjutsu</th>
+      <th>genjutsu</th>
     </tr>
     
     <tr>

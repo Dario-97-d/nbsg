@@ -1,7 +1,8 @@
 <?php
   
   require_once 'backend/backstart.php';
-  require_once 'functions/features/team/train.php';
+  require_once 'functions/features/team/team-train.php';
+  require_once 'functions/features/skills.php';
   
   if ( ! isset( $_uid ) ) exiter('index');
   
@@ -24,11 +25,11 @@
 
 <h1>Team Train</h1>
 
-<table align="center" style="text-align: center;" cellpadding="8" cellspacing="0">
+<table class="table-generic">
   <tr>
     <th>Clan</th>
     <th>Lv</th>
-    <th>Nin</th>
+    <th>Char</th>
     <th>Jutsu</th>
   </tr>
   
@@ -48,17 +49,7 @@
       </td>
       
       <th>
-        <?=
-          $row['kenjutsu']
-          .' • '.
-          $row['shuriken']
-          .' • '.
-          $row['taijutsu']
-          .' • '.
-          $row['ninjutsu']
-          .' • '.
-          $row['genjutsu']
-        ?>
+        <?= VIEW_Skills_inline( $row ) ?>
       </th>
       
     </tr>
@@ -69,133 +60,38 @@
 
 <h3>Joint Skills</h3>
 
-<?=
-  $_team_skills['kenjutsu']
-  .' • '.
-  $_team_skills['shuriken']
-  .' • '.
-  $_team_skills['taijutsu']
-  .' • '.
-  $_team_skills['ninjutsu']
-  .' • '.
-  $_team_skills['genjutsu']
-?>
+<?= VIEW_Skills_inline( $_team_skills ) ?>
 
 <br />
 <br />
 
-<table class="table-skill" align="center">
-  <tr>
-    <th title="Sword Skill">kenjutsu</th>
-    <th title="Shuriken Skill">shuriken</th>
-    <th title="Melee Skill">taijutsu</th>
-    <th title="Elemental Skill">ninjutsu</th>
-    <th title="Illusion Skill">genjutsu</th>
-  </tr>
-  
-  <tr>
-    <td><?= $_char['kenjutsu'] ?></td>
-    <td><?= $_char['shuriken'] ?></td>
-    <td><?= $_char['taijutsu'] ?></td>
-    <td><?= $_char['ninjutsu'] ?></td>
-    <td><?= $_char['genjutsu'] ?></td>
-  </tr>
-</table>
+<?= VIEW_Char_skills( $_char ) ?>
 
-<br /><br />
+<br />
+<br />
 
-<table id="table-train" align="center" cellspacing="3">
-  
-  <tr>
-    
-    <th><?= $_upgrades['kenjutsu'] ?></th>
-    
-    <th>Kenjutsu</th>
-    
-    <td>
-      <div id="bp">
-        <div id="bt" style="width: <?= round( $_char['kenjutsu_points'] * 100 / $_char['kenjutsu'] ) ?>px;"></div>
-      </div>
-    </td>
-    
-    <th><?= $_char['kenjutsu_points'] .'/'. $_char['kenjutsu'] ?></th>
-    
-    <th><?= $_training['kenjutsu'] ?></th>
-  </tr>
-  
-  <tr>
-    
-    <th><?= $_upgrades['shuriken'] ?></th>
-    
-    <th>Shuriken</th>
-    
-    <td>
-      <div id="bp">
-        <div id="bt" style="width: <?= round( $_char['shuriken_points'] * 100 / $_char['shuriken'] ) ?>px;"></div>
-      </div>
-    </td>
-    
-    <th><?= $_char['shuriken_points'] .'/'. $_char['shuriken'] ?></th>
-    
-    <th><?= $_training['shuriken'] ?></th>
-    
-  </tr>
-  
-  <tr>
-    
-    <th><?= $_upgrades['taijutsu'] ?></th>
-    
-    <th>Taijutsu</th>
-    
-    <td>
-      <div id="bp">
-        <div id="bt" style="width: <?= round( $_char['taijutsu_points'] * 100 / $_char['taijutsu'] ) ?>px;"></div>
-      </div>
-    </td>
-    
-    <th><?= $_char['taijutsu_points'] .'/'. $_char['taijutsu'] ?></th>
-    
-    <th><?= $_training['taijutsu'] ?></th>
-    
-  </tr>
-  
-  <?php if ( $_char['style_name'] != 'Tameru' )
+<table cellspacing="4">
+  <?php foreach ( SKILLS_get_by_style( $_char['style_name'] ) as $skill_name )
   {
     ?>
     <tr>
+      <th><?= $_upgrades[ $skill_name ] ?? '' ?></th>
       
-      <th><?= $_upgrades['ninjutsu'] ?></th>
-      
-      <th>Ninjutsu</th>
+      <th><?= ucfirst( $skill_name ) ?></th>
       
       <td>
-        <div id="bp">
-          <div id="bt" style="width: <?= round( $_char['ninjutsu_points'] * 100 / $_char['ninjutsu'] ) ?>px;"></div>
+        <div class="skill-training-frame">
+          <div
+            class="skill-training-bar"
+            style="width: <?= round( $_char[ $skill_name .'_points'] * 100 / $_char[ $skill_name ] ) ?>px;"
+            >
+          </div>
         </div>
       </td>
       
-      <th><?= $_char['ninjutsu_points'] .'/'. $_char['ninjutsu'] ?></th>
+      <th><?= $_char[ $skill_name .'_points'] .'/'. $_char[ $skill_name ] ?></th>
       
-      <th><?= $_training['ninjutsu'] ?></th>
-      
-    </tr>
-    
-    <tr>
-      
-      <th><?= $_upgrades['genjutsu'] ?></th>
-      
-      <th>Genjutsu</th>
-      
-      <td>
-        <div id="bp">
-          <div id="bt" style="width: <?= round( $_char['genjutsu_points'] * 100 / $_char['genjutsu'] ) ?>px;"></div>
-        </div>
-      </td>
-      
-      <th><?= $_char['genjutsu_points'] .'/'. $_char['genjutsu'] ?></th>
-      
-      <th><?= $_training['genjutsu'] ?></th>
-      
+      <th><?= $_training[ $skill_name ] ?? '' ?></th>
     </tr>
     <?php
   }

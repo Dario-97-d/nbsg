@@ -2,7 +2,8 @@
 
   require_once 'backend/backstart.php';
   require_once 'functions/features/char/char-train.php';
-
+  require_once 'functions/features/skills.php';
+  
   if ( ! isset( $_uid ) ) exiter('index');
 
   // -- End training skill --
@@ -42,23 +43,7 @@
 
 <h3><?= $_char['style_name'] ?></h3>
 
-<table class="table-skill" align="center">
-  <tr>
-    <th title="Sword Skill">kenjutsu</th>
-    <th title="Shuriken Skill">shuriken</th>
-    <th title="Melee Skill">taijutsu</th>
-    <th title="Elemental Skill">ninjutsu</th>
-    <th title="Illusion Skill">genjutsu</th>
-  </tr>
-  
-  <tr>
-    <td><?= $_char['kenjutsu'] ?></td>
-    <td><?= $_char['shuriken'] ?></td>
-    <td><?= $_char['taijutsu'] ?></td>
-    <td><?= $_char['ninjutsu'] ?></td>
-    <td><?= $_char['genjutsu'] ?></td>
-  </tr>
-</table>
+<?= VIEW_Char_skills( $_char ) ?>
 
 <?php if ( $_char['is_training'] )
 {
@@ -71,206 +56,90 @@
   <p><?= $_char['sessions_in_training'] .' Sessions | '. ( $_char['sessions_in_training'] * 30 ) .' minutes' ?></p>
   
   Time left:
+  
   <br />
+  
   <?= date( "H:i:s", $_char['time_left_seconds'] ) ?>
   
-  <br /><br />
+  <br />
+  <br />
   
   <form method="POST">
     <button type="submit" name="stop-training">Stop</button>
   </form>
   
-  <p>Can't train with other nin when training alone</p>
+  <p>Can't train with other chars when training alone.</p>
   
   <?php
 }
 else
 {
   ?>
+  
   <h3>
     <a href="clan-train">Train in Clan</a> || <a href="team-train">Train in Team</a>
   </h3>
   
-  <table id="table-train" align="center" cellspacing="3">
+  <form method="POST">
     
-    <tr>
-      
-      <th><?= $_upgrade['kenjutsu'] ?? '' ?></th>
-      
-      <th>Kenjutsu</th>
-      
-      <td>
-        <div id="bp">
-          <div id="bt" style="width: <?= round( $_char['kenjutsu_points'] * 100 / $_char['kenjutsu'] ) ?>px;"></div>
-        </div>
-      </td>
-      
-      <th><?= $_char['kenjutsu_points'] .'/'. $_char['kenjutsu'] ?></th>
-      
-      <form method="POST">
-        <th>
-          <select name="sessions">
-            <?php for ( $i = 1; $i <= $_char['kenjutsu'] && $i < 11; $i++ )
-            {
+    <input type="hidden" id="input-skill-name" name="train-skill" value="" />
+    <input type="hidden" id="input-sessions" name="sessions" value="" />
+    
+    <table cellspacing="4">
+      <?php foreach ( SKILLS_get_by_style( $_char['style_name'] ) as $skill_name )
+      {
+        ?>
+        <tr>
+          
+          <th><?= $_upgrade[ $skill_name ] ?? '' ?></th>
+          
+          <th><?= ucfirst( $skill_name ) ?></th>
+          
+          <td>
+            <div class="skill-training-frame">
+              <div
+                class="skill-training-bar"
+                style="width: <?= round( $_char[ $skill_name .'_points' ] * 100 / $_char[ $skill_name ] ) ?>%;"
+                >
+              </div>
+            </div>
+          </td>
+          
+          <th><?= $_char[ $skill_name .'_points' ] .'/'. $_char[ $skill_name ] ?></th>
+          
+          <th>
+            <select id="select-sessions-<?= $skill_name ?>">
+              <?php for ( $i = 1; $i <= $_char[ $skill_name ] && $i < 11; $i++ )
+              {
+                ?>
+                <option><?= $i ?></option>
+                <?php
+              }
               ?>
-              <option><?= $i ?></option>
-              <?php
-            }
-            ?>
-          </select>
-        </th>
-        
-        <th>
-          <button type="submit" name="train-skill" value="kenjutsu">Train</button>
-        </th>
-      </form>
-      
-    </tr>
-    
-    <tr>
-      
-      <th><?= $_upgrade['shuriken'] ?? '' ?></th>
-      
-      <th>Shuriken</th>
-      
-      <td>
-        <div id="bp">
-          <div id="bt" style="width: <?= round( $_char['shuriken_points'] * 100 / $_char['shuriken'] ) ?>px;"></div>
-        </div>
-      </td>
-      
-      <th><?= $_char['shuriken_points'] .'/'. $_char['shuriken'] ?></th>
-      
-      <form method="POST">
-        <th>
-          <select name="sessions">
-            <?php for ( $i = 1; $i <= $_char['shuriken'] && $i < 11; $i++ )
-            {
-              ?>
-              <option><?= $i ?></option>
-              <?php
-            }
-            ?>
-          </select>
-        </th>
-        
-        <th>
-          <button type="submit" name="train-skill" value="shuriken">Train</button>
-        </th>
-      </form>
-      
-    </tr>
-    
-    <tr>
-      
-      <th><?= $_upgrade['taijutsu'] ?? '' ?></th>
-      
-      <th>Taijutsu</th>
-      
-      <td>
-        <div id="bp">
-          <div id="bt" style="width: <?= round( $_char['taijutsu_points'] * 100 / $_char['taijutsu'] ) ?>px;"></div>
-        </div>
-      </td>
-      
-      <th><?= $_char['taijutsu_points'] .'/'. $_char['taijutsu'] ?></th>
-      
-      <form method="POST">
-        <th>
-          <select name="sessions">
-            <?php for ( $i = 1; $i <= $_char['taijutsu'] && $i < 11; $i++ )
-            {
-              ?>
-              <option><?= $i ?></option>
-              <?php
-            }
-            ?>
-          </select>
-        </th>
-        
-        <th>
-          <button type="submit" name="train-skill" value="taijutsu">Train</button>
-        </th>
-      </form>
-      
-    </tr>
-    
-    <?php if ( $_char['style_name'] != 'Tameru' )
-    {
+            </select>
+          </th>
+          
+          <th>
+            <button type="submit" onclick="setInputValues('<?= $skill_name ?>')">Train</button>
+          </th>
+          
+        </tr>
+        <?php
+      }
       ?>
-      <tr>
-        
-        <th><?= $_upgrade['ninjutsu'] ?? '' ?></th>
-        
-        <th>Ninjutsu</th>
-        
-        <td>
-          <div id="bp">
-            <div id="bt" style="width: <?= round( $_char['ninjutsu_points'] * 100 / $_char['ninjutsu'] ) ?>px;"></div>
-          </div>
-        </td>
-        
-        <th><?= $_char['ninjutsu_points'] .'/'. $_char['ninjutsu'] ?></th>
-        
-        <form method="POST">
-          <th>
-            <select name="sessions">
-              <?php for ( $i = 1; $i <= $_char['ninjutsu'] && $i < 11; $i++ )
-              {
-                ?>
-                <option><?= $i ?></option>
-                <?php
-              }
-              ?>
-            </select>
-          </th>
-          
-          <th>
-            <button type="submit" name="train-skill" value="ninjutsu">Train</button>
-          </th>
-        </form>
-        
-      </tr>
-      
-      <tr>
-        
-        <th><?= $_upgrade['genjutsu'] ?? '' ?></th>
-        
-        <th>Genjutsu</th>
-        
-        <td>
-          <div id="bp">
-            <div id="bt" style="width: <?= round( $_char['genjutsu_points'] * 100 / $_char['genjutsu'] ) ?>px;"></div>
-          </div>
-        </td>
-      
-        <th><?= $_char['genjutsu_points'] .'/'. $_char['genjutsu'] ?></th>
-        
-        <form method="POST">
-          <th>
-            <select name="sessions">
-              <?php for ( $i = 1; $i <= $_char['genjutsu'] && $i < 11; $i++ )
-              {
-                ?>
-                <option><?= $i ?></option>
-                <?php
-              }
-              ?>
-            </select>
-          </th>
-          
-          <th>
-            <button type="submit" name="train-skill" value="genjutsu">Train</button>
-          </th>
-        </form>
-        
-      </tr>
-      <?php
-    }
-    ?>
-  </table>
+    </table>
+  </form>
   
   <h4><?= $_trained ?></h4>
+  
+  <script>
+    function setInputValues(skill)
+    {
+      document.getElementById('input-skill-name').value = skill;
+      document.getElementById('input-sessions').value = document.getElementById('select-sessions-' + skill).value;
+    }
+  </script>
+  
   <?php
 }
 ?>

@@ -33,7 +33,7 @@ while ( $row = mysqli_fetch_assoc($members) )
 
 if ( min( $teammate1_level, $teammate2_level ) > $user_level )
 {
-  // remove nin from team
+  // remove char from team
   // exiter(team-meet)
 }
 
@@ -113,7 +113,7 @@ sql_query("UPDATE style_attributes SET $set_up_skl skill_points = skill_points -
 
 <h1>Team Train</h1>
 
-<table align="center" style="text-align: center;">
+<table style="text-align: center;">
   
   <tr>
     <th width="33%"><?= $teammate1_name ?></th>

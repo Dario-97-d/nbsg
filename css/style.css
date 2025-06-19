@@ -1,0 +1,85 @@
+table {
+  margin: 0 auto;
+}
+
+a {
+	color: #874700;
+	font-weight: bold;
+	text-decoration: none;
+}
+
+textarea {
+  height: 8rem;
+  width: 24rem;
+}
+
+.table-char-skills {
+	text-align: center;
+	border: 0.25rem solid #0033CC;
+  border-spacing: 0.25rem;
+}
+.table-char-skills th {
+	color: white;
+	background: orange;
+  padding: 0.5rem;
+  border: 0.1rem solid brown; 
+  border-radius: 0.25rem;
+	text-shadow: -1px -1px 0 #002299, 1px -1px 0 #002299, -1px 1px 0 #002299, 1px 1px 0 #002299;
+  width: 20%;
+}
+.table-char-skills td {
+  font-weight: bold;
+}
+
+.table-generic {
+  text-align: center;
+  
+}
+.table-generic th,
+.table-generic td {
+  padding: 0.5rem;
+}
+
+.select-clan {
+	color: white;
+	font-weight: bold;
+	background: orange;
+	padding: 0.5rem;
+	border: 0.25rem solid #0033CC;
+	border-radius: 0.25rem;
+	text-shadow: -1px -1px 0 #002299, 1px -1px 0 #002299, -1px 1px 0 #002299, 1px 1px 0 #002299;
+}
+.select-clan option {
+	color: #0033CC;
+	padding: 0.125rem;
+}
+
+.select-skill {
+	color: #0033CC;
+	background: orange;
+	border: 1px solid #0033CC;
+	padding: 2px;
+	margin: 8px;
+}
+
+.skill-training-frame {
+	background: lightgray;
+	height: 0.5rem;
+	width: 100px;
+	border: 0.125rem solid #002299;
+	border-radius: 0.5rem;
+}
+.skill-training-bar {
+	background: orange;
+	height: 0.5rem;
+	border-radius: 0.5rem;
+}
+
+.team-skill-bar {
+	height: 1rem;
+	background: #002299;
+}
+
+.outline-blue {
+  outline: 0.1rem solid #0033cc;
+}

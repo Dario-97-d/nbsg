@@ -24,24 +24,24 @@
   
   <h1><?= $_clan_style_name ?></h1>
   
-  <h4>Clan members gather in the village</h4>
+  <h4>Clan members gather in the village.</h4>
   
   <h2>
     <a href="clan-train">Train</a>
   </h2>
   
-  <table align="center" style="text-align: center;" cellpadding="8" cellspacing="0">
+  <table class="table-generic">
     <tr>
       <th>Rank</th>
       <th>Lv</th>
-      <th>Nin</th>
+      <th>Char</th>
       <th>Send</th>
     </tr>
     
     <?php foreach ( $_clan_members as $row )
     {
       ?>
-      <tr<?= $row['char_id'] === $_uid ? ' style="outline: 1px solid #0033CC;"' : '' ?>>
+      <tr class="<?= $row['char_id'] === $_uid ? 'outline-blue' : '' ?>">
         
         <td><?= $row['char_rank'] ?></td>
         
@@ -70,7 +70,7 @@ else
   ?>
   <h1>Clan</h1>
   
-  <p style="padding: 0 32px;">
+  <p>
     Clans determine char's lineage.
     <br />
     Each clan has a specific set of characteristics,

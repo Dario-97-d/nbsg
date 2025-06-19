@@ -25,10 +25,10 @@
   <?= $_char['username'] ?>
 </h1>
 
-<table align="center" style="text-align: center" cellpadding="8" cellspacing="0">
+<table class="table-generic">
   <tr>
     <th>Clan</th>
-    <th>Nin</th>
+    <th>Char</th>
     <th>Lv</th>
     <th>Jutsu</th>
   </tr>
@@ -49,17 +49,7 @@
       <td><?= $row['char_level'] ?></td>
       
       <th>
-        <?=
-          $row['kenjutsu']
-          .' • '.
-          $row['shuriken']
-          .' • '.
-          $row['taijutsu']
-          .' • '.
-          $row['ninjutsu']
-          .' • '.
-          $row['genjutsu']
-        ?>
+        <?= VIEW_Skills_inline( $row ) ?>
       </th>
       
     </tr>
@@ -73,26 +63,16 @@
   
   <br />
   
-  <?=
-    $_team_skills['kenjutsu']
-    .' • '.
-    $_team_skills['shuriken']
-    .' • '.
-    $_team_skills['taijutsu']
-    .' • '.
-    $_team_skills['ninjutsu']
-    .' • '.
-    $_team_skills['genjutsu']
-  ?>
+  <?= VIEW_Skills_inline( $_team_skills ) ?>
 </h3>
 
-<table class="table-team" align="center">
+<table class="">
   
   <tr>
     <th>Kenjutsu</th>
     
     <td>
-      <div id="ttd" style="width: <?= round( $_bar_widths['kenjutsu'] ) ?>px"></div>
+      <div class="team-skill-bar" style="width: <?= round( $_bar_widths['kenjutsu'] ) ?>px"></div>
     </td>
   </tr>
   
@@ -100,7 +80,7 @@
     <th>Shuriken</th>
     
     <td>
-      <div id="ttd" style="width: <?= round( $_bar_widths['shuriken'] ) ?>px"></div>
+      <div class="team-skill-bar" style="width: <?= round( $_bar_widths['shuriken'] ) ?>px"></div>
     </td>
   </tr>
   
@@ -108,7 +88,7 @@
     <th>Taijutsu</th>
     
     <td>
-      <div id="ttd" style="width: <?= round( $_bar_widths['taijutsu'] ) ?>px"></div>
+      <div class="team-skill-bar" style="width: <?= round( $_bar_widths['taijutsu'] ) ?>px"></div>
     </td>
   </tr>
   
@@ -116,7 +96,7 @@
     <th>Ninjutsu</th>
     
     <td>
-      <div id="ttd" style="width: <?= round( $_bar_widths['ninjutsu'] ) ?>px"></div>
+      <div class="team-skill-bar" style="width: <?= round( $_bar_widths['ninjutsu'] ) ?>px"></div>
     </td>
   </tr>
   
@@ -124,7 +104,7 @@
     <th>Genjutsu</th>
     
     <td>
-      <div id="ttd" style="width: <?= round( $_bar_widths['genjutsu'] ) ?>px"></div>
+      <div class="team-skill-bar" style="width: <?= round( $_bar_widths['genjutsu'] ) ?>px"></div>
     </td>
   </tr>
   
@@ -133,9 +113,7 @@
 <br />
 
 <form action="team-exam-joint" method="POST">
-  
   <button type="submit" name="go-team-exam">Team Battle</button>
-  
 </form>
 
 3v3 battle

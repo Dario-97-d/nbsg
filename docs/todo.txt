@@ -1,43 +1,38 @@
 -- TODO --
 
+DATA
+
+use char id instead of username for mail
+use mail msg state(s?) viewed/deleted instead of seen in { 0, 1, 2 }, for clarity
+rename long sql fields
+- training_sessions_for_upgrade -> attribute_points
+- sessions_needed_for_upgrade   -> points_needed
+- OR: use attribute_points and not points_needed
+
 LATER
 
-Use file for file paths constants.
+Add logging.
 Build a robust set of SQL functions.
 - Hide sensitive data (sql connection credentials).
 - Use prepared statements.
 - Replace tabs and multi space for 1 whitespace in sql query string value.
 Update validation logic, maybe add HANDLE functions for input like return [ is_valid:bool, handled:string, message:string ].
 - or use references and change value.
-Add logging.
 Add extensive checks and feedback messages for all Actions.
-check time for the end of current solo training
-maybe use preffix _ for in-file function use
-
-UI
-
-use css classes and not inline styles
-use flexbox
-make ui wider? (64rem?)
-make ui work on mobile (maybe later if it's too much)
+Use file for file paths constants.
 
 MINOR
 
-use wording "upgrade attribute" instead of "train attribute"
-
-DATA
-
-use mail msg state(s?) viewed/deleted instead of seen in { 0, 1, 2 }, for clarity
-use char id instead of username for mail
-rename long sql fields
-- training_sessions_for_upgrade -> attribute_points
-- sessions_needed_for_upgrade   -> points_needed
-- OR: use attribute_points and not points_needed
+maybe use preffix _ for in-file function use
 
 CONCEPT
 
+Drop Clan/Style
 maybe use something like Lineage or Spirit instead of Clan and Style, for non-ambiguity
 - or maybe just drop it altogether, for free char development
+Change calculation of bots' skills in team exam
+- maybe drop bots and do something else.
+- maybe have teams fight each other or any existing team, including passed.
 
 ...
 

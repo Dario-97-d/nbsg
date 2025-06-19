@@ -1,7 +1,7 @@
 <?php
 
   require_once 'backend/backstart.php';
-  require_once 'functions/features/clan.php';
+  require_once 'functions/features/start.php';
 
   if ( ! isset( $_uid ) ) exiter('index');
   
@@ -35,62 +35,62 @@
   <button type="submit">Choose</button>
 </form>
 
-<table align="center" style="padding: 16px;">
+<table>
   
   <tr>
-    <th title="Taijutsu: Melee">Tameru</th>
+    <th>Tameru</th>
     <td>Close combat, no chakra, extreme body</td>
   </tr>
   
   <tr>
-    <th title="Taijutsu: Hyuuga">Tayuga</th>
+    <th>Tayuga</th>
     <td>Close combat using chakra to enhance damage</td>
   </tr>
   
   <tr>
-    <th title="Kenjutsu / Sword">Kensou</th>
+    <th>Kensou</th>
     <td>Sword fight, can chanel chakra through blade</td>
   </tr>
   
   <tr>
-    <th title="Shuriken">Surike</th>
+    <th>Surike</th>
     <td>Throw shuriken and other small weapons precisely</td>
   </tr>
   
   <tr>
-    <th title="Genjutsu: Illusion">Geniru</th>
+    <th>Geniru</th>
     <td>Grab oponents in illusion</td>
   </tr>
   
   <tr>
-    <th title="Fire Ninjutsu">Faruni</th>
+    <th>Faruni</th>
     <td>Elemental ninjutsu, fire element</td>
   </tr>
   
   <tr>
-    <th title="Wind Ninjutsu">Wyroni</th>
+    <th>Wyroni</th>
     <td>Elemental ninjutsu, air element</td>
   </tr>
   
   <tr>
-    <th title="Ray Ninjutsu">Raiyni</th>
+    <th>Raiyni</th>
     <td>Elemental ninjutsu, ligthning element</td>
   </tr>
   
   <tr>
-    <th title="Rock Ninjutsu">Rokuni</th>
+    <th>Rokuni</th>
     <td>Elemental ninjutsu, rock element</td>
   </tr>
   
   <tr>
-    <th title="Water Ninjutsu">Watoni</th>
+    <th>Watoni</th>
     <td>Elemental ninjutsu, water element</td>
   </tr>
   
 </table>
 
-<p style="padding: 0 64px;">
-  Generally, all nin can develop any style.
+<p>
+  Generally, all chars can develop any style.
   <br />
   It's just that each clan favours specific skills.
   <br />
@@ -102,5 +102,3 @@
   <br />
   to open the chakra gates, while Geniru can't.
 </p>
-
-Clan names: hover

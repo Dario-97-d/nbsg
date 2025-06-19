@@ -23,18 +23,22 @@
 <form method="POST">
   
   Username:
+  
   <br />
   
   <input type="text" name="username" value="<?= $_POST['username'] ?? '' ?>" />
+  
   <br />
   
   Password:
+  
   <br />
   
   <input type="password" name="password" value="<?= $_POST['password'] ?? '' ?>" />
-  <br />
   
   <br />
+  <br />
+  
   <button type="submit" name="login">Login</button>
   
 </form>

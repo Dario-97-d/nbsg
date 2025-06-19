@@ -27,11 +27,9 @@
 
 <?php LAYOUT_wrap_onwards(); ?>
 
-<h1>Private Message</h1>
+<h1>Write mail</h1>
 
-<h2>
-  <a href="mail-received">Mailbox</a> || <a href="mail-write">Send pm</a> || <a href="mail-sent">PMs sent</a>
-</h2>
+<?= VIEW_Mail_navbar() ?>
 
 <form method="POST">
   

@@ -483,7 +483,7 @@ else
 
 <h1>Battle</h1>
 
-<table align="center" style="text-align: center;">
+<table style="text-align: center;">
   
   <tr>
     <th><?= $u_username ?></th>
@@ -557,10 +557,10 @@ else
 <br />Too close to tell who's stronger.
 
 <br />Minor Win
-<br />You're leaving this nin behind.
+<br />You're leaving this char behind.
 
 <br />Major Win
-<br />Is it worth it to keep training with this nin?
+<br />Is it worth it to keep training with this char?
 
 <br />
 

@@ -1,69 +1,77 @@
-<html>
+<html lang="en">
 
 <head>
-  <title>Hachimaki</title>
+  <link rel="stylesheet" type="text/css" href="css/layout.css" />
+  <link rel="stylesheet" type="text/css" href="css/style.css" />
   
-  <link href="style.css" rel="stylesheet" type="text/css" />
+  <meta charset="UTF-8" />
+  
+  <title>Hachimaki</title>
 </head>
 
 <body>
 
-<div class="hfer">
-  <?php if ( isset( $_uid ) )
-  {
+<div class="container">
+  
+  <header class="header">
+    <?php if ( isset( $_uid ) )
+    {
+      ?>
+      <a href="logout" class="header-logout-link">Log out</a>
+      <?php
+    }
     ?>
-    <a style="float: left; padding-left: 16px;" href="logout">Log out</a>
-    <?php
-  }
-  ?>
-  
-  <a href="index"><b>8-maki</b></a>
-</div>
-  
-<div id="container">
-  
-  <div id="menu">
+    
+    <a href="index" class="header-index-link"><b>8-maki</b></a>
+  </header>
+
+  <nav class="menu">
     <?php if ( isset( $_uid ) )
     {
       ?>
       
-      <h5><a href="char-home" title="Overview" accesskey="h">HOME</a></h5>
-      <h5><a href="clan-hall" title="Lineage" accesskey="c">CLAN</a></h5>
-      <h5><a href="team-meet" title="Team" accesskey="t">TEAM</a></h5>
-      <h5><a href="rank-chars" title="Ranking" accesskey="r">RANK</a></h5>
+      <h4><a href="char-home">HOME</a></h4>
+      <h4><a href="clan-hall">CLAN</a></h4>
+      <h4><a href="team-meet">TEAM</a></h4>
+      <h4><a href="rank-chars">RANK</a></h4>
       
       <!--
       <br />
-      <h5><a href="sato-squad" title="" accesskey="s">SQUAD</a></h5>
-      <h5><a href="sato-intel" title="" accesskey="i">INTEL</a></h5>
-      <h5><a href="char-bonds" title="Family" accesskey="b">BONDS</a></h5>
+      <h4><a href="char-bonds">BONDS</a></h4>
+      <h4><a href="sato-squad">SQUAD</a></h4>
+      <h4><a href="sato-intel">INTEL</a></h4>
       -->
       
       <br />
       
-      <h5><a href="mail-received" accesskey="m">MAIL</a></h5>
-      <h5><a href="mail-sent">SENT</a></h5>
-      <h5><a href="mail-write">SEND</a></h5>
+      <h4><a href="mail-received">MAIL</a></h4>
+      <!--
+      <h4><a href="mail-sent">SENT</a></h4>
+      <h4><a href="mail-write">SEND</a></h4>
+      -->
+      
       <br />
-      <h5><a href="user-account" accesskey="a">Account</a></h5>
+      
+      <h4><a href="user-account">Account</a></h4>
       
       <?php
     }
     ?>
-  </div>
+  </nav>
   
-  <div id="content">
+  <div class="content">
     
     <?= JS_render_messages() ?>
     
     <?= $_LAYOUT_VIEW_CONTENT ?>
     
   </div>
-</div>
 
-<div class="hfer">
-  <!--8-maki &copy; 2018-->
-  Server time: <?= date( "H:i:s", time() ) ?>
+  <footer class="footer">
+    <!--8-maki &copy; 2018-->
+    Server time: <?= date( "H:i:s", time() ) ?>
+  </footer>
+  
 </div>
 
 </body>

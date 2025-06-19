@@ -5,7 +5,9 @@
 <?php if ( ! isset( $_uid ) )
 {
   ?>
-  <a href="user-register">Register</a> || <a href="user-login">Login</a>
+  <h3>
+    <a href="user-register">Register</a> || <a href="user-login">Login</a>
+  </h3>
   <?php
 }
 ?>

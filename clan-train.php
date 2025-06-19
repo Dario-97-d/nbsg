@@ -18,30 +18,16 @@
 <h1><?= $_char['style_name'] ?></h1>
 
 <h4>
-  In the training grounds of the village
+  In the training grounds of the village,
   <br />
-  nin from the clan train their skills
+  chars from the clan train their skills.
 </h4>
 
-<table class="table-skill" align="center">
-  <tr>
-    <th title="Sword Skill">kenjutsu</th>
-    <th title="Shuriken Skill">shuriken</th>
-    <th title="Melee Skill">taijutsu</th>
-    <th title="Elemental Skill">ninjutsu</th>
-    <th title="Illusion Skill">genjutsu</th>
-  </tr>
-  
-  <tr>
-    <td><?= $_char['kenjutsu'] ?></td>
-    <td><?= $_char['shuriken'] ?></td>
-    <td><?= $_char['taijutsu'] ?></td>
-    <td><?= $_char['ninjutsu'] ?></td>
-    <td><?= $_char['genjutsu'] ?></td>
-  </tr>
-</table>
+<?= VIEW_Char_skills( $_char ); ?>
 
-<a href="char-train">Train alone</a>
+<h3>
+  <a href="char-train">Train alone</a>
+</h3>
 
 <h2>Rank-<?= $_char['char_rank'] ?></h2>
 
@@ -64,11 +50,11 @@
   
   <button type="submit">Train</button>
   
-  <table align="center" style="text-align: center;" cellpadding="8" cellspacing="0">
+  <table class="table-generic">
     <?php if ( empty( $_clan_members_to_train_with ) )
     {
       ?>
-      <p>There's no nin to train with.</p>
+      <p>There's no char to train with.</p>
       <?php
     }
     else
@@ -76,7 +62,7 @@
       ?>
       <tr>
         <th>Lv</th>
-        <th>Nin</th>
+        <th>Char</th>
         <th>Jutsu</th>
         <th>Select</th>
       </tr>
@@ -97,17 +83,7 @@
           
           <!-- Skill levels -->
           <th>
-            <?=
-              $row['kenjutsu']
-              .' • '.
-              $row['shuriken']
-              .' • '.
-              $row['taijutsu']
-              .' • '.
-              $row['ninjutsu']
-              .' • '.
-              $row['genjutsu']
-            ?>
+            <?= VIEW_Skills_inline( $row ) ?>
           </th>
           
           <!-- Radio button -->

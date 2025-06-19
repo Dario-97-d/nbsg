@@ -1,0 +1,31 @@
+nbsg char ranks
+
+-- Levels --
+
+E -> based on Naruto's student or academy level.
+D -> based on Naruto's genin level.
+C -> based on Naruto's chunnin level.
+B -> based on Naruto's jonin level.
+A -> based on Naruto's sennin level.
+
+-- Assignments --
+
+E: Develop attributes and skill training until a specific jutsu is learned.
+D: Train in a team in order to beat the Chunnin Shiken (Team Exam).
+C: Go on patrol missions until the team defeats a Jonin.
+B: Go on undercover missions in other villages.
+A: Lead village or start another one (or maybe a nuke-nin organization).
+
+-- Graduations --
+
+E -> D: Learn a specific jutsu.
+D -> C: Win a Team vs Team battle, as Team leader.
+C -> B: Win a Team vs Char battle, as Team leader, against a Jonin (B-rank).
+B -> A: Beat an A-rank char or a kage.
+
+-- Unlocks --
+
+D: Team missions (D-rank).
+C: Squad missions (C-rank).
+B: Intel missions (B-rank).
+A: Sato-level fights and decisions.

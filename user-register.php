@@ -26,24 +26,30 @@
 <form method="POST">
   
   Username:
+  
   <br />
   
   <input type="text" name="username" value="<?= $_POST['username'] ?? '' ?>" />
+  
   <br />
   
   Password:
+  
   <br />
   
   <input type="password" name="password" value="<?= $_POST['password'] ?? '' ?>" />
+  
   <br />
   
   E-mail:
+  
   <br />
   
   <input type="email" name="email" value="<?= $_POST['email'] ?? '' ?>" />
-  <br />
   
   <br />
+  <br />
+  
   <button type="submit" name="register">Start</button>
   
 </form>

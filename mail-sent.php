@@ -19,16 +19,14 @@
 
 <?php LAYOUT_wrap_onwards(); ?>
 
-<h1>PMs sent</h1>
+<h1>Mail sent</h1>
 
-<h2>
-  <a href="mail-received">Mailbox</a> || <a href="mail-write">Send pm</a> || <a href="mail-sent">PMs sent</a>
-</h2>
+<?= VIEW_Mail_navbar() ?>
 
 <?php if ( empty( $_messages ) )
 {
   ?>
-  No sent messages to show
+  No messages to show.
   <?php
 }
 else

@@ -32,23 +32,7 @@
 }
 ?>
 
-<table class="table-skill" align="center">
-  <tr>
-    <th title="Sword Skill">kenjutsu</th>
-    <th title="Shuriken Skill">shuriken</th>
-    <th title="Melee Skill">taijutsu</th>
-    <th title="Elemental Skill">ninjutsu</th>
-    <th title="Illusion Skill">genjutsu</th>
-  </tr>
-  
-  <tr>
-    <td><?= $_profile['kenjutsu'] ?></td>
-    <td><?= $_profile['shuriken'] ?></td>
-    <td><?= $_profile['taijutsu'] ?></td>
-    <td><?= $_profile['ninjutsu'] ?></td>
-    <td><?= $_profile['genjutsu'] ?></td>
-  </tr>
-</table>
+<?= VIEW_Char_skills( $_profile ); ?>
 
 <br />
 
@@ -83,40 +67,40 @@
 <p>
   Rank-<?= $_profile['char_rank'] ?>
   <br />
-  <b title="Average of stats">Lv <?= $_profile['char_level'] ?></b>
+  <b>Lv <?= $_profile['char_level'] ?></b>
 </p>
 
 <?php if ( true ) //if ( in_bonds )
 {
   ?>
-  <table align="center">
+  <table>
     
     <tr>
-      <td title="Critical">Flair</td>
+      <td>Flair</td>
       
       <td><?= $_profile['flair'] ?></td>
     </tr>
     
     <tr>
-      <td title="Strength">Power</td>
+      <td>Power</td>
       
       <td><?= $_profile['strength'] ?></td>
     </tr>
     
     <tr>
-      <td title="Reach">Speed</td>
+      <td>Speed</td>
       
       <td><?= $_profile['agility'] ?></td>
     </tr>
     
     <tr>
-      <td title="Effect">Jutsu</td>
+      <td>Jutsu</td>
       
       <td><?= $_profile['jutsu'] ?></td>
     </tr>
     
     <tr>
-      <td title="Planning">Tactics</td>
+      <td>Tactics</td>
       
       <td><?= $_profile['tactics'] ?></td>
     </tr>
