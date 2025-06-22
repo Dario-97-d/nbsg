@@ -5,9 +5,7 @@
 function MAIL_delete_message( $msg_id )
 {
   return sql_transaction('
-    UPDATE mail
-    SET    seen = 2
-    WHERE  msg_id = '. $msg_id .'
+    DELETE FROM mail WHERE msg_id = '. $msg_id .'
   ');
 }
 
@@ -19,15 +17,13 @@ function MAIL_get_received()
     SELECT
       m.msg_id,
       m.msg_time,
-      m.sender_username,
+      m.sender_id,
       m.msg_text,
-      m.seen,
-      s.char_id as sender_id
+      s.username as sender_username
     FROM       mail       m
-    LEFT  JOIN game_users r ON r.username = m.receiver_username
-    RIGHT JOIN game_users s ON s.username = m.sender_username
+    LEFT  JOIN game_users r ON r.char_id = m.receiver_id
+    RIGHT JOIN game_users s ON s.char_id = m.sender_id
     WHERE      r.char_id = '. $_uid .'
-    AND        seen <> 2
     ORDER BY   msg_time DESC
   ');
 }
@@ -40,20 +36,18 @@ function MAIL_get_sent()
     SELECT
       m.msg_id,
       m.msg_time,
-      m.receiver_username,
+      m.receiver_id,
       m.msg_text,
-      m.seen,
-      r.char_id as receiver_id
+      r.username as receiver_username
     FROM       mail       m
-    LEFT  JOIN game_users s ON s.username = m.sender_username
-    RIGHT JOIN game_users r ON r.username = m.receiver_username
+    LEFT  JOIN game_users s ON s.char_id = m.sender_id
+    RIGHT JOIN game_users r ON r.char_id = m.receiver_id
     WHERE      s.char_id = '. $_uid .'
-    AND        seen <> 2
     ORDER BY   msg_time DESC
   ');
 }
 
-function MAIL_send( $to_username, $msg_text )
+function MAIL_send( $msg_text, $to_username )
 {
   global $_uid;
   
@@ -63,25 +57,24 @@ function MAIL_send( $to_username, $msg_text )
   if ( ! VALIDATE_User_name( $to_username ) )               return 'Invalid username: '. $to_username;
   if ( ! VALIDATE_Mail_text_length( strlen( $msg_text ) ) ) return 'Text length must be 1 to 800 chars.';
   
+  $get_receiver_id = sql_mfa('
+    SELECT char_id
+    FROM   game_users
+    WHERE  username = \''. $to_username .'\'
+  ');
+  
+  if ( ! $get_receiver_id ) return 'User not found: '. $to_username;
+  
   sql_transaction('
     INSERT INTO mail (
-      sender_username,
-      receiver_username,
+      sender_id,
+      receiver_id,
       msg_text
     )
     VALUES (
-      ( SELECT username FROM game_users WHERE char_id = '. $_uid .' ),
-      \''. $to_username .'\',
-      \''. $msg_text     .'\'
+      '. $_uid .',
+      '. $get_receiver_id['char_id'] .',
+      \''. $msg_text .'\'
     )
-  ');
-}
-
-function MAIL_view_message( $msg_id )
-{
-  return sql_transaction('
-    UPDATE mail
-    SET    seen = 1
-    WHERE  msg_id = '. $msg_id .'
   ');
 }

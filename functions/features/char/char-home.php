@@ -16,8 +16,8 @@ function CHAR_Home_get()
       a.agility,
       a.jutsu,
       a.tactics,
-      a.training_sessions_for_use,
-      a.sessions_needed_for_upgrade,
+      a.attribute_points,
+      a.points_needed,
       s.style_name,
       s.kenjutsu,
       s.shuriken,
@@ -48,7 +48,7 @@ function CHAR_Home_increment_attribute( $attribute )
         tactics
       ) AS total_atts,
       '. $attribute .',
-      training_sessions_for_use >= sessions_needed_for_upgrade AS can_upgrade
+      attribute_points >= points_needed AS can_upgrade
     FROM  char_attributes
     WHERE char_id = '. $_uid .'
   ');
@@ -60,13 +60,13 @@ function CHAR_Home_increment_attribute( $attribute )
   return sql_transaction('
     UPDATE char_attributes
     SET
-      char_level = FLOOR( ( flair + strength + agility + jutsu + tactics + 1 ) / 5 ),
+      char_level       = FLOOR( ( flair + strength + agility + jutsu + tactics + 1 ) / 5 ),
       '. $attribute .' = '. $attribute .' + 1,
-      training_sessions_for_use   = training_sessions_for_use - sessions_needed_for_upgrade,
-      sessions_needed_for_upgrade = sessions_needed_for_upgrade + 1
+      attribute_points = attribute_points - points_needed,
+      points_needed    = points_needed + 1
     WHERE char_id          = '. $_uid .'
     AND   char_level       = '. $char['char_level'] .'
     AND   '. $attribute .' = '. $char[ $attribute ]  .'
-    AND   training_sessions_for_use >= sessions_needed_for_upgrade
+    AND   attribute_points >= points_needed
   ');
 }

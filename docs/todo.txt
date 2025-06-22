@@ -1,13 +1,13 @@
 -- TODO --
 
-DATA
+CONCEPT
 
-use char id instead of username for mail
-use mail msg state(s?) viewed/deleted instead of seen in { 0, 1, 2 }, for clarity
-rename long sql fields
-- training_sessions_for_upgrade -> attribute_points
-- sessions_needed_for_upgrade   -> points_needed
-- OR: use attribute_points and not points_needed
+Drop Clan/Style
+maybe use something like Lineage or Spirit instead of Clan and Style, for non-ambiguity
+- or maybe just drop it altogether, for free char development
+Change calculation of bots' skills in team exam
+- maybe drop bots and do something else.
+- maybe have teams fight each other or any existing team, including passed.
 
 LATER
 
@@ -24,15 +24,6 @@ Use file for file paths constants.
 MINOR
 
 maybe use preffix _ for in-file function use
-
-CONCEPT
-
-Drop Clan/Style
-maybe use something like Lineage or Spirit instead of Clan and Style, for non-ambiguity
-- or maybe just drop it altogether, for free char development
-Change calculation of bots' skills in team exam
-- maybe drop bots and do something else.
-- maybe have teams fight each other or any existing team, including passed.
 
 ...
 

@@ -13,14 +13,6 @@
     JS_add_message('PM deleted.');
   }
   
-  // -- Set Message as Seen --
-  if ( isset( $_POST['set-msg-seen-id'] ) )
-  {
-    MAIL_view_message( $_POST['set-msg-seen-id'] );
-    
-    JS_add_message('PM seen.');
-  }
-  
   $_messages = MAIL_get_received();
 
 ?>
@@ -55,11 +47,7 @@ else
       
       <?= $row['sender_username'] ?>
       
-    </a> || <b>
-      
-      <?= $row['seen'] == 0 ? 'Not s' : 'S' ?>een
-      
-    </b> || <a href="mail-write?to-username=<?= $row['sender_username'] ?>">
+    </a> || <a href="mail-write?to-username=<?= $row['sender_username'] ?>">
       
       Reply
       
@@ -68,21 +56,7 @@ else
     <textarea name="msg-text" disabled><?= $row['msg_text'] ?></textarea>
     
     <form method="POST">
-      <table>
-        <?php if ( $row['seen'] !== 1 )
-        {
-          ?>
-          <td>
-            <button type="submit" name="set-msg-seen-id" value="<?= $row['msg_id'] ?>">Seen</button>
-          </td>
-          <?php
-        }
-        ?>
-        
-        <td>
-          <button type="submit" name="delete-msg-id" value="<?= $row['msg_id'] ?>">Delete</button>
-        </td>
-      </table>
+      <button type="submit" name="delete-msg-id" value="<?= $row['msg_id'] ?>">Delete</button>
     </form>
     
     <?php

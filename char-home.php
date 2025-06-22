@@ -5,7 +5,7 @@
 
   if ( ! isset( $_uid ) ) exiter('index');
 
-  // -- Train Attribute --
+  // -- Upgrade Attribute --
   if ( isset( $_POST['upgrade-attribute'] ) )
   {
     CHAR_Home_increment_attribute( $_POST['upgrade-attribute'] );
@@ -13,7 +13,7 @@
 
   $_char = CHAR_Home_get();
 
-  $_disabled = $_char['sessions_needed_for_upgrade'] > $_char['training_sessions_for_use'] ? 'disabled' : '';
+  $_disabled = $_char['attribute_points'] < $_char['points_needed'] ? 'disabled' : '';
 
 ?>
 
@@ -117,9 +117,9 @@
     <tr>
       <td style="text-align: right;">Needs:</td>
       
-      <td><?= $_char['sessions_needed_for_upgrade'] ?></td>
+      <td><?= $_char['points_needed'] ?></td>
       
-      <td colspan="2" style="text-align: center;">Has: <b><?= $_char['training_sessions_for_use'] ?></b> /50</td>
+      <td colspan="2" style="text-align: center;">Has: <b><?= $_char['attribute_points'] ?></b> /50</td>
     </tr>
     
   </table>

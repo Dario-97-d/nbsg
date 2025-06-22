@@ -8,15 +8,15 @@ CREATE TABLE IF NOT EXISTS game_users (
 
 CREATE TABLE IF NOT EXISTS char_attributes (
 	char_id INT PRIMARY KEY,
-	char_level                  INT NOT NULL DEFAULT 1,
-	energy                      INT NOT NULL DEFAULT 100,
-	training_sessions_for_use   INT NOT NULL DEFAULT 50,
-	sessions_needed_for_upgrade INT NOT NULL DEFAULT 6,
-	flair                       INT NOT NULL DEFAULT 1,
-	strength                    INT NOT NULL DEFAULT 1,
-	agility                     INT NOT NULL DEFAULT 1,
-	jutsu                       INT NOT NULL DEFAULT 1,
-	tactics                     INT NOT NULL DEFAULT 1
+	char_level       INT NOT NULL DEFAULT 1,
+	energy           INT NOT NULL DEFAULT 100,
+	flair            INT NOT NULL DEFAULT 1,
+	strength         INT NOT NULL DEFAULT 1,
+	agility          INT NOT NULL DEFAULT 1,
+	jutsu            INT NOT NULL DEFAULT 1,
+	tactics          INT NOT NULL DEFAULT 1,
+	attribute_points INT NOT NULL DEFAULT 50,
+	points_needed    INT NOT NULL DEFAULT 6
 ) ENGINE = InnoDB;
 
 CREATE TABLE IF NOT EXISTS style_attributes (
@@ -58,9 +58,8 @@ CREATE TABLE IF NOT EXISTS char_team (
 
 CREATE TABLE IF NOT EXISTS mail (
 	msg_id INT PRIMARY KEY AUTO_INCREMENT,
-	msg_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-	sender_username   VARCHAR(16) NOT NULL,
-	receiver_username VARCHAR(16) NOT NULL,
-	msg_text          TEXT NOT NULL,
-	seen              INT  NOT NULL DEFAULT 0
+	msg_time    TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	sender_id   INT  NOT NULL,
+	receiver_id INT  NOT NULL,
+	msg_text    TEXT NOT NULL
 ) ENGINE = InnoDB;

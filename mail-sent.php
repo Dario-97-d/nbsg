@@ -47,11 +47,7 @@ else
       
       <?= $row['receiver_username']?>
       
-    </a> <b>
-      
-      <?= $row['seen'] == 0 ? 'Not s' : 'S' ?>een
-      
-    </b> || <a href="mail-write?to-username=<?= $row['receiver_username'] ?>">
+    </a> || <a href="mail-write?to-username=<?= $row['receiver_username'] ?>">
       
       Send PM
       

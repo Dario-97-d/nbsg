@@ -12,9 +12,9 @@
   }
   
   // -- Send Message --
-  if ( isset( $_POST['send-msg'] ) )
+  if ( isset( $_POST['send-msg-text'] ) )
   {
-    $send_message = MAIL_send( $_POST['to-username'] ?? '', $_POST['msg-text'] ?? '' );
+    $send_message = MAIL_send( $_POST['send-msg-text'], $_POST['to-username'] ?? '' );
     
     if ( is_string( $send_message ) )
     {
@@ -41,11 +41,11 @@
   <br />
   <br />
   
-  <textarea name="msg-text" maxlength="800"></textarea>
+  <textarea name="send-msg-text" maxlength="800"></textarea>
   
   <br />
   <br />
   
-  <button type="submit" name="send-msg">Send</button>
+  <button type="submit">Send</button>
   
 </form>
